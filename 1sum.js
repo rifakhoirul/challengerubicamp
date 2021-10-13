@@ -3,7 +3,7 @@ function sum() {
     for (let i = 0; i < arguments.length; i++) {
         x += arguments[i]
     }
-    return(console.log(x));
+    console.log(x);
 }
 
 sum(1, 2, 7);
