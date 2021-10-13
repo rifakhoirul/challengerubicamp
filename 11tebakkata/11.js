@@ -1,5 +1,4 @@
 const fs = require('fs')
-const { stdin } = require('process')
 let data = fs.readFileSync('data.json', 'utf-8')
 let ambil = data.split(/[""]/)
 let soal = [ambil[3], ambil[11], ambil[19]]
