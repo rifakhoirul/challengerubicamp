@@ -24,6 +24,7 @@ else {
         if (jawab.trim().toLowerCase() == `${jwbn[i]}`) {
             console.log("\nAnda beruntung! \n");
             i++
+            
             //kalau udh bener semua ga ada yg sekip lagi
             if (i == soal.length && sekip.length == 0) {
                 console.log("Anda berhasil!");
@@ -42,10 +43,11 @@ else {
 
             //lanjut ke soal berikutnya
             console.log(`Pertanyaan: ${soal[i]}`)
+            salah = 0;
         }
 
         //kalau jawab skip
-        else if (jawab == 'skip') {
+        else if (jawab.toLowerCase() == 'skip') {
             sekip.push(soal[i]);
             jwbnsekip.push(jwbn[i]);
             i++;
@@ -58,6 +60,7 @@ else {
                 salah = 0;
             }
             console.log(`\nPertanyaan: ${soal[i]}`);
+            salah = 0;
         }
 
         //kalau jawab salah
@@ -69,5 +72,4 @@ else {
     }).on('close', () => {
         process.exit(0);
     })
-
 }
