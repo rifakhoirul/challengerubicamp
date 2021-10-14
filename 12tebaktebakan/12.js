@@ -1,4 +1,3 @@
-const { argv } = require('process');
 const fs = require('fs');
 let data = fs.readFileSync('data.json', 'utf-8');
 let ambil = data.split(/[""]/);
