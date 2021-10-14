@@ -31,7 +31,7 @@ else {
             }
 
             //kalau masih ada soal yg disekip
-            if (sekip.length > 0) {
+            if (i == soal.length && sekip.length > 0) {
                 soal = sekip;
                 jwbn = jwbnsekip;
                 sekip = [];
