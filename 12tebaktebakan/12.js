@@ -6,9 +6,8 @@ let jwbn = [ambil[7], ambil[15], ambil[23]];
 let i = 0;
 let salah = 0;
 let sekip = [];
-let jwbnsekip = [];
-
-if (process.argv[2] != 'data.json') {
+let jwbnsekip = [];data.json
+if (!process.argv[2]) {
     console.log("Tolong sertakan nama file sebagai inputan soalnya\nMisalnya 'node solution.js data.json'");
 }
 else {
