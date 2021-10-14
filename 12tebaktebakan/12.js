@@ -7,8 +7,10 @@ let i = 0;
 let salah = 0;
 let sekip = [];
 let jwbnsekip = []
+let namafile = process.argv[2]
+let cek = namafile.split(".")
 
-if (!process.argv[2]) {
+if (!process.argv[2] || cek[cek.length-1]!='json') {
     console.log("Tolong sertakan nama file sebagai inputan soalnya\nMisalnya 'node solution.js data.json'");
 }
 else {
@@ -23,7 +25,7 @@ else {
         if (jawab.trim().toLowerCase() == `${jwbn[i]}`) {
             console.log("\nAnda beruntung! \n");
             i++
-            
+
             //kalau udh bener semua ga ada yg sekip lagi
             if (i == soal.length && sekip.length == 0) {
                 console.log("Anda berhasil!");
