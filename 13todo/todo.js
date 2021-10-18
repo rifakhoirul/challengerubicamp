@@ -105,7 +105,6 @@ else if (process.argv[2] == 'list:outstanding') {
     }
     else { console.log("Masukkan command yang valid!") }
 }
-
 //list:completed
 else if (process.argv[2] == 'list:completed') {
     let udah = [];
@@ -135,7 +134,6 @@ else if (process.argv[2] == 'tag') {
     taglist[taskid] = tagsave.join(" ")
     fs.writeFileSync('tagdata.json', `${taglist.join("\n")}`);
 }
-
 //filter
 else if (process.argv[2] != undefined) {
     let cekinput = process.argv[2]
