@@ -1,16 +1,54 @@
-create table mahasiswa (nim varchar(4) primary key not null, namamahasiswa varchar(100) not null, alamat varchar(100) not null, kode jurusan varchar(4) not null);
-insert into mahasiswa values('1001','Andi','Bandung','K10');
-insert into mahasiswa values('1002','Budi','Jakarta','K10');
-create table jurusan (kode jurusan varchar(4) primary key not null, namajurusan varchar(100) not null);\
-insert into jurusan values ('K10','Psikologi');
-create table dosen (nip varchar(4) primary key not null, namadosen varchar(100) not null, kode jurusan varchar(4) not null, kodematkul varchar(4) not null);
-insert into dosen ('1101', 'Asep', 'K10', 'P01');
-insert into dosen ('1102', 'Bambang', 'K10', 'P02');
-create table matakuliah (kode matkul varchar(4) not null, nama matkul varchar(100) not null, sks int not null, kode jurusan varchar(4), nip varchar(4) not null);
-insert into matakuliah values('P01', 'Pengantar Psikologi', 2, 'K10', '11001');
-insert into matakuliah values('P02', 'Psikologi Umum', 2, 'K10', '11002');
-create table krs (kode matkul varchar(4) primary key not null, no absen int not null, nim varchar(4) not null, nilai int not null);
-insert into krs values('P01', 1, '1001', 80);
-insert into krs values('P01', 2, '1002', 90);
-insert into krs values('P02', 1, '1001', 85);
-insert into krs values('P02', 2, '1002', 95);
+PRAGMA foreign_keys = ON;
+CREATE TABLE jurusan 
+(
+    kodejurusan varchar(4) primary key not null, 
+    namajurusan varchar(100) not null
+);
+INSERT INTO jurusan VALUES ('J10','Psikologi');
+
+CREATE TABLE mahasiswa 
+(
+    nim int primary key not null, 
+    namamahasiswa varchar(100) not null, 
+    alamat varchar(100) not null, 
+    kodejurusan varchar(4) not null, 
+    FOREIGN KEY (kodejurusan) REFERENCES jurusan (kodejurusan)
+);
+INSERT INTO mahasiswa VALUES(1001,'Andi','Bandung','J10');
+INSERT INTO mahasiswa VALUES(1002,'Budi','Jakarta','J10');
+
+CREATE TABLE dosen 
+(
+    nip int primary key not null, 
+    namadosen varchar(100) not null, 
+    kodejurusan varchar(4) not null, 
+    FOREIGN KEY (kodejurusan) REFERENCES jurusan (kodejurusan)
+);
+INSERT INTO dosen VALUES (1101, 'Asep', 'J10');
+INSERT INTO dosen VALUES (1102, 'Bambang', 'J10');
+
+CREATE TABLE matakuliah (
+    kodematkul varchar(4) primary key not null, 
+    namamatkul varchar(100) not null, 
+    sks int not null, 
+    kodejurusan varchar(4), 
+    nip int not null, 
+    FOREIGN KEY (kodejurusan) REFERENCES jurusan (kodejurusan), 
+    FOREIGN KEY (nip) REFERENCES dosen (nip)
+);
+INSERT INTO matakuliah VALUES('P01', 'Pengantar Psikologi', 2, 'J10', 11001);
+INSERT INTO matakuliah VALUES('P02', 'Psikologi Umum', 2, 'J10', 11002);
+
+CREATE TABLE krs 
+(
+    kodematkul varchar(4) not null, 
+    noabsen int not null,
+    nim int not null, 
+    nilai int not null, 
+    FOREIGN KEY (kodematkul) REFERENCES matakuliah (kodematkul), 
+    FOREIGN KEY (nim) REFERENCES mahasiswa (nim)
+);
+INSERT INTO krs VALUES('P01', 1, 1001, 80);
+INSERT INTO krs VALUES('P01', 2, 1002, 90);
+INSERT INTO krs VALUES('P02', 1, 1001, 85);
+INSERT INTO krs VALUES('P02', 2, 1002, 95);
