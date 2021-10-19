@@ -42,7 +42,7 @@ INNER JOIN matakuliah ON krs.kodematkul = matakuliah.kodematkul
 WHERE matakuliah.namamatkul = 'Data Mining'
 
 --, no 6
-SELECT matakuliah.nip, dosen.namadosen, COUNT(krs.kodematkul) AS totalmahasiswa
+SELECT matakuliah.nip, dosen.namadosen, COUNT(DISTINCT krs.nim) AS totalmahasiswa
 FROM matakuliah
 INNER JOIN dosen ON matakuliah.nip = dosen.nip
 INNER JOIN krs ON matakuliah.kodematkul = krs.kodematkul
