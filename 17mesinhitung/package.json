@@ -1,0 +1,13 @@
+{
+  "name": "17mesinhitung",
+  "version": "1.0.0",
+  "description": "mesin hitung",
+  "main": "MesinHitung.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC"
+  
+}
