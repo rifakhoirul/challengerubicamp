@@ -26,29 +26,34 @@ class BodyCar {
     }
 }
 class CarFactory {
-    produce() {
-        return console.log(`Total produksi dalam setahun: ${Math.floor(Math.random() * 100000)} unit`)
+    constructor(){
+        this.cars = []
     }
+    produce(){
+        this.cars.push(new Avanza(2019,2025, 'Avanza'))
+        this.cars.push(new Ayla(2019,2025, 'Ayla'))
+        return console.log(`Total produksi ${this.cars[0].name}: ${Math.floor(Math.random() * 10000)} unit.\nTotal produksi ${this.cars[1].name}: ${Math.floor(Math.random() * 10000)} unit`)
+    }        
 }
 //MERK
 class Avanza extends Car {  //
-    constructor(year,guarantee) {
+    constructor(year,guarantee,name) {
         super(year,guarantee)
+        this.name = name
         this.seat = 7
         this.tyre = new Tyre('Radial', 50)
         this.bodycar = new BodyCar('Black','SUV')
      }
-
 }
 class Ayla extends Car {
-    constructor(year, guarantee) { 
+    constructor(year, guarantee,name) { 
         super(year,guarantee)
-        this.seat = 4;
+        this.name = name
+        this.seat = 4
         this.tyre = new Tyre('Radial', 40)
         this.bodycar = new BodyCar('White','MPV')
     }
 }
 
-//
-let mobil = new CarFactory()
-mobil.produce();
+let pabrikToyota = new CarFactory()
+pabrikToyota.produce()
