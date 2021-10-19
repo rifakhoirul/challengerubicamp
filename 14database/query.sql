@@ -26,6 +26,9 @@ INSERT INTO mahasiswa VALUES(1102,'Gaga','Sukabumi','J11', '2001-10-18');
 INSERT INTO mahasiswa VALUES(1103,'Hari','Cianjur','J11', '2002-10-18');
 INSERT INTO mahasiswa VALUES(1104,'Inces','Malang','J11', '2003-10-18');
 INSERT INTO mahasiswa VALUES(1105,'Jojo','Banten','J11', '2004-10-18');
+INSERT INTO mahasiswa VALUES(1106,'Koko','Banten','J11', '2004-10-18');
+INSERT INTO mahasiswa VALUES(1107,'Lulu','Banten','J11', '2004-10-18');
+
 
 CREATE TABLE dosen 
 (
@@ -86,3 +89,5 @@ INSERT INTO krs VALUES('M1102', 1, 1101, 'D');
 INSERT INTO krs VALUES('M1102', 2, 1102, 'E');
 INSERT INTO krs VALUES('M1103', 1, 1101, 'A');
 INSERT INTO krs VALUES('M1103', 2, 1102, 'B');
+INSERT INTO krs VALUES('M1103', 2, 1106, 'B');
+INSERT INTO krs VALUES('M1103', 2, 1107, 'B');
