@@ -3,10 +3,6 @@ class Car {
         this.year = year;
         this.guarantee = guarantee;
     }
-    guaranteesim(yearsimulation) {
-        let age = yearsimulation - this.year;
-        return this.guarantee > age ? 'Active':'Expired'
-    }
 }
 class Tyre {
     constructor(brand, size) {
@@ -26,34 +22,45 @@ class BodyCar {
     }
 }
 class CarFactory {
-    constructor(){
+    constructor() {
         this.cars = []
     }
-    produce(){
-        this.cars.push(new Avanza(2019,2025, 'Avanza'))
-        this.cars.push(new Ayla(2019,2025, 'Ayla'))
-        return console.log(`Total produksi ${this.cars[0].name}: ${Math.floor(Math.random() * 10000)} unit.\nTotal produksi ${this.cars[1].name}: ${Math.floor(Math.random() * 10000)} unit`)
-    }        
+    produce() {
+        for (let i = 0; i < Math.floor(Math.random() * 10); i++) {
+            this.cars.push(new Avanza(2015, 5, 'Avanza'))
+        }
+        for (let i = 0; i < Math.floor(Math.random() * 10); i++) {
+            this.cars.push(new Ayla(2015, 7, 'Ayla'))
+        }
+        return console.log(`Total produksi ${this.cars.length} unit`)
+    }
+    guaranteeSimulation(yearsimulation) {
+        for (let i = 0; i < this.cars.length; i++) {
+            let age = yearsimulation - this.cars[i].year;
+            console.log(this.cars[i].guarantee > age ? 'Active' : 'Expired')
+        }
+    }
 }
 //MERK
 class Avanza extends Car {  //
-    constructor(year,guarantee,name) {
-        super(year,guarantee)
+    constructor(year, guarantee, name) {
+        super(year, guarantee)
         this.name = name
         this.seat = 7
         this.tyre = new Tyre('Radial', 50)
-        this.bodycar = new BodyCar('Black','SUV')
-     }
+        this.bodycar = new BodyCar('Black', 'SUV')
+    }
 }
 class Ayla extends Car {
-    constructor(year, guarantee,name) { 
-        super(year,guarantee)
+    constructor(year, guarantee, name) {
+        super(year, guarantee)
         this.name = name
         this.seat = 4
         this.tyre = new Tyre('Radial', 40)
-        this.bodycar = new BodyCar('White','MPV')
+        this.bodycar = new BodyCar('White', 'MPV')
     }
 }
 
 let pabrikToyota = new CarFactory()
 pabrikToyota.produce()
+pabrikToyota.guaranteeSimulation(2021)
