@@ -1,4 +1,4 @@
-export class MesinHitung {
+export default class MesinHitung {
     constructor() {
         this.x = 1
     }
