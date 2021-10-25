@@ -1,0 +1,19 @@
+{
+  "name": "submit",
+  "version": "1.0.0",
+  "description": "",
+  "main": "10readline.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rifakhoirul/challangerubicamp.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/rifakhoirul/challangerubicamp/issues"
+  },
+  "homepage": "https://github.com/rifakhoirul/challangerubicamp#readme"
+}
