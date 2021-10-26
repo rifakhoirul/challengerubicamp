@@ -4,7 +4,6 @@ let dataraw = JSON.parse(datajson)
 let data = dataraw
 let filter = {}
 
-
 const express = require('express')
 const path = require('path')
 const bodyParser = require('body-parser')
@@ -59,12 +58,23 @@ app.get('/', function (req, res) {
         }
     }
     else { data = dataraw }
+    let url = req._parsedUrl.query
+    let urlstring = `${url}`
+    let urls = urlstring.split("=")
+    if (urls[0] == "page") { url = "" }
 
+    if (urls[0] == "IDfilter" && urls[urls.length - 2].includes("page")) {
+        let urln = urlstring.split("&")
+        urln.pop()
+        url = urln.join("&") + "&"
+    }
+    else if (urls[0] == "IDfilter") { url += "&" }
     let totalpage = Math.ceil(data.length / 3)
-    let pageno = req.query.page ? Number(req.query.page):1
+    let pageno = req.query.page ? Number(req.query.page) : 1
     let offset = 3 * (pageno - 1)
     let data2 = data.slice(offset, offset + 3)
-    res.render('index', { data: data2, totalpage, currentpage:pageno, offset })
+
+    res.render('index', { data: data2, totalpage, currentpage: pageno, offset, filter, url })
 })
 app.get('/add', function (req, res) {
     res.render('add')
@@ -103,6 +113,5 @@ app.post('/edit/:id', function (req, res) { //nerima tembakan
 
 
 app.listen(port, () => {
-    console.log(`aplikasi berjalan di port${port}`)
+    console.log(`aplikasi berjalan di port ${port}`)
 })
-

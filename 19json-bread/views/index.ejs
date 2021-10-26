@@ -7,6 +7,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Challange 19 (json-bread)</title>
     <style>
+        a.disabled {
+            pointer-events: none;
+            cursor: default;
+        }
+
         input[type=text],
         input[type=number],
         input[type=date],
@@ -112,6 +117,20 @@
             text-decoration: none;
         }
 
+        .yellow-button {
+            font-family: Arial, Helvetica, sans-serif;
+            width: 6%;
+            background-color: rgb(199, 170, 6);
+            color: white;
+            padding: 7px 10px;
+            margin: 8px 0;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 100%;
+            text-decoration: none;
+        }
+
         .red-button {
             width: 100%;
             background-color: red;
@@ -171,55 +190,65 @@
     <h2>Filters</h2>
     <form action="" method="get">
         <div class="containercheck">
-            <input type="checkbox" id="IDcheck" name="IDcheck" value="IDcheck">
+            <input type="checkbox" id="IDcheck" name="IDcheck" value="IDcheck" <%=filter.IDcheck ? "checked" :"" %>>
             <label for="ID" style="width: 150px;">ID</label>
-            <input type="number" id="IDfilter" name="IDfilter" placeholder="ID" size="20px" style="height:fit-content;">
+            <input type="number" id="IDfilter" name="IDfilter" placeholder="ID" size="20px" style="height:fit-content;"
+                value=<%=filter.IDfilter %>>
             <br>
         </div>
         <div class="containercheck">
-            <input type="checkbox" id="stringcheck" name="stringcheck" value="stringcheck">
+            <input type="checkbox" id="stringcheck" name="stringcheck" value="stringcheck" <%=filter.stringcheck
+                ? "checked" :"" %>>
             <label for="stringcheck" style="width: 150px;">String</label>
-            <input type="text" id="stringfilter" name="stringfilter" placeholder="String">
+            <input type="text" id="stringfilter" name="stringfilter" placeholder="String" value=<%=filter.stringfilter
+                %>>
             <br>
         </div>
         <div class="containercheck">
-            <input type="checkbox" id="integercheck" name="integercheck" value="integercheck">
+            <input type="checkbox" id="integercheck" name="integercheck" value="integercheck" <%=filter.integercheck
+                ? "checked" :"" %>>
             <label for="integercheck" style="width: 150px;">Integer</label>
-            <input type="number" id="integerfilter" name="integerfilter" placeholder="Integer">
+            <input type="number" id="integerfilter" name="integerfilter" placeholder="Integer"
+                value=<%=filter.integerfilter %>>
             <br>
         </div>
         <div class="containercheck">
-            <input type="checkbox" id="floatcheck" name="floatcheck" value="floatcheck">
+            <input type="checkbox" id="floatcheck" name="floatcheck" value="floatcheck" <%=filter.floatcheck ? "checked"
+                :"" %>>
             <label for="floatcheck" style="width: 150px;">Float</label>
-            <input type="number" id="floatfilter" name="floatfilter" placeholder="Float" step="any">
+            <input type="number" id="floatfilter" name="floatfilter" placeholder="Float" step="any"
+                value=<%=filter.floatfilter %>>
             <br>
         </div>
 
         <div class="containerdate" style="width: 100%;">
             <div style="width: 200px; margin-top: 20px;">
-                <input type="checkbox" id="datecheck" name="datecheck" value="datecheck">
+                <input type="checkbox" id="datecheck" name="datecheck" value="datecheck" <%=filter.datecheck ? "checked"
+                    :"" %>>
                 <label for="datecheck" style="width: 11.3%;">Date</label>
             </div>
             <div style="width: 100%;">
                 <input placeholder="Start date" type="text" onfocus="(this.type='date')" id="datefilter"
-                    name="datefilter">
+                    name="datefilter" value=<%=filter.datefilter %>>
                 <p style="margin: 5px 0;">to</p>
                 <input placeholder="End date" type="text" onfocus="(this.type='date')" id="datefilter2"
-                    name="datefilter2">
+                    name="datefilter2" value=<%=filter.datefilter2 %>>
             </div>
         </div>
 
         <div class="containercheck">
-            <input type="checkbox" id="booleancheck" name="booleancheck" value="booleancheck">
+            <input type="checkbox" id="booleancheck" name="booleancheck" value="booleancheck" <%=filter.booleancheck
+                ? "checked" :"" %>>
             <label for="booleancheck" style="width: 150px;">Boolean</label>
             <select id="booleanfilter" name="booleanfilter">
                 <option value="" disabled selected>Choose the boolean ...</option>
-                <option value="true">true</option>
-                <option value="false">false</option>
+                <option value="true" <%=filter.booleanfilter=='true' ? "selected" : "" %>>true</option>
+                <option value="false" <%=filter.booleanfilter=='false' ? "selected" : "" %>>false</option>
             </select>
             <br>
         </div>
         <button type="submit" class="blue-button">Search</button>
+        <a href="/" class="yellow-button">Reset</a>
     </form>
     <br><br>
     <table>
@@ -256,8 +285,8 @@
                         <%= item.boolean %>
                     </td>
                     <td>
-                        <a class="green-button" href="/edit/<%= index %>">Edit</a>
-                        <a class="red-button" href="/delete/<%= index %>">Delete</a>
+                        <a class="green-button" href="/edit/<%= index + offset %>">Edit</a>
+                        <a class="red-button" href="/delete/<%= index + offset %>">Delete</a>
                     </td>
                 </tr>
                 <% }) %>
@@ -265,13 +294,13 @@
     </table>
     <br>
     <div class="pagination">
-        <a href="?page=<%= currentpage - 1%>">Previous</a>
+        <a href="?<%=url%>page=<%= currentpage-1 %>" class=<%=currentpage==1 ? "disabled" :"" %> >Previous</a>
         <% for( let i=1; i <=totalpage; i++ ) { %>
-            <a href="?page=<%= i %>" class="btn-page">
+            <a href="?<%=url%>page=<%= i %>" class="btn-page">
                 <%= i %>
             </a>
             <% } %>
-                <a href="?page=<%= currentpage + 1%>">Next</a>
+                <a href="?<%=url%>page=<%= currentpage + 1%>" class=<%=currentpage==totalpage ? "disabled" : "" %> >Next</a>
     </div>
     <br><br>
     <a class="blue-button" href="/add">Add</a>
@@ -290,8 +319,6 @@
             btnPage[0].style.background = "rgb(7, 101, 201)";
             btnPage[0].style.color = "white"
         }
-
-
     })
 </script>
 
