@@ -22,6 +22,7 @@ app.use('/', express.static(path.join(__dirname, 'public')))
 app.get('/', function (req, res) {
     filter = req.query
     if (filter.IDcheck == 'IDcheck' || filter.stringcheck == 'stringcheck' || filter.integercheck == 'integercheck' || filter.floatcheck == 'floatcheck' || filter.datecheck == 'datecheck' || filter.booleancheck == 'booleancheck') {
+               
         if (filter.IDcheck == 'IDcheck') {
             let i = parseInt(filter.IDfilter)
             let a = data[i - 1]
