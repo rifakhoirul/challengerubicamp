@@ -39,9 +39,7 @@ app.use('/', express.static(path.join(__dirname, 'public')))
 app.get('/', function (req, res) {
 
     filter = req.query
-    console.log(filter)
     if (filter.IDcheck == 'IDcheck' || filter.stringcheck == 'stringcheck' || filter.integercheck == 'integercheck' || filter.floatcheck == 'floatcheck' || filter.datecheck == 'datecheck' || filter.booleancheck == 'booleancheck') {
-        console.log("hadir")
         if (filter.IDcheck == 'IDcheck') {
             let i = Number(filter.IDfilter)
             let a = data[i - 1]
