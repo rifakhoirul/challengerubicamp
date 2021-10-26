@@ -2,6 +2,7 @@ const fs = require('fs')
 let datajson = fs.readFileSync('data.json', 'utf-8')
 let dataraw = JSON.parse(datajson)
 let data = dataraw
+console.log(data)
 let filter = {}
 
 const express = require('express')
@@ -82,9 +83,10 @@ app.get('/add', function (req, res) {
 })
 
 app.post('/add', function (req, res) { //nerima tembakan
+    console.log(req.body)
     data.push(req.body)
-    datajson = JSON.stringify(data)
-    fs.writeFileSync('data.json', datajson)
+    // datajson = JSON.stringify(data)
+    // fs.writeFileSync('data.json', datajson)
     res.redirect('/')
 })
 
@@ -94,8 +96,8 @@ app.get('/edit', function (req, res) {
 app.get('/delete/:id', function (req, res) {
     const id = req.params.id //parameterr
     data.splice(id, 1)
-    datajson = JSON.stringify(data)
-    fs.writeFileSync('data.json', datajson)
+    // datajson = JSON.stringify(data)
+    // fs.writeFileSync('data.json', datajson)
     res.redirect('/')
 })
 app.get('/edit/:id', function (req, res) {
@@ -107,8 +109,8 @@ app.get('/edit/:id', function (req, res) {
 app.post('/edit/:id', function (req, res) { //nerima tembakan
     let id = req.params.id
     data[id] = req.body
-    datajson = JSON.stringify(data)
-    fs.writeFileSync('data.json', datajson)
+    // datajson = JSON.stringify(data)
+    // fs.writeFileSync('data.json', datajson)
     res.redirect('/')
 })
 
