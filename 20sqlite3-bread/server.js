@@ -1,8 +1,4 @@
 const fs = require('fs');
-
-let datajson = fs.readFileSync('data.json', 'utf-8');
-// let dataraw = JSON.parse(datajson);
-// let data = dataraw;
 let filter = {};
 
 const sqlite3 = require('sqlite3').verbose();
