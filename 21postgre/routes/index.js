@@ -1,10 +1,6 @@
-// var express = require('express');
-// var router = express.Router();
 const Router = require('express-promise-router')
 const db = require('../db')
-
 const router = new Router()
-
 let data = [];
 
 router.get('/', async function (req, res) {
@@ -153,8 +149,7 @@ router.get('/', async function (req, res) {
 
     let urlt = urls[0].split("&")
     console.log(urlt)
-    if(urlt[1]==''){ 
-    // if(urlt[1] == "idasc" || urlt[1] == "iddesc" || urlt[1] == "stringasc" || urlt[1] == "stringdesc" || urlt[1] == "integerasc" || urlt[1] == "integerdesc" || urlt[1] == "floatasc" || urlt[1] == "floatdesc" || urlt[1] == "dateasc" || urlt[1] == "datedesc" || urlt[1] == "booleanasc" || urlt[1] == "booleandesc"){
+    if (urlt[1] == '') {
         console.log('hai')
         url = ""
     }
@@ -183,7 +178,7 @@ router.get('/add', function (req, res) {
     res.render('add')
 })
 
-router.post('/add', function (req, res) { //nerima tembakan
+router.post('/add', function (req, res) {
     let add = req.body;
     add.integerdb = parseInt(add.integerdb)
     add.floatdb = parseFloat(add.floatdb)
@@ -204,7 +199,7 @@ router.get('/edit/:id', function (req, res) {
     res.render('edit', { edit, id })
 })
 
-router.post('/edit/:id', function (req, res) { //nerima tembakan
+router.post('/edit/:id', function (req, res) {
     let id = Number(req.params.id)
     let edit = req.body
     edit.integerdb = parseInt(edit.integerdb)
