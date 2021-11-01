@@ -153,12 +153,15 @@ router.get('/', async function (req, res) {
 
     let urlt = urls[0].split("&")
     console.log(urlt)
+    if(urlt[1]==''){ 
+    // if(urlt[1] == "idasc" || urlt[1] == "iddesc" || urlt[1] == "stringasc" || urlt[1] == "stringdesc" || urlt[1] == "integerasc" || urlt[1] == "integerdesc" || urlt[1] == "floatasc" || urlt[1] == "floatdesc" || urlt[1] == "dateasc" || urlt[1] == "datedesc" || urlt[1] == "booleanasc" || urlt[1] == "booleandesc"){
+        console.log('hai')
+        url = ""
+    }
+
     if (urlt[1] == "page") {
         urlt[1] = ""
-        console.log(urlt)
         url = urlt.join("&")
-        console.log('hai')
-        console.log(url)
     }
 
     if (urls[0] == "IDfilter" && urls[urls.length - 2].includes("page")) {
@@ -168,6 +171,7 @@ router.get('/', async function (req, res) {
     }
     else if (urls[0] == "IDfilter") { url += "&" }
 
+    console.log(url)
     let totalpage = Math.ceil(data.length / 3)
     let pageno = req.query.page ? Number(req.query.page) : 1
     let offset = 3 * (pageno - 1)
