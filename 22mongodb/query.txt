@@ -1,0 +1,8 @@
+db.c22.insertOne({stringdb: 'Adi', integerdb: 1, floatdb: 1.5, datedb: '2021-10-10', booleandb: true})
+db.c22.insertOne({stringdb: 'Budi', integerdb: 2, floatdb: 2.5, datedb: '2021-10-11', booleandb: false})
+db.c22.insertOne({stringdb: 'Caca', integerdb: 3, floatdb: 3.5, datedb: '2021-10-13', booleandb: true})
+db.c22.insertOne({stringdb: 'Debora', integerdb: 4, floatdb: 4.5, datedb: '2021-10-12', booleandb: false})
+db.c22.insertOne({stringdb: 'Elang', integerdb: 1, floatdb: 1.5, datedb: '2021-10-10', booleandb: true})
+db.c22.insertOne({stringdb: 'Fira', integerdb: 2, floatdb: 2.5, datedb: '2021-10-11', booleandb: false})
+db.c22.insertOne({stringdb: 'Gina', integerdb: 3, floatdb: 3.5, datedb: '2021-10-13', booleandb: true})
+db.c22.insertOne({stringdb: 'Hailey', integerdb: 4, floatdb: 4.5, datedb: '2021-10-12', booleandb: false})

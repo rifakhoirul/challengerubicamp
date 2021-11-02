@@ -141,32 +141,28 @@ router.get('/', async function (req, res) {
         }
     }
     data = filtered;
+    
     let url = req._parsedUrl.query
     let urlstring = `${url}`
 
     let urls = urlstring.split("=")
-    if (urls[0] == "page") { url = "" }
-
     let urlt = urls[0].split("&")
-    console.log(urlt)
-    if (urlt[1] == '') {
-        console.log('hai')
-        url = ""
-    }
+
+    if (urls[0] == "page") { url = "" }
 
     if (urlt[1] == "page") {
         urlt[1] = ""
         url = urlt.join("&")
-    }
-
+    } 
+    // if (urlt[1] == '') {
+    //     url = ""
+    // }
     if (urls[0] == "IDfilter" && urls[urls.length - 2].includes("page")) {
         let urln = urlstring.split("&")
         urln.pop()
         url = urln.join("&") + "&"
-    }
-    else if (urls[0] == "IDfilter") { url += "&" }
+    } else if (urls[0] == "IDfilter") { url += "&" }
 
-    console.log(url)
     let totalpage = Math.ceil(data.length / 3)
     let pageno = req.query.page ? Number(req.query.page) : 1
     let offset = 3 * (pageno - 1)
