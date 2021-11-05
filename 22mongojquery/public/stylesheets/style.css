@@ -1,0 +1,80 @@
+a.disabled {
+  pointer-events: none;
+  cursor: default;
+  background-color: rgba(165, 165, 165, 0.426);
+}
+
+input[type=text],
+input[type=number],
+input[type=date],
+select {
+  -moz-appearance: textfield;
+  width: 90%;
+  padding: 13px 20px;
+  margin: 8px 0;
+  display: inline-block;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+
+#datefilter,
+#datefilter2 {
+  max-width: 200px;
+
+}
+
+.containerdate {
+  display: flex;
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+body {
+  padding: 70px 70px;
+}
+
+table {
+  font-size: large;
+}
+
+thead{
+  font-weight: bold
+}
+
+form .containercheck {
+  display: flex;
+  margin: 2px;
+  align-items: center;
+}
+
+.pagination {
+  display: inline-block;
+}
+
+.pagination a {
+  color: black;
+  float: left;
+  padding: 8px 16px;
+  text-decoration: none;
+  border: 1px solid #ddd;
+  color: rgb(7, 101, 201)
+}
+
+.pagination a:hover:not(.active) {
+  background-color: #ddd;
+}
+
+.pagination a:first-child {
+  border-top-left-radius: 5px;
+  border-bottom-left-radius: 5px;
+}
+
+.pagination a:last-child {
+  border-top-right-radius: 5px;
+  border-bottom-right-radius: 5px;
+}

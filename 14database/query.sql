@@ -1,31 +1,31 @@
 PRAGMA foreign_keys = ON;
-CREATE TABLE jurusan 
-(
+CREATE TABLE jurusan (
     kodejurusan varchar(4) primary key not null, 
-    namajurusan varchar(100) not null
-);
-INSERT INTO jurusan VALUES ('J10','Informatika');
-INSERT INTO jurusan VALUES ('J11','Psikologi');
+    namajurusan varchar(100) not null);
+INSERT INTO jurusan VALUES 
+('J10','Informatika'),
+('J11','Psikologi');
 
-CREATE TABLE mahasiswa 
-(
+CREATE TABLE mahasiswa (
     nim int primary key not null, 
     namamahasiswa varchar(100) not null, 
-    alamat varchar(100) not null, 
+    alamat text not null, 
     kodejurusan varchar(4) not null,
     ttl date not null, 
     FOREIGN KEY (kodejurusan) REFERENCES jurusan (kodejurusan)
 );
-INSERT INTO mahasiswa VALUES(1001,'Andi','Bandung','J10', '2000-10-18');
-INSERT INTO mahasiswa VALUES(1002,'Budi','Jakarta','J10', '2001-10-18');
-INSERT INTO mahasiswa VALUES(1003,'Caca','Surabaya','J10', '2002-10-18');
-INSERT INTO mahasiswa VALUES(1004,'Debora','Garut','J10', '2003-10-18');
-INSERT INTO mahasiswa VALUES(1005,'Elis','Depok','J10', '2004-10-18');
-INSERT INTO mahasiswa VALUES(1101,'Fira','Bogor','J11', '2000-10-18');
-INSERT INTO mahasiswa VALUES(1102,'Gaga','Sukabumi','J11', '2001-10-18');
-INSERT INTO mahasiswa VALUES(1103,'Hari','Cianjur','J11', '2002-10-18');
-INSERT INTO mahasiswa VALUES(1104,'Inces','Malang','J11', '2003-10-18');
-INSERT INTO mahasiswa VALUES(1105,'Jojo','Banten','J11', '2004-10-18');
+
+INSERT INTO mahasiswa VALUES
+(1001,'Andi','Bandung','J10', '2000-10-18'),
+(1002,'Budi','Jakarta','J10', '2001-10-18'),
+(1003,'Caca','Surabaya','J10', '2002-10-18'),
+(1004,'Debora','Garut','J10', '2003-10-18'),
+(1005,'Elis','Depok','J10', '2004-10-18'),
+(1101,'Fira','Bogor','J11', '2000-10-18'),
+(1102,'Gaga','Sukabumi','J11', '2001-10-18'),
+(1103,'Hari','Cianjur','J11', '2002-10-18'),
+(1104,'Inces','Malang','J11', '2003-10-18'),
+(1105,'Jojo','Banten','J11', '2004-10-18');
 
 CREATE TABLE dosen 
 (
@@ -57,10 +57,11 @@ INSERT INTO matakuliah VALUES('M1103', 'Psikologi Pendidikan', 4, 'J11', 91102);
 
 CREATE TABLE krs 
 (
+    id INTEGER PRIMARY KEY autoincrement
     kodematkul varchar(4) not null, 
     noabsen int not null,
     nim int not null, 
-    nilai varchar(2) not null, 
+    nilai varchar(2), 
     FOREIGN KEY (kodematkul) REFERENCES matakuliah (kodematkul), 
     FOREIGN KEY (nim) REFERENCES mahasiswa (nim)
 );

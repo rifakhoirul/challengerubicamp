@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Challange 22</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p"
+    crossorigin="anonymous"></script>
+  <link rel='stylesheet' href='/stylesheets/style.css' />
+  <script src="/javascripts/jquery.js"></script>
+</head>
+
+<body>
+</body>
+<script>
+  var dataRaw = []
+  var tableData = []
+  var tableSort = []
+  var totalpage
+  var currentpage = 1
+  var offset = 0
+
+  $(document).ready(function () {
+    $("body").html(defaultHTML)
+    loadData();
+
+    //Add Data
+    $("body").on("click", "#add", function () {
+      $("body").html(addHTML)
+    })
+    $('body').on("click", "#saveData", function () {
+      event.preventDefault();
+      saveData();
+      $("body").html(defaultHTML)
+      loadData();
+    })
+    $("body").on("click", "#cancelSave", function () {
+      event.preventDefault();
+      $("body").html(defaultHTML)
+      loadData();
+    })
+
+    //Delete & Edit
+    $("body").on("click", ".btn-delete", function () {
+      deleteData($(this).attr('id-data'))
+    })
+    $("body").on("click", ".btn-edit", function () {
+      event.preventDefault();
+      let valueID = $(this).attr('valueID')
+      let valueString = $(this).attr('valueString')
+      let valueInteger = $(this).attr('valueInteger')
+      let valueFloat = $(this).attr('valueFloat')
+      let valueDate = $(this).attr('valueDate')
+      let valueBoolean = $(this).attr('valueBoolean')
+      loadEdit(valueID, valueString, valueInteger, valueFloat, valueDate, valueBoolean);
+    })
+    $("body").on("click", "#updateData", function () {
+      event.preventDefault();
+      updateData($("#IDedit").val())
+      $("body").html(defaultHTML)
+      loadData();
+    })
+
+    //Filter
+    $("body").on("click", "#search", function () {
+      event.preventDefault();
+      filterData();
+    })
+    $("body").on("click", "#resetFilter", function () {
+      event.preventDefault();
+      $("body").html(defaultHTML)
+      loadData();
+    })
+
+    //Sort
+    $("body").on("click", "#idasc", function () {
+      loadData();
+    })
+    $("body").on("click", "#iddesc", function () {
+      sortData('?iddesc');
+    })
+    $("body").on("click", "#stringasc", function () {
+      sortData('?stringasc');
+    })
+    $("body").on("click", "#stringdesc", function () {
+      sortData('?stringdesc');
+    })
+    $("body").on("click", "#integerasc", function () {
+      sortData('?integerasc');
+    })
+    $("body").on("click", "#integerdesc", function () {
+      sortData('?integerdesc');
+    })
+    $("body").on("click", "#floatasc", function () {
+      sortData('?floatasc');
+    })
+    $("body").on("click", "#floatdesc", function () {
+      sortData('?floatdesc');
+    })
+    $("body").on("click", "#dateasc", function () {
+      sortData('?dateasc');
+    })
+    $("body").on("click", "#datedesc", function () {
+      sortData('?datedesc');
+    })
+    $("body").on("click", "#booleanasc", function () {
+      sortData('?booleanasc');
+    })
+    $("body").on("click", "#booleandesc", function () {
+      sortData('?booleandesc');
+    })
+
+    //Pagination
+    $("body").on("click", "#buttonPrevious", function () {
+      event.preventDefault();
+      currentpage -= Number($(this).attr("page"))
+      renderTable(tableData)
+    })
+    $("body").on("click", "#buttonNext", function () {
+      event.preventDefault();
+      currentpage += Number($(this).attr("page"))
+      renderTable(tableData)
+    })
+    $("body").on("click", "#buttonPage", function () {
+      event.preventDefault();
+      currentpage = Number($(this).attr("page"))
+      renderTable(tableData)
+    })
+  })
+
+  const loadData = () => {
+    $.ajax({
+      method: "GET",
+      url: "/users",
+    })
+      .done(function (data) {
+        dataRaw = data;
+        tableData = data;
+        tableSort = [];
+        renderTable(tableData);
+      });
+  }
+  const sortData = (sort) => {
+    $.ajax({
+      method: "GET",
+      url: `/users/${sort}`,
+    })
+      .done(function (sorted) {
+        tableSort = sorted;
+        tableData = tableSort;
+        renderTable(tableData)
+      });
+  }
+  const saveData = () => {
+    const stringdb = $("#addString").val();
+    const integerdb = $("#addInteger").val();
+    const floatdb = $("#addFloat").val();
+    const datedb = $("#addDate").val();
+    const booleandb = $("#addBoolean").val();
+    $.ajax({
+      method: "POST",
+      url: "/users",
+      data: { stringdb, integerdb, floatdb, datedb, booleandb }
+    })
+      .done(function (msg) {
+        loadData();
+      });
+  }
+  const deleteData = (id) => {
+    $.ajax({
+      method: "DELETE",
+      url: `/users/${id}`,
+    })
+      .done(function (msg) {
+        loadData();
+      });
+  }
+  const updateData = (id) => {
+    const stringdb = $("#editString").val();
+    const integerdb = $("#editInteger").val();
+    const floatdb = $("#editFloat").val();
+    const datedb = $("#editDate").val();
+    const booleandb = $("#editBoolean").val();
+    $.ajax({
+      method: "PUT",
+      url: `/users/${id}`,
+      data: { stringdb, integerdb, floatdb, datedb, booleandb }
+    })
+      .done(function (msg) {
+        loadData();
+      });
+  }
+  const filterData = () => {
+    let IDcheck = $("#IDcheck").prop("checked")
+    let stringcheck = $("#stringcheck").prop("checked")
+    let integercheck = $("#integercheck").prop("checked")
+    let floatcheck = $("#floatcheck").prop("checked")
+    let datecheck = $("#datecheck").prop("checked")
+    let booleancheck = $("#booleancheck").prop("checked")
+    let idFilter = $("#idFilter").val()
+    let stringFilter = $("#stringFilter").val()
+    let integerFilter = $("#integerFilter").val()
+    let floatFilter = $("#floatFilter").val()
+    let dateFilter = $("#dateFilter").val()
+    let dateFilter2 = $("#dateFilter2").val()
+    let booleanFilter = $("#booleanFilter").val()
+    let filtered = [];
+    tableSort == [] ? tableData = dataRaw : tableData = tableSort
+    if (IDcheck) {
+      if (idFilter) {
+        let i = Number(idFilter)
+        filtered.push(tableData[i - 1])
+      } else { filtered = tableData }
+    } else { filtered = tableData }
+    if (stringcheck) {
+      if (stringFilter) {
+        let tempfilter = []
+        for (let i = 0; i < filtered.length; i++) {
+          if (filtered[i].stringdb.includes(stringFilter)) { tempfilter.push(filtered[i]) }
+        }
+        filtered = tempfilter
+      }
+    }
+    if (integercheck) {
+      if (integerFilter) {
+        let tempfilter = []
+        for (let i = 0; i < filtered.length; i++) {
+          if (filtered[i].integerdb == integerFilter) { tempfilter.push(filtered[i]) }
+        }
+        filtered = tempfilter
+      }
+    }
+    if (floatcheck) {
+      if (floatFilter) {
+        let tempfilter = []
+        for (let i = 0; i < filtered.length; i++) {
+          if (filtered[i].floatdb == floatFilter) { tempfilter.push(filtered[i]) }
+        }
+        filtered = tempfilter
+      }
+    }
+    if (datecheck) {
+      if (dateFilter) {
+        if (dateFilter2) {
+          let tempfilter = []
+          for (let i = 0; i < filtered.length; i++) {
+            if (new Date(filtered[i].datedb) >= new Date(dateFilter) && new Date(filtered[i].datedb) <= new Date(dateFilter2)) { tempfilter.push(filtered[i]) }
+          }
+          filtered = tempfilter
+        } else {
+          let tempfilter = []
+          for (let i = 0; i < filtered.length; i++) {
+            if (new Date(filtered[i].datedb) >= new Date(dateFilter)) { tempfilter.push(filtered[i]) }
+          }
+          filtered = tempfilter
+        }
+      } else if (dateFilter2) {
+        let tempfilter = []
+        for (let i = 0; i < filtered.length; i++) {
+          if (new Date(filtered[i].datedb) <= new Date(dateFilter2)) { tempfilter.push(filtered[i]) }
+        }
+        filtered = tempfilter
+      }
+    }
+    if (booleancheck) {
+      if (booleanFilter) {
+        let tempfilter = []
+        for (let i = 0; i < filtered.length; i++) {
+          if (`${filtered[i].booleandb}` == `${booleanFilter}`) { tempfilter.push(filtered[i]) }
+        }
+        filtered = tempfilter
+      }
+    }
+    tableData = filtered
+    renderTable(tableData);
+  }
+  const renderTable = (data) => {
+    let html = '';
+    totalpage = Math.ceil(tableData.length / 3)
+    offset = 3 * (currentpage - 1)
+    data = data.slice(offset, offset + 3)
+    data.forEach((item, index) => {
+      html += `<tr>`
+      html += `<td>${item.id}</td>`
+      html += `<td>${item.stringdb}</td>`
+      html += `<td>${item.integerdb}</td>`
+      html += `<td>${item.floatdb}</td>`
+      html += `<td>${item.datedb}</td>`
+      html += `<td>${item.booleandb}</td>`
+      html += `<td><a class="btn btn-success btn-edit" valueID="${item.id}" valueString="${item.stringdb}" valueInteger="${item.integerdb}" valueFloat="${item.floatdb}" valueDate="${item.datedb}" valueBoolean="${item.booleandb}" >Edit</a><a class="btn btn-danger btn-delete" id-data="${item.id}">Delete</a></td>`
+      html += `</tr>`
+    });
+    $("table tbody").html(html)
+    html = `<a id="buttonPrevious" name="buttonPrevious" page="1" href="?page=${currentpage - 1}" class=${currentpage == 1 ? "disabled" : ""}>Previous</a>`;
+    for (let i = 1; i <= totalpage; i++) {
+      html += `<a id="buttonPage" name="buttonPage" page="${i}" href="?page=${i}" class="btn-page" ${currentpage == i ? 'style="background-color: rgb(19, 133, 220); color: white;"' : ""}>${i}</a>`
+    }
+    html += `<a id="buttonNext" name="buttonNext" page="1" href="?page=${currentpage + 1}" class=${currentpage == totalpage ? "disabled" : ""}>Next</a>`
+    $(".pagination").html(html)
+  }
+
+  var defaultHTML = `<h1>BREAD (Browse, Read, Edit, Add, Delete)</h1>
+  <h2>Filters</h2>
+  <form id="form-filter">
+    <div class="containercheck">
+      <input type="checkbox" id="IDcheck" name="IDcheck" value="IDcheck">
+      <label for="ID" style="width: 150px;">ID</label>
+      <input type="number" id="idFilter" name="idFilter" placeholder="ID" size="20px" style="height:fit-content;">
+      <br>
+    </div>
+    <div class="containercheck">
+      <input type="checkbox" id="stringcheck" name="stringcheck">
+      <label for="stringcheck" style="width: 150px;">String</label>
+      <input type="text" id="stringFilter" name="stringFilter" placeholder="String">
+      <br>
+    </div>
+    <div class="containercheck">
+      <input type="checkbox" id="integercheck" name="integercheck" value="integercheck">
+      <label for="integercheck" style="width: 150px;">Integer</label>
+      <input type="number" id="integerFilter" name="integerFilter" placeholder="Integer">
+      <br>
+    </div>
+    <div class="containercheck">
+      <input type="checkbox" id="floatcheck" name="floatcheck" value="floatcheck">
+      <label for="floatcheck" style="width: 150px;">Float</label>
+      <input type="number" id="floatFilter" name="floatFilter" placeholder="Float" step="any">
+      <br>
+    </div>
+
+    <div class="containerdate" style="width: 100%;">
+      <div style="width: 200px; margin-top: 20px;">
+        <input type="checkbox" id="datecheck" name="datecheck" value="datecheck">
+        <label for="datecheck" style="width: 11.3%;">Date</label>
+      </div>
+      <div style="width: 100%;">
+        <input placeholder="Start date" type="text" onfocus="(this.type='date')" id="dateFilter" name="dateFilter">
+        <p style="margin: 5px 0;">to</p>
+        <input placeholder="End date" type="text" onfocus="(this.type='date')" id="dateFilter2" name="dateFilter2">
+      </div>
+    </div>
+
+    <div class="containercheck">
+      <input type="checkbox" id="booleancheck" name="booleancheck" value="booleancheck">
+      <label for="booleancheck" style="width: 150px;">Boolean</label>
+      <select id="booleanFilter" name="booleanFilter">
+        <option value="" disabled selected>Choose the boolean ...</option>
+        <option value="true">true</option>
+        <option value="false">false</option>
+      </select>
+      <br>
+    </div>
+    <button type="submit" class="btn btn-primary" id="search">Search</button>
+    <a class="btn btn-secondary" id="resetFilter">Reset</a>
+
+    <br><br>
+    <table class="table table-hover">
+      <thead>
+        <tr>
+          <th>ID <a id="idasc">▲</a><a id="iddesc">▼</a></th>
+                <th>String <a id="stringasc">▲</a><a id="stringdesc">▼</a></th>
+                <th>Integer <a id="integerasc">▲</a><a id="integerdesc">▼</a></th>
+                <th>Float <a id="floatasc">▲</a><a id="floatdesc">▼</a></th>
+                <th>Date <a id="dateasc">▲</a><a id="datedesc">▼</a></th>
+                <th>Boolean <a id="booleanasc">▲</a><a id="booleandesc">▼</a></th>
+                <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+      </tbody>
+    </table>
+    <div class="pagination"></div>
+      <br><br>
+    <a class="btn btn-primary" id="add">Add</a>`
+  var addHTML = `<h1>Add Data</h1>
+    <form>
+        <div class="containercheck">
+            <label for="addString" style="width: 150px;">String</label>
+            <input type="text" id="addString" name="stringdb" placeholder="String"><br>
+        </div>
+        <div class="containercheck">
+            <label for="addInteger" style="width: 150px;">Integer</label>
+            <input type="number" id="addInteger" name="integerdb" placeholder="Integer"><br>
+        </div>
+        <div class="containercheck">
+            <label for="addFloat" style="width: 150px;">Float</label>
+            <input type="number" id="addFloat" name="floatdb" placeholder="Float" step="any"><br>
+        </div>
+        <div class="containercheck">
+            <label for="addDate" style="width: 150px;">Date</label>
+            <input placeholder="Date" type="text" onfocus="(this.type='date')" id="addDate" name="datedb">
+        </div>
+        <div class="containercheck">
+            <label for="addBoolean" style="width: 150px;">Boolean</label>
+            <select id="addBoolean" name="booleandb">
+                <option value="" disabled selected>Choose the boolean ...</option>
+                <option value="true">true</option>
+                <option value="false">false</option>
+            </select>
+            <br>
+        </div>
+        <button type="submit" class="btn btn-primary" id="saveData">Save</button>
+        <a class="btn btn-danger" id="cancelSave">Cancel</a>`
+  const loadEdit = (valueID, valueString, valueInteger, valueFloat, valueDate, valueBoolean) => {
+    let editHTML = ` <h1>Edit Data</h1>
+    <form action="" method="post">
+        <div class="containercheck">
+            <label for="IDedit" style="width: 150px;">ID</label>
+            <input type="number" id="IDedit" name="IDedit" value="${valueID}" disabled><br>
+        </div>
+        <div class="containercheck">
+            <label for="editString" style="width: 150px;">String</label>
+            <input type="text" id="editString" name="stringdb" placeholder="String" value="${valueString}"><br>
+        </div>
+        <div class="containercheck">
+            <label for="editInteger" style="width: 150px;">Integer</label>
+            <input type="number" id="editInteger" name="integerdb" placeholder="Integer"
+                value="${valueInteger}"><br>
+        </div>
+        <div class="containercheck">
+            <label for="editFloat" style="width: 150px;">Float</label>
+            <input type="number" id="editFloat" name="floatdb" placeholder="Float" step="any"
+                value="${valueFloat}"><br>
+        </div>
+        <div class="containercheck">
+            <label for="editDate" style="width: 150px;">Date</label>
+            <input type="date" id="editDate" name="datedb" value="${valueDate}"><br>
+        </div>
+        <div class="containercheck">
+            <label for="editBoolean" style="width: 150px;">Boolean</label>
+            <select id="editBoolean" name="booleandb" placeholder="Choose the boolean...">
+                <option value="true" ${valueBoolean == 'true' ? 'selected' : ''}>true</option>
+                <option value="false" ${valueBoolean == 'false' ? 'selected' : ''}>false</option>
+            </select>
+        </div>
+        <br>
+        <button type="submit" class="btn btn-primary" id="updateData">Update</button>
+        <a class="btn btn-danger" id="cancelSave">Cancel</a>
+    </form>`
+    $("body").html(editHTML)
+  }
+</script>
+
+</html>
