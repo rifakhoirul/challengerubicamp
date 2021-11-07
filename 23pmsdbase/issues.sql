@@ -5,7 +5,7 @@
 CREATE TABLE IF NOT EXISTS public.issues
 (
     issueid integer NOT NULL DEFAULT nextval('issues_issueid_seq'::regclass),
-    projectid integer NOT NULL DEFAULT nextval('issues_projectid_seq'::regclass),
+    projectid integer NOT NULL,
     tracker character varying(10) COLLATE pg_catalog."default" NOT NULL,
     subject character varying(20) COLLATE pg_catalog."default" NOT NULL,
     description text COLLATE pg_catalog."default",
@@ -19,7 +19,7 @@ CREATE TABLE IF NOT EXISTS public.issues
     closeddate date NOT NULL,
     parenttask integer NOT NULL DEFAULT nextval('issues_parenttask_seq'::regclass),
     estimatedtime real NOT NULL,
-    done real NOT NULL,
+    done integer NOT NULL,
     files json[] NOT NULL,
     spenttime real NOT NULL,
     targetversion character varying(10) COLLATE pg_catalog."default" NOT NULL,
