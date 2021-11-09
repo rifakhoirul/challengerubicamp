@@ -3,6 +3,8 @@ var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
+var session = require('express-session')
+var flash = require('connect-flash');
 
 var indexRouter = require('./routes/index');
 var projectsRouter = require('./routes/projects');
@@ -20,6 +22,14 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+app.use(session({
+  secret:'rikoriko',
+  resave: true,
+  saveUninitialized: true,
+  cookie: {maxAge:3600000}
+}));
+app.use(flash());
+app.use( rememberme.middleware )
 
 app.use('/', indexRouter);
 app.use('/projects', projectsRouter);

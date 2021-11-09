@@ -1,26 +1,52 @@
-var express = require('express');
-var router = express.Router();
+const Router = require('express-promise-router')
+const router = new Router()
+const db = require('../db')
 const bcrypt = require('bcrypt');
 const saltRounds = 10;
 
-/* GET home page. */
+function checkLogIn(req, res, next) {
+  if (req.session.user) {
+    next();
+  } else {
+    res.redirect('/');
+  }
+};
+
 router.get('/', function (req, res, next) {
-  res.render('login');
+  if (req.session.user) {
+    res.redirect("/projects")
+  }
+  res.render('login', {
+    infoFailed: req.flash('infoFailed'),
+    infoSuccess: req.flash('infoSuccess')
+  });
 });
 
 router.post('/auth', function (req, res, next) {
-  // bcrypt.hash(req.body.password, saltRounds, function (err, hash) {
-  //   if(err) return res.send(err)
-    
-  //   // Store hash in your password DB.
-  // });
-
-
-  res.redirect('/projects');
+  db.query(`SELECT * FROM users WHERE email = '${req.body.email}'`, (err, data) => {
+    if (err) return res.send(err)
+    if (data.rows.length == 0) {
+      req.flash('infoFailed', 'User not found.');
+      return res.redirect('/')
+    }
+    bcrypt.compare(req.body.password, data.rows[0].password, function (err, result) {
+      if (err) return res.send('Login failed')
+      if (!result) {
+        req.flash('infoFailed', 'Wrong password.');
+        return res.redirect('/');
+      }
+      req.session.user = data.rows[0];
+      console.log(req.session.user)
+      req.flash('infoSuccess', 'Logging in.');
+      res.redirect('/projects')
+    });
+  })
 });
 
 router.get('/logout', function (req, res, next) {
-  res.redirect('/');
+  req.session.destroy(function (err) {
+    res.redirect('/');
+  })
 });
 
 module.exports = router;

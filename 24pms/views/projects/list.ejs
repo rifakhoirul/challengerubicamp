@@ -1,2 +1,79 @@
 <% include ../partial/header.ejs %>
-<% include ../partial/footer.ejs %>
+    <div style="padding-top: 80px;padding-left: 40px;padding-right: 40px;">
+        <h1>Projects</h1>
+        <h3>Filters</h3>
+        <div style="padding-left: 100px;padding-right: 100px;">
+            <form id="form-filter">
+                <div class="containerCheck">
+                    <input type="checkbox" id="idCheckFilter" name="idCheckFilter" value="idCheckFilter">
+                    <label for="idCheckFilter" style="width: 150px;">ID</label>
+                    <input class="form-control" type="number" id="idFilter" name="idFilter" placeholder="ID">
+                    <br>
+                </div>
+                <div class="containerCheck">
+                    <input type="checkbox" id="nameCheckFilter" name="nameCheckFilter" value="nameCheckFilter">
+                    <label for="nameCheckFilter" style="width: 150px;">Name</label>
+                    <input class="form-control" type="text" id="nameFilter" name="nameFilter" placeholder="Name">
+                    <br>
+                </div>
+                <div class="containerCheck">
+                    <input type="checkbox" id="memberCheckFilter" name="memberCheckFilter" value="memberCheckFilter">
+                    <label for="memberCheckFilter" style="width: 168px;">Member</label>
+                    <select class="form-control" id="memberFilter" name="memberFilter">
+                        <option value="" disabled selected>Choose the member ...</option>
+                        <option value="true">true</option>
+                        <option value="false">false</option>
+                    </select>
+                    <br>
+                </div>
+                <button type="submit" class="btn btn-primary" id="search"><i class="fas fa-search"></i> Search</button>
+                <a class="btn btn-secondary" id="resetFilter"><i class="fas fa-times"></i> Reset</a>
+            </form>
+        </div>
+        <br>
+        <h3>Options</h3>
+        <form>
+            <div class="row">
+                <div class="col-md-2">
+                    <p>Columns</p>
+                </div>
+                <div class="col-md-2">
+                    <div><input class="form-check-input" type="checkbox" id="idOption" name="idOption"> ID</input></div>
+                    <div><input class="form-check-input" type="checkbox" id="nameOption" name="nameOption"> Name</input>
+                    </div>
+                    <div><input class="form-check-input" type="checkbox" id="memberOption" name="memberOption">
+                        Members</input></div>
+                </div>
+            </div>
+            <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Apply</button>
+        </form>
+        <br>
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Name</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% data.forEach((item, index)=>{ %>
+                    <tr>
+                        <td>
+                            <%= item.projectid %>
+                        </td>
+                        <td>
+                            <%= item.name %>
+                        </td>
+                        <td>
+                            <a class="btn btn-success"><i class="fas fa-edit"></i> Edit</a>
+                            <a class="btn btn-danger"><i class="fas fa-trash"></i> Delete</a>
+                        </td>
+                    </tr>
+                    <% }) %>
+            </tbody>
+        </table>
+        <button class="btn btn-primary"><i class="fas fa-plus-circle"></i> Add</button>
+    </div>
+    <br>
+    <% include ../partial/footer.ejs %>
