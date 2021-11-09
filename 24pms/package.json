@@ -18,8 +18,7 @@
     "express-session": "^1.17.2",
     "http-errors": "~1.6.3",
     "morgan": "~1.9.1",
-    "pg": "^8.7.1",
-    "session-rememberme": "^14.0.1"
+    "pg": "^8.7.1"
   },
   "main": "app.js",
   "devDependencies": {

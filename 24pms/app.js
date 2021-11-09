@@ -29,7 +29,6 @@ app.use(session({
   cookie: {maxAge:3600000}
 }));
 app.use(flash());
-app.use( rememberme.middleware )
 
 app.use('/', indexRouter);
 app.use('/projects', projectsRouter);

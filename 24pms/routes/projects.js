@@ -13,8 +13,8 @@ function checkLogIn(req, res, next) {
 
 router.get('/', checkLogIn, async function (req, res, next) {
     let data = await db.query('SELECT * FROM projects')
-    res.render('projects/list',{
-        data:data.rows,
+    res.render('projects/list', {
+        data: data.rows,
     });
 });
 

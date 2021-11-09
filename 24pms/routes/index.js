@@ -36,8 +36,6 @@ router.post('/auth', function (req, res, next) {
         return res.redirect('/');
       }
       req.session.user = data.rows[0];
-      console.log(req.session.user)
-      req.flash('infoSuccess', 'Logging in.');
       res.redirect('/projects')
     });
   })
