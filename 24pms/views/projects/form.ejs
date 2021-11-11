@@ -11,7 +11,7 @@
                         <input type="text" class="form-control" id="projectName" name="projectName">
                     </div>
                 </div>
-                <fieldset class="row mb-3">
+                <div class="row mb-3">
                     <legend class="col-form-label col-sm-2 pt-0">Members</legend>
                     <div class="col-sm-10">
                         <% members.forEach((item, index)=>{ %>
@@ -24,7 +24,7 @@
                             </div>
                             <% }) %>
                     </div>
-                </fieldset>
+                </div>
                 <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Save</button>
                 <a class="btn btn-danger" href="/projects"><i class="fas fa-times"></i> Cancel</a>
             </form><br>
