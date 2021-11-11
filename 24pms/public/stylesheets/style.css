@@ -18,16 +18,6 @@ select {
   box-sizing: border-box;
 }
 
-#dateFilter,
-#dateFilter2 {
-  max-width: 200px;
-
-}
-
-.containerDate {
-  display: flex;
-}
-
 table {
   font-size: large;
 }

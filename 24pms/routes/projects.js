@@ -16,7 +16,7 @@ router.get('/', checkLogIn, async function (req, res, next) {
     LEFT JOIN members ON projects.projectid = members.projectid
     LEFT JOIN users ON members.userid = users.userid
     ORDER BY projectid`)
-    
+
     for (let j = 0; j < projectList.rows.length; j++) {
         let members = []
         for (let i = 0; dataRaw.rows[i].projectid <= projectList.rows[j].projectid;) {
@@ -28,7 +28,6 @@ router.get('/', checkLogIn, async function (req, res, next) {
         }
         projectList.rows[j].firstname = members.join(", ")
     }
-    
 
     if (req.query.idCheckFilter) {
         if (req.query.idFilter != '') {
@@ -52,42 +51,32 @@ router.get('/', checkLogIn, async function (req, res, next) {
         }
     }
 
-    //////
     let url = req._parsedUrl.query
     let urlstring = `${url}`
-
     let urls = urlstring.split("=")
     let urlt = urls[0].split("&")
-
     if (urls[0] == "page") { url = "" }
-
     if (urlt[1] == "page") {
         urlt[1] = ""
         url = urlt.join("&")
     }
-
-    // /// if (urlt[1] == '') {
-    // ///     url = ""
-    // /// }
-
-    // if (urls[0] == "IDfilter" && urls[urls.length - 2].includes("page")) {
-    //     let urln = urlstring.split("&")
-    //     urln.pop()
-    //     url = urln.join("&") + "&"
-    // } else if (urls[0] == "IDfilter") { url += "&" }
+    // if (urlt[1] == '') {
+    //     url = ""
+    // }
+    if (urls[0] == "idFilter" && urls[urls.length - 2].includes("page")) {
+        let urln = urlstring.split("&")
+        urln.pop()
+        url = urln.join("&") + "&"
+    } else if (urls[0] == "idFilter") { url += "&" }
 
     let totalPage = Math.ceil(projectList.rows.length / 3)
     let currentPage = req.query.page ? Number(req.query.page) : 1
     let offset = 3 * (currentPage - 1)
     let dataEachPage = projectList.rows.slice(offset, offset + 3)
 
-    if (!req.query.idOption && !req.query.nameOption && !req.query.memberOption) {
-        req.query.idOption = "on"
-        req.query.nameOption = "on"
-        req.query.memberOption = "on"
-    }
-
     const users = await db.query(`SELECT firstname FROM users ORDER BY userid`)
+    let setting = await db.query(`SELECT setting FROM users WHERE userid = 1;`)
+    setting = setting.rows[0].setting
     res.render('projects/list', {
         data: dataEachPage,
         option: req.query,
@@ -95,7 +84,8 @@ router.get('/', checkLogIn, async function (req, res, next) {
         totalPage,
         currentPage,
         offset,
-        url
+        url,
+        setting
     });
 });
 
@@ -132,6 +122,15 @@ router.post('/add', checkLogIn, async function (req, res, next) {
             })
         }
     }
+    res.redirect('/projects');
+});
+
+router.post('/saveoption', checkLogIn, async function (req, res, next) {
+    let setting = { idOption: req.body.idOption, nameOption: req.body.nameOption, memberOption: req.body.memberOption }
+    setting = JSON.stringify(setting)
+    db.query(`UPDATE users SET setting ='${setting}' WHERE userid = 1;`, (err, res) => {
+        if (err) return console.log(err)
+    })
     res.redirect('/projects');
 });
 

@@ -1,54 +1,55 @@
 <% include ../partial/header.ejs %>
-    <div style="padding-top: 80px;padding-left: 40px;padding-right: 40px;">
+    <div style="padding-top: 80px; padding-left: 40px;padding-right: 40px;">
         <h1>Projects</h1>
         <hr>
         <h3>Filters</h3>
         <div style="padding-left: 100px;padding-right: 100px;">
             <form id="form-filter">
                 <div class="containerCheck">
-                    <input type="checkbox" id="idCheckFilter" name="idCheckFilter" value="idCheckFilter">
-                    <label for="idCheckFilter" style="width: 150px;">ID</label>
-                    <input class="form-control" type="number" id="idFilter" name="idFilter" placeholder="ID">
-                    <br>
+                    <label for="idCheckFilter" style="width: 150px;"><input class="form-check-input" type="checkbox" id="idCheckFilter" name="idCheckFilter"
+                        value="idCheckFilter" <%=option.idCheckFilter ? "checked" :"" %>>ID</label>
+                    <input class="form-control" type="number" id="idFilter" name="idFilter" placeholder="ID"
+                        value=<%=option.idFilter %>>
                 </div>
                 <div class="containerCheck">
-                    <input type="checkbox" id="nameCheckFilter" name="nameCheckFilter" value="nameCheckFilter">
-                    <label for="nameCheckFilter" style="width: 150px;">Name</label>
-                    <input class="form-control" type="text" id="nameFilter" name="nameFilter" placeholder="Name">
-                    <br>
+                    <label for="nameCheckFilter" style="width: 150px;"><input class="form-check-input" type="checkbox" id="nameCheckFilter" name="nameCheckFilter"
+                        value="nameCheckFilter" <%=option.nameCheckFilter ? "checked" :""%>>Name</label>
+                    <input class="form-control" type="text" id="nameFilter" name="nameFilter" placeholder="Name"
+                        value="<%=option.nameFilter %>">
                 </div>
                 <div class="containerCheck">
-                    <input type="checkbox" id="memberCheckFilter" name="memberCheckFilter" value="memberCheckFilter">
-                    <label for="memberCheckFilter" style="width: 168px;">Member</label>
+                    <label for="memberCheckFilter" style="width: 168px;"><input class="form-check-input" type="checkbox" id="memberCheckFilter" name="memberCheckFilter"
+                        value="memberCheckFilter" <%=option.memberCheckFilter ? "checked" :"" %>>Member</label>
                     <select class="form-control" id="memberFilter" name="memberFilter">
                         <option value="" disabled selected>Choose the member ...</option>
                         <% members.forEach((item, index)=>{ %>
-                            <option value="<%= item.firstname %>">
+                            <option value="<%= item.firstname %>" <%=option.memberFilter==`${item.firstname}`
+                                ? "selected" : "" %>>
                                 <%= item.firstname %>
                             </option>
                             <% }) %>
                     </select>
-                    <br>
                 </div>
+                <p></p>
                 <button type="submit" class="btn btn-primary" id="search"><i class="fas fa-search"></i> Search</button>
                 <a class="btn btn-secondary" id="resetFilter" href="/projects"><i class="fas fa-times"></i> Reset</a>
             </form>
         </div>
         <br>
         <h3>Options</h3>
-        <form>
+        <form action="/projects/saveoption" method="post">
             <div class="row">
                 <div class="col-md-2">
                     <p>Columns</p>
                 </div>
                 <div class="col-md-2">
                     <div><input class="form-check-input" type="checkbox" id="idOption" name="idOption"
-                            <%=option.idOption ? "checked" : "" %> > ID</input></div>
+                            <%=setting.idOption=='on' ? "checked" : "" %> > ID</input></div>
                     <div><input class="form-check-input" type="checkbox" id="nameOption" name="nameOption"
-                            <%=option.nameOption ? "checked" : "" %>> Name</input>
+                            <%=setting.nameOption=='on' ? "checked" : "" %>> Name</input>
                     </div>
                     <div><input class="form-check-input" type="checkbox" id="memberOption" name="memberOption"
-                            <%=option.memberOption ? "checked" : "" %>>
+                            <%=setting.memberOption=='on' ? "checked" : "" %>>
                         Members</input></div>
                 </div>
             </div>
@@ -58,13 +59,13 @@
         <table class="table table-hover">
             <thead>
                 <tr>
-                    <% if(option.idOption){ %>
+                    <% if(setting.idOption=='on'){ %>
                         <th>#</th>
                         <% } %>
-                            <% if(option.nameOption){ %>
+                            <% if(setting.nameOption=='on'){ %>
                                 <th>Name</th>
                                 <% } %>
-                                    <% if(option.memberOption){ %>
+                                    <% if(setting.memberOption=='on'){ %>
                                         <th>Members</th>
                                         <% } %>
                                             <th>Actions</th>
@@ -73,30 +74,54 @@
             <tbody>
                 <% data.forEach((item, index)=>{ %>
                     <tr>
-                        <% if(option.idOption){ %>
+                        <% if(setting.idOption=='on'){ %>
                             <td>
                                 <%= item.projectid %>
                             </td>
                             <% } %>
-                                <% if(option.nameOption){ %>
+                                <% if(setting.nameOption=='on'){ %>
                                     <td>
                                         <%= item.name %>
                                     </td>
                                     <% } %>
-                                        <% if(option.memberOption){ %>
+                                        <% if(setting.memberOption=='on'){ %>
                                             <td>
                                                 <%= item.firstname %>
                                             </td>
                                             <% } %>
-                                                <% if(option.idOption || option.nameOption || option.memberOption){ %>
+                                                <% if(setting.idOption=='on' || setting.nameOption=='on' || setting.memberOption=='on'){ %>
                                                     <td>
                                                         <a class="btn btn-success"
                                                             href="/projects/edit/<%= item.projectid %>"><i
                                                                 class="fas fa-edit"></i> Edit</a>
-                                                        <a class="btn btn-danger"
-                                                            href="/projects/delete/<%= item.projectid %>"><i
-                                                                class="fas fa-trash"></i>
-                                                            Delete</a>
+                                                        <button type="button" class="btn btn-danger" data-toggle="modal"
+                                                            data-target="#exampleModal"><i class="fas fa-trash"></i>
+                                                            Delete</button>
+                                                        <div class="modal fade" id="exampleModal" tabindex="-1"
+                                                            role="dialog" aria-labelledby="exampleModalLabel"
+                                                            aria-hidden="true">
+                                                            <div class="modal-dialog" role="document">
+                                                                <div class="modal-content">
+                                                                    <div class="modal-header">
+                                                                        <h5 class="modal-title" id="exampleModalLabel">
+                                                                            Delete Confirmation</h5>
+                                                                        <button type="button" class="close"
+                                                                            data-dismiss="modal" aria-label="Close">
+                                                                            <span aria-hidden="true">&times;</span>
+                                                                        </button>
+                                                                    </div>
+                                                                    <div class="modal-body">
+                                                                        Are you sure want to delete this project?
+                                                                    </div>
+                                                                    <div class="modal-footer">
+                                                                        <button type="button" class="btn btn-secondary"
+                                                                            data-dismiss="modal">No</button>
+                                                                        <a type="button" class="btn btn-primary"
+                                                                            href="/projects/delete/<%= item.projectid %>">Yes</a>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
                                                     </td>
                                                     <% } %>
                     </tr>
