@@ -1,6 +1,7 @@
 <% include ../partial/header.ejs %>
     <div style="padding-top: 80px;padding-left: 40px;padding-right: 40px;">
         <h1>Projects</h1>
+        <hr>
         <h3>Filters</h3>
         <div style="padding-left: 100px;padding-right: 100px;">
             <form id="form-filter">
@@ -21,13 +22,16 @@
                     <label for="memberCheckFilter" style="width: 168px;">Member</label>
                     <select class="form-control" id="memberFilter" name="memberFilter">
                         <option value="" disabled selected>Choose the member ...</option>
-                        <option value="true">true</option>
-                        <option value="false">false</option>
+                        <% members.forEach((item, index)=>{ %>
+                            <option value="<%= item.firstname %>">
+                                <%= item.firstname %>
+                            </option>
+                            <% }) %>
                     </select>
                     <br>
                 </div>
                 <button type="submit" class="btn btn-primary" id="search"><i class="fas fa-search"></i> Search</button>
-                <a class="btn btn-secondary" id="resetFilter"><i class="fas fa-times"></i> Reset</a>
+                <a class="btn btn-secondary" id="resetFilter" href="/projects"><i class="fas fa-times"></i> Reset</a>
             </form>
         </div>
         <br>
@@ -38,10 +42,13 @@
                     <p>Columns</p>
                 </div>
                 <div class="col-md-2">
-                    <div><input class="form-check-input" type="checkbox" id="idOption" name="idOption"> ID</input></div>
-                    <div><input class="form-check-input" type="checkbox" id="nameOption" name="nameOption"> Name</input>
+                    <div><input class="form-check-input" type="checkbox" id="idOption" name="idOption"
+                            <%=option.idOption ? "checked" : "" %> > ID</input></div>
+                    <div><input class="form-check-input" type="checkbox" id="nameOption" name="nameOption"
+                            <%=option.nameOption ? "checked" : "" %>> Name</input>
                     </div>
-                    <div><input class="form-check-input" type="checkbox" id="memberOption" name="memberOption">
+                    <div><input class="form-check-input" type="checkbox" id="memberOption" name="memberOption"
+                            <%=option.memberOption ? "checked" : "" %>>
                         Members</input></div>
                 </div>
             </div>
@@ -51,29 +58,63 @@
         <table class="table table-hover">
             <thead>
                 <tr>
-                    <th>#</th>
-                    <th>Name</th>
-                    <th>Actions</th>
+                    <% if(option.idOption){ %>
+                        <th>#</th>
+                        <% } %>
+                            <% if(option.nameOption){ %>
+                                <th>Name</th>
+                                <% } %>
+                                    <% if(option.memberOption){ %>
+                                        <th>Members</th>
+                                        <% } %>
+                                            <th>Actions</th>
                 </tr>
             </thead>
             <tbody>
                 <% data.forEach((item, index)=>{ %>
                     <tr>
-                        <td>
-                            <%= item.projectid %>
-                        </td>
-                        <td>
-                            <%= item.name %>
-                        </td>
-                        <td>
-                            <a class="btn btn-success"><i class="fas fa-edit"></i> Edit</a>
-                            <a class="btn btn-danger"><i class="fas fa-trash"></i> Delete</a>
-                        </td>
+                        <% if(option.idOption){ %>
+                            <td>
+                                <%= item.projectid %>
+                            </td>
+                            <% } %>
+                                <% if(option.nameOption){ %>
+                                    <td>
+                                        <%= item.name %>
+                                    </td>
+                                    <% } %>
+                                        <% if(option.memberOption){ %>
+                                            <td>
+                                                <%= item.firstname %>
+                                            </td>
+                                            <% } %>
+                                                <% if(option.idOption || option.nameOption || option.memberOption){ %>
+                                                    <td>
+                                                        <a class="btn btn-success"
+                                                            href="/projects/edit/<%= item.projectid %>"><i
+                                                                class="fas fa-edit"></i> Edit</a>
+                                                        <a class="btn btn-danger"
+                                                            href="/projects/delete/<%= item.projectid %>"><i
+                                                                class="fas fa-trash"></i>
+                                                            Delete</a>
+                                                    </td>
+                                                    <% } %>
                     </tr>
                     <% }) %>
             </tbody>
         </table>
-        <button class="btn btn-primary"><i class="fas fa-plus-circle"></i> Add</button>
+        <div class="pagination">
+            <a href="?<%=url%>page=<%= currentPage-1 %>" class=<%=currentPage==1 ? "disabled" :"" %> >Previous</a>
+            <% for( let i=1; i <=totalPage; i++ ) { %>
+                <a href="?<%=url%>page=<%= i %>" class="btn-page">
+                    <%= i %>
+                </a>
+                <% } %>
+                    <a href="?<%=url%>page=<%= currentPage + 1%>" class=<%=currentPage==totalPage ? "disabled" : "" %>
+                        >Next</a>
+        </div>
+        <br><br>
+        <a class="btn btn-primary" href="/projects/add"><i class="fas fa-plus-circle"></i> Add</a>
     </div>
     <br>
     <% include ../partial/footer.ejs %>
