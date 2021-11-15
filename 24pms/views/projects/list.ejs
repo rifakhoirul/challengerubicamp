@@ -6,20 +6,23 @@
         <div style="padding-left: 100px;padding-right: 100px;">
             <form id="form-filter">
                 <div class="containerCheck">
-                    <label for="idCheckFilter" style="width: 150px;"><input class="form-check-input" type="checkbox" id="idCheckFilter" name="idCheckFilter"
-                        value="idCheckFilter" <%=option.idCheckFilter ? "checked" :"" %>>ID</label>
+                    <label for="idCheckFilter" style="width: 150px;"><input class="form-check-input" type="checkbox"
+                            id="idCheckFilter" name="idCheckFilter" value="idCheckFilter" <%=option.idCheckFilter
+                            ? "checked" :"" %>>ID</label>
                     <input class="form-control" type="number" id="idFilter" name="idFilter" placeholder="ID"
                         value=<%=option.idFilter %>>
                 </div>
                 <div class="containerCheck">
-                    <label for="nameCheckFilter" style="width: 150px;"><input class="form-check-input" type="checkbox" id="nameCheckFilter" name="nameCheckFilter"
-                        value="nameCheckFilter" <%=option.nameCheckFilter ? "checked" :""%>>Name</label>
+                    <label for="nameCheckFilter" style="width: 150px;"><input class="form-check-input" type="checkbox"
+                            id="nameCheckFilter" name="nameCheckFilter" value="nameCheckFilter"
+                            <%=option.nameCheckFilter ? "checked" :""%>>Name</label>
                     <input class="form-control" type="text" id="nameFilter" name="nameFilter" placeholder="Name"
                         value="<%=option.nameFilter %>">
                 </div>
                 <div class="containerCheck">
-                    <label for="memberCheckFilter" style="width: 168px;"><input class="form-check-input" type="checkbox" id="memberCheckFilter" name="memberCheckFilter"
-                        value="memberCheckFilter" <%=option.memberCheckFilter ? "checked" :"" %>>Member</label>
+                    <label for="memberCheckFilter" style="width: 168px;"><input class="form-check-input" type="checkbox"
+                            id="memberCheckFilter" name="memberCheckFilter" value="memberCheckFilter"
+                            <%=option.memberCheckFilter ? "checked" :"" %>>Member</label>
                     <select class="form-control" id="memberFilter" name="memberFilter">
                         <option value="" disabled selected>Choose the member ...</option>
                         <% members.forEach((item, index)=>{ %>
@@ -59,13 +62,13 @@
         <table class="table table-hover">
             <thead>
                 <tr>
-                    <% if(setting.idOption=='on'){ %>
+                    <% if(setting.idOption=='on' ){ %>
                         <th>#</th>
                         <% } %>
-                            <% if(setting.nameOption=='on'){ %>
+                            <% if(setting.nameOption=='on' ){ %>
                                 <th>Name</th>
                                 <% } %>
-                                    <% if(setting.memberOption=='on'){ %>
+                                    <% if(setting.memberOption=='on' ){ %>
                                         <th>Members</th>
                                         <% } %>
                                             <th>Actions</th>
@@ -74,22 +77,23 @@
             <tbody>
                 <% data.forEach((item, index)=>{ %>
                     <tr>
-                        <% if(setting.idOption=='on'){ %>
-                            <td>
-                                <%= item.projectid %>
-                            </td>
+                        <% if(setting.idOption=='on' ){ %>
+                            <td><a href="/projects/overview/<%= item.projectid %>">
+                                    <%=item.projectid %>
+                                </a></td>
                             <% } %>
-                                <% if(setting.nameOption=='on'){ %>
+                                <% if(setting.nameOption=='on' ){ %>
                                     <td>
                                         <%= item.name %>
                                     </td>
                                     <% } %>
-                                        <% if(setting.memberOption=='on'){ %>
+                                        <% if(setting.memberOption=='on' ){ %>
                                             <td>
                                                 <%= item.firstname %>
                                             </td>
                                             <% } %>
-                                                <% if(setting.idOption=='on' || setting.nameOption=='on' || setting.memberOption=='on'){ %>
+                                                <% if(setting.idOption=='on' || setting.nameOption=='on' ||
+                                                    setting.memberOption=='on' ){ %>
                                                     <td>
                                                         <a class="btn btn-success"
                                                             href="/projects/edit/<%= item.projectid %>"><i

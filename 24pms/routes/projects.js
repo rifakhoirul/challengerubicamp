@@ -193,6 +193,7 @@ router.get('/delete/:id', checkLogIn, function (req, res, next) {
 
 //overview
 router.get('/overview/:projectid', checkLogIn, function (req, res, next) {
+    console.log('a')
     res.render('projects/overview/view');
 });
 

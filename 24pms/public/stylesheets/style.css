@@ -64,3 +64,10 @@ a.disabled {
   cursor: default;
   background-color: rgba(165, 165, 165, 0.426);
 }
+
+.kotak-content-overview {
+  border: 1px solid rgba(211, 209, 209, 0.856);
+  border-radius: 5px;
+  margin-bottom: 30px;
+  padding: 20px;
+}
