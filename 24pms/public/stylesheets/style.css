@@ -71,3 +71,13 @@ a.disabled {
   margin-bottom: 30px;
   padding: 20px;
 }
+
+.selectedSidebar{
+  background-color: rgb(145, 145, 145);
+  color: white;
+}
+
+.sort{
+  display: flex;
+  flex-direction: column;
+}

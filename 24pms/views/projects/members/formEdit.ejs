@@ -5,28 +5,23 @@
                 <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4">
                     <div
                         class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-                        <h1 class="h2"><a href="/projects/members/<%=projectid%>"><i class="fas fa-arrow-circle-left" ></i></a> Add Member</h1>
+                        <h1 class="h2"><a href="/projects/members/<%=projectid%>"><i class="fas fa-arrow-circle-left" ></i></a> Edit Member</h1>
                     </div>
                     <h3 class="mt-4 mb-3"></h3>
-                    <form action="/projects/members/<%=projectid%>/add" method="POST">
+                    <form action="" method="POST">
                         <div class="containerCheck">
                             <label style="width: 168px;">Member</label>
-                            <select class="form-control" id="member" name="member">
-                                <option value="" disabled selected>Choose the member ...</option>
-                                <% members.forEach((item, index)=>{ %>
-                                    <option value="<%= item.userid %>">
-                                        <%= item.firstname %>
-                                    </option>
-                                    <% }) %>
+                            <select class="form-control" id="member" name="member" disabled>
+                                <option value="<%=member.userid%>" selected><%= member.firstname %></option>
                             </select>
                         </div>
                         <div class="containerCheck">
                             <label style="width: 168px;">Position</label>
                             <select class="form-control" id="position" name="position">
                                 <option value="" disabled selected>Choose the position ...</option>
-                                    <option value="Manager">Manager</option>
-                                    <option value="Software Developer">Software Developer</option>
-                                    <option value="Quality Assurance">Quality Assurance</option>
+                                    <option value="Manager" <%= member.position=='Manager' ? 'selected':''%>>Manager</option>
+                                    <option value="Software Developer" <%= member.position=='Software Developer' ? 'selected':''%>>Software Developer</option>
+                                    <option value="Quality Assurance" <%= member.position=='Quality Assurance' ? 'selected':''%>>Quality Assurance</option>
                             </select>
                         </div>
                         <p></p>

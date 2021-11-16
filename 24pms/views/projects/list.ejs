@@ -63,13 +63,13 @@
             <thead>
                 <tr>
                     <% if(setting.idOption=='on' ){ %>
-                        <th>#</th>
+                        <th># <a href="<%= String(url.split('?')[1]).includes('asc') || String(url.split('?')[1]).includes('desc') ? '?' : url.split('=')[0]=='?idFilter' && (String(url.split('&')[url.split('&').length-2]).includes('desc') || String(url.split('&')[url.split('&').length-2]).includes('asc')) ? urls:url%>id_asc"><i class="fas fa-long-arrow-alt-up"></i></a><a href="<%= String(url.split('?')[1]).includes('asc') || String(url.split('?')[1]).includes('desc') ? '?' : url.split('=')[0]=='?idFilter' && (String(url.split('&')[url.split('&').length-2]).includes('desc') || String(url.split('&')[url.split('&').length-2]).includes('asc')) ? urls:url%>id_desc"><i class="fas fa-long-arrow-alt-down"></i></a></th>
                         <% } %>
                             <% if(setting.nameOption=='on' ){ %>
-                                <th>Name</th>
+                                <th>Name <a href="<%= String(url.split('?')[1]).includes('asc') || String(url.split('?')[1]).includes('desc') ? '?' : url.split('=')[0]=='?idFilter' && (String(url.split('&')[url.split('&').length-2]).includes('desc') || String(url.split('&')[url.split('&').length-2]).includes('asc')) ? urls:url%>name_asc"><i class="fas fa-long-arrow-alt-up"></i></a><a href="<%= String(url.split('?')[1]).includes('asc') || String(url.split('?')[1]).includes('desc') ? '?' : url.split('=')[0]=='?idFilter' && (String(url.split('&')[url.split('&').length-2]).includes('desc') || String(url.split('&')[url.split('&').length-2]).includes('asc')) ? urls:url%>name_desc"><i class="fas fa-long-arrow-alt-down"></i></a></th>
                                 <% } %>
                                     <% if(setting.memberOption=='on' ){ %>
-                                        <th>Members</th>
+                                        <th>Members <a href="<%= String(url.split('?')[1]).includes('asc') || String(url.split('?')[1]).includes('desc') ? '?' : url.split('=')[0]=='?idFilter' && (String(url.split('&')[url.split('&').length-2]).includes('desc') || String(url.split('&')[url.split('&').length-2]).includes('asc')) ? urls:url%>members_asc"><i class="fas fa-long-arrow-alt-up"></i></a><a href="<%= String(url.split('?')[1]).includes('asc') || String(url.split('?')[1]).includes('desc') ? '?' : url.split('=')[0]=='?idFilter' && (String(url.split('&')[url.split('&').length-2]).includes('desc') || String(url.split('&')[url.split('&').length-2]).includes('asc')) ? urls:url%>members_desc"><i class="fas fa-long-arrow-alt-down"></i></a></th>
                                         <% } %>
                                             <th>Actions</th>
                 </tr>
@@ -92,8 +92,7 @@
                                                 <%= item.firstname %>
                                             </td>
                                             <% } %>
-                                                <% if(setting.idOption=='on' || setting.nameOption=='on' ||
-                                                    setting.memberOption=='on' ){ %>
+                                                <% if(setting.idOption=='on' || setting.nameOption=='on' || setting.memberOption=='on' ){ %>
                                                     <td>
                                                         <a class="btn btn-success"
                                                             href="/projects/edit/<%= item.projectid %>"><i
@@ -133,13 +132,13 @@
             </tbody>
         </table>
         <div class="pagination">
-            <a href="?<%=url%>page=<%= currentPage-1 %>" class=<%=currentPage==1 ? "disabled" :"" %> >Previous</a>
+            <a href="<%=url%><%=bridge%>page=<%= currentPage-1 %>" class=<%=currentPage==1 ? "disabled" :"" %> >Previous</a>
             <% for( let i=1; i <=totalPage; i++ ) { %>
-                <a href="?<%=url%>page=<%= i %>" class="btn-page">
+                <a href="<%=url%><%=bridge%>page=<%= i %>" class="btn-page">
                     <%= i %>
                 </a>
                 <% } %>
-                    <a href="?<%=url%>page=<%= currentPage + 1%>" class=<%=currentPage==totalPage ? "disabled" : "" %>
+                    <a href="<%=url%><%=bridge%>page=<%= currentPage + 1%>" class=<%=currentPage==totalPage ? "disabled" : "" %>
                         >Next</a>
         </div>
         <br><br>

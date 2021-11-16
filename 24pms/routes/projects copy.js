@@ -11,42 +11,10 @@ function checkLogIn(req, res, next) {
 };
 
 router.get('/', checkLogIn, async function (req, res, next) {
-    let querySyntax = `SELECT * FROM projects`
-    let querySyntax2 = `SELECT projects.projectid, projects.name, users.firstname FROM projects
-    LEFT JOIN members ON projects.projectid = members.projectid
-    LEFT JOIN users ON members.userid = users.userid ORDER BY projects.projectid`
-
-    if (req.query.idCheckFilter) {
-        if (req.query.idFilter != '') {
-            querySyntax += ` WHERE projectid = ${Number(req.query.idFilter)}`
-        }
-    }
-    if (req.query.nameCheckFilter) {
-        if (req.query.nameFilter != '') {
-            if (req.query.idCheckFilter && req.query.idFilter != '') {
-                querySyntax += ` AND name LIKE '%${req.query.nameFilter}%'`
-            } else {
-                querySyntax += ` WHERE name LIKE '%${req.query.nameFilter}%'`
-            }   
-        }
-    }
-    if (req.query.id_asc == '') {
-        querySyntax += ' ORDER BY projectid ASC'
-    }
-    else if (req.query.id_desc == '') {
-        querySyntax += ' ORDER BY projectid DESC'
-    } 
-    else if (req.query.name_asc == '') {
-        querySyntax += ' ORDER BY name ASC'
-    }
-    else if (req.query.name_desc == '') {
-        querySyntax += ' ORDER BY name DESC'
-    } else {
-        querySyntax += ' ORDER BY projectid ASC'
-    }
-
-    let projectList = await db.query(querySyntax)    
-    let dataRaw = await db.query(querySyntax2)
+    let projectList = await db.query(`SELECT * FROM projects ORDER BY projectid`)
+    let dataRaw = await db.query(`SELECT projects.projectid, projects.name, users.firstname FROM projects
+        LEFT JOIN members ON projects.projectid = members.projectid
+        LEFT JOIN users ON members.userid = users.userid ORDER BY projectid`)
 
     for (let j = 0; j < projectList.rows.length; j++) {
         let members = []
@@ -59,7 +27,21 @@ router.get('/', checkLogIn, async function (req, res, next) {
         }
         projectList.rows[j].firstname = members.join(", ")
     }
-
+    
+    if (req.query.idCheckFilter) {
+        if (req.query.idFilter != '') {
+            projectList.rows = projectList.rows.filter((element) => {
+                return element.projectid == Number(req.query.idFilter);
+            })
+        }
+    }
+    if (req.query.nameCheckFilter) {
+        if (req.query.nameFilter != '') {
+            projectList.rows = projectList.rows.filter((element) => {
+                return element.name.includes(req.query.nameFilter);
+            })
+        }
+    }
     if (req.query.memberCheckFilter) {
         if (req.query.memberFilter) {
             projectList.rows = projectList.rows.filter((element) => {
@@ -68,48 +50,23 @@ router.get('/', checkLogIn, async function (req, res, next) {
         }
     }
 
-    if (req.query.members_asc == '') {
-        projectList.rows.sort()
+    let url = req._parsedUrl.query
+    let urlstring = `${url}`
+    let urls = urlstring.split("=")
+    let urlt = urls[0].split("&")
+    if (urls[0] == "page") { url = "" }
+    if (urlt[1] == "page") {
+        urlt[1] = ""
+        url = urlt.join("&")
     }
-    else if (req.query.members_desc == '') {
-        projectList.rows.sort().reverse()
-        projectList.rows = projectList.reverse()
-    }
-
-    if (!req._parsedUrl.query) { req._parsedUrl.query = '?' }
-    let url = `${req._parsedUrl.query}`
-    let bridge = ''
-
-    //moving page only
-    if (url.split('=')[0] == 'page') {
-        url = '?'
-    }
-    //moving page with filter only
-    if (url.split('=')[0] == 'idFilter') {
-        url = '?' + url;
-        url += '&';
-    }
-    if (url.split('=')[0] == '?idFilter' && String(url.split('=')[url.split('=').length - 2]).includes("page")) {
-        url = url.split('&');
-        url.pop(); url.pop();
-        url = url.join('&') + '&'
-    }
-    //moving page with sort only
-    if (url == 'id_asc' || url == 'id_desc' ||
-        url == 'name_asc' || url == 'name_desc' ||
-        url == 'members_asc' || url == 'members_desc') {
-        url = '?' + url;
-        bridge = "&"
-    }
-    if ((String(url.split('&')[0]).includes('asc') || String(url.split('&')[0]).includes('desc')) && String(url.split('&')[1]).includes('page')) {
-        url = url.split('&')
-        url.pop();
-        url = '?' + url.join('&') + '&'
-        console.log(url)
-    }
-    let urls = url.split('&')
-    urls.pop(); urls.pop();
-    urls = urls.join('&') + '&'
+    // if (urlt[1] == '') {
+    //     url = ""
+    // }
+    if (urls[0] == "idFilter" && urls[urls.length - 2].includes("page")) {
+        let urln = urlstring.split("&")
+        urln.pop()
+        url = urln.join("&") + "&"
+    } else if (urls[0] == "idFilter") { url += "&" }
 
     let totalPage = Math.ceil(projectList.rows.length / 3)
     let currentPage = req.query.page ? Number(req.query.page) : 1
@@ -126,8 +83,6 @@ router.get('/', checkLogIn, async function (req, res, next) {
         currentPage,
         offset,
         url,
-        bridge,
-        urls,
         setting: setting.rows[0].setting,
     });
 });
