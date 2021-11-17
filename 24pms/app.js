@@ -5,6 +5,7 @@ var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var session = require('express-session')
 var flash = require('connect-flash');
+const fileUpload = require('express-fileupload');
 
 var indexRouter = require('./routes/index');
 var projectsRouter = require('./routes/projects');
@@ -29,6 +30,11 @@ app.use(session({
   cookie: {maxAge:3600000}
 }));
 app.use(flash());
+app.use(fileUpload({
+  limits: { fileSize: 50 * 1024 * 1024 },
+  useTempFiles : true,
+  tempFileDir : '/tmp/'
+}));
 
 app.use('/', indexRouter);
 app.use('/projects', projectsRouter);

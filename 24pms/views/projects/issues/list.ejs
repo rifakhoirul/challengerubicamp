@@ -5,11 +5,173 @@
                 <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4">
                     <div
                         class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-                        <h1 class="h2">Members</h1>
+                        <h1 class="h2">Issues</h1>
                     </div>
-                    <h3 class="mt-4 mb-3">Library System</h3>
+                    <h4 class="mt-4 mb-3">Filters</h4>
+                    <div style="padding-left: 30px;padding-right:30px;">
+                        <form id="form-filter">
+                            <div class="containerCheck">
+                                <label for="issueidCheckFilter" style="width: 150px;"><input class="form-check-input"
+                                        type="checkbox" id="issueidCheckFilter" name="issueidCheckFilter" value="issueidCheckFilter"
+                                        <%=option.issueidCheckFilter ? "checked" :"" %>>ID</label>
+                                <input class="form-control" type="number" id="issueidFilter" name="issueidFilter" placeholder="ID"
+                                    value=<%=option.issueidFilter %>>
+                            </div>
+                            <div class="containerCheck">
+                                <label for="subjectCheckFilter" style="width: 150px;"><input class="form-check-input"
+                                        type="checkbox" id="subjectCheckFilter" name="subjectCheckFilter"
+                                        value="subjectCheckFilter" <%=option.subjectCheckFilter ? "checked" :""%>>Subject</label>
+                                <input class="form-control" type="text" id="subjectFilter" name="subjectFilter"
+                                    placeholder="Subject" value="<%=option.subjectFilter %>">
+                            </div>
+                            <div class="containerCheck">
+                                <label for="trackerCheckFilter" style="width: 168px;"><input class="form-check-input"
+                                        type="checkbox" id="trackerCheckFilter" name="trackerCheckFilter"
+                                        value="trackerCheckFilter" <%=option.trackerCheckFilter ? "checked" :""%>>Tracker</label>
+                                <select class="form-control" id="trackerFilter" name="trackerFilter">
+                                    <option value="" disabled selected>Choose the tracker ...</option>
+                                    <option value="Bug" <%=option.trackerFilter=="Bug" ? "selected" : "" %>>
+                                        Bug
+                                    </option>
+                                    <option value="Feature" <%=option.trackerFilter=="Feature" ? "selected" : "" %>
+                                        >
+                                        Feature
+                                    </option>
+                                    <option value="Support" <%=option.trackerFilter=="Support"
+                                        ? "selected" : "" %>>
+                                        Support
+                                    </option>
+                                </select>
+                            </div>
+                            <p></p>
+                            <button type="submit" class="btn btn-primary" id="search"><i class="fas fa-search"></i>
+                                Search</button>
+                            <a class="btn btn-secondary" id="resetFilter" <%=`href=/projects/issues/${projectid}` %>><i
+                                    class="fas fa-times"></i>
+                                Reset</a>
+                        </form>
+                    </div>
+                    <h4 class="mt-4 mb-3">Options</h4>
+                    <form action="/projects/issues/<%=projectid%>/saveoption" method="post">
+                        <div class="row">
+                            <div class="col-md-2">
+                                <p>Columns</p>
+                            </div>
+                            <div class="col-md-2">
+                                <div><input class="form-check-input" type="checkbox" id="issueidOption" name="issueidOption"
+                                        <%=setting.issueidOption=='on' ? "checked" : "" %> > ID</input></div>
+                                <div><input class="form-check-input" type="checkbox" id="subjectOption" name="subjectOption"
+                                        <%=setting.subjectOption=='on' ? "checked" : "" %>> Subject</input>
+                                </div>
+                                <div><input class="form-check-input" type="checkbox" id="trackerOption"
+                                        name="trackerOption" <%=setting.trackerOption=='on' ? "checked" : "" %>>
+                                    Tracker</input></div>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Apply</button>
+                    </form>
+                    <br>
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <% if(setting.issueidOption=='on' ){ %>
+                                    <th># <a href="<%=projectid%><%= String(url.split('?')[1]).includes('asc') || String(url.split('?')[1]).includes('desc') ? '?' : url.split('=')[0]=='?issueidFilter' && (String(url.split('&')[url.split('&').length-2]).includes('desc') || String(url.split('&')[url.split('&').length-2]).includes('asc')) ? urls:url%>issueid_asc"><i class="fas fa-long-arrow-alt-up"></i></a><a href="<%=projectid%><%= String(url.split('?')[1]).includes('asc') || String(url.split('?')[1]).includes('desc') ? '?' : url.split('=')[0]=='?issueidFilter' && (String(url.split('&')[url.split('&').length-2]).includes('desc') || String(url.split('&')[url.split('&').length-2]).includes('asc')) ? urls:url%>issueid_desc"><i class="fas fa-long-arrow-alt-down"></i></a></th>
+                                    <% } %>
+                                        <% if(setting.subjectOption=='on' ){ %>
+                                            <th>Subject <a href="<%=projectid%><%= String(url.split('?')[1]).includes('asc') || String(url.split('?')[1]).includes('desc') ? '?' : url.split('=')[0]=='?issueidFilter' && (String(url.split('&')[url.split('&').length-2]).includes('desc') || String(url.split('&')[url.split('&').length-2]).includes('asc')) ? urls:url%>subject_asc"><i class="fas fa-long-arrow-alt-up"></i></a><a href="<%=projectid%><%= String(url.split('?')[1]).includes('asc') || String(url.split('?')[1]).includes('desc') ? '?' : url.split('=')[0]=='?issueidFilter' && (String(url.split('&')[url.split('&').length-2]).includes('desc') || String(url.split('&')[url.split('&').length-2]).includes('asc')) ? urls:url%>subject_desc"><i class="fas fa-long-arrow-alt-down"></i></a></th>
+                                            <% } %>
+                                                <% if(setting.trackerOption=='on' ){ %>
+                                                    <th>Tracker <a href="<%=projectid%><%= String(url.split('?')[1]).includes('asc') || String(url.split('?')[1]).includes('desc') ? '?' : url.split('=')[0]=='?issueidFilter' && (String(url.split('&')[url.split('&').length-2]).includes('desc') || String(url.split('&')[url.split('&').length-2]).includes('asc')) ? urls:url%>tracker_asc"><i class="fas fa-long-arrow-alt-up"></i></a><a href="<%=projectid%><%= String(url.split('?')[1]).includes('asc') || String(url.split('?')[1]).includes('desc') ? '?' : url.split('=')[0]=='?issueidFilter' && (String(url.split('&')[url.split('&').length-2]).includes('desc') || String(url.split('&')[url.split('&').length-2]).includes('asc')) ? urls:url%>tracker_desc"><i class="fas fa-long-arrow-alt-down"></i></a></th>
+                                                    <% } %>
+                                                        <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% data.forEach((item, index)=>{ %>
+                                <tr>
+                                    <% if(setting.issueidOption=='on' ){ %>
+                                        <td><%=item.issueid %></td>
+                                        <% } %>
+                                            <% if(setting.subjectOption=='on' ){ %>
+                                                <td>
+                                                    <%= item.subject %>
+                                                </td>
+                                                <% } %>
+                                                    <% if(setting.trackerOption=='on' ){ %>
+                                                        <td>
+                                                            <%= item.tracker %>
+                                                        </td>
+                                                        <% } %>
+                                                            <% if(setting.issueidOption=='on' || setting.subjectOption=='on' || setting.trackerOption=='on' ){ %>
+                                                                <td>
+                                                                    <a class="btn btn-success"
+                                                                        href="/projects/issues/<%= projectid %>/edit/<%= item.issueid %>"><i
+                                                                            class="fas fa-edit"></i> Edit</a>
+                                                                    <button type="button" class="btn btn-danger"
+                                                                        data-toggle="modal"
+                                                                        data-target="#exampleModal"><i
+                                                                            class="fas fa-trash" onclick=""></i>
+                                                                        Delete</button>
 
+                                                                    <div class="modal fade" id="exampleModal" tabindex="-1"
+                                                                        role="dialog" aria-labelledby="exampleModalLabel"
+                                                                        aria-hidden="true">
+                                                                        <div class="modal-dialog" role="document">
+                                                                            <div class="modal-content">
+                                                                                <div class="modal-header">
+                                                                                    <h5 class="modal-title"
+                                                                                        id="exampleModalLabel">
+                                                                                        Delete Confirmation</h5>
+                                                                                        <button type="button" class="close"
+                                                                                            data-dismiss="modal" aria-label="Close">
+                                                                                            <span aria-hidden="true">&times;</span>
+                                                                                        </button>
+                                                                                </div>
+                                                                                <div class="modal-body">
+                                                                                    Are you sure want to delete this
+                                                                                    issue?
+                                                                                </div>
+                                                                                <div class="modal-footer">
+                                                                                    <button type="button"
+                                                                                        class="btn btn-secondary"
+                                                                                       data-dismiss="modal">No</button>
+                                                                                    <a type="button"
+                                                                                        class="btn btn-primary"
+                                                                                        href="/projects/issues/<%= projectid %>/delete/<%= item.issueid %>">Yes</a>
+                                                                                </div> 
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </td>
+                                                                <% } %>
+                                </tr>
+                                <% }) %>
+                        </tbody>
+                    </table>
+                    <div class="pagination">
+                        <a href="<%=projectid%><%=url%><%=bridge%>page=<%= currentPage-1 %>" class=<%=currentPage==1 ? "disabled" :"" %>
+                            >Previous</a>
+                        <% for( let i=1; i <=totalPage; i++ ) { %>
+                            <a href="<%=projectid%><%=url%><%=bridge%>page=<%= i %>" class="btn-page">
+                                <%= i %>
+                            </a>
+                            <% } %>
+                                <a href="<%=projectid%><%=url%><%=bridge%>page=<%= currentPage + 1%>" class=<%=currentPage==totalPage
+                                    ? "disabled" : "" %>
+                                    >Next</a>
+                    </div>
+                    <br><br>
+                    <a class="btn btn-primary" href="/projects/issues/<%= projectid %>/add"><i class="fas fa-plus-circle"></i> Add</a>
+                    
                 </main>
+                
         </div>
+        <br>
     </div>
+
+    <script>
+        function getDelete(){
+            
+        }
+    </script>
     <% include ../../partial/footer.ejs %>
