@@ -4,15 +4,7 @@ const db = require('../db')
 const bcrypt = require('bcrypt');
 const saltRounds = 10;
 
-function checkLogIn(req, res, next) {
-  if (req.session.user) {
-    next();
-  } else {
-    res.redirect('/');
-  }
-};
-
-router.get('/', function (req, res, next) {
+router.get('/', async function (req, res, next) {
   if (req.session.user) {
     res.redirect("/projects")
   }

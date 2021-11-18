@@ -1,15 +1,10 @@
 const Router = require('express-promise-router');
 const db = require('../db');
 const router = new Router();
-const path = require('path')
-
-function checkLogIn(req, res, next) {
-    if (req.session.user) {
-        next();
-    } else {
-        res.redirect('/');
-    }
-};
+const path = require('path');
+const fs = require('fs');
+const moment = require('moment');
+var _ = require('underscore');
 
 router.get('/', checkLogIn, async function (req, res, next) {
     let querySyntax = `SELECT * FROM projects`
@@ -26,25 +21,14 @@ router.get('/', checkLogIn, async function (req, res, next) {
         if (req.query.nameFilter != '') {
             if (req.query.idCheckFilter && req.query.idFilter != '') {
                 querySyntax += ` AND name LIKE '%${req.query.nameFilter}%'`
-            } else {
-                querySyntax += ` WHERE name LIKE '%${req.query.nameFilter}%'`
-            }
+            } else { querySyntax += ` WHERE name LIKE '%${req.query.nameFilter}%'` }
         }
     }
-    if (req.query.id_asc == '') {
-        querySyntax += ' ORDER BY projectid ASC'
-    }
-    else if (req.query.id_desc == '') {
-        querySyntax += ' ORDER BY projectid DESC'
-    }
-    else if (req.query.name_asc == '') {
-        querySyntax += ' ORDER BY name ASC'
-    }
-    else if (req.query.name_desc == '') {
-        querySyntax += ' ORDER BY name DESC'
-    } else {
-        querySyntax += ' ORDER BY projectid ASC'
-    }
+    if (req.query.id_asc == '') { querySyntax += ' ORDER BY projectid ASC' }
+    else if (req.query.id_desc == '') { querySyntax += ' ORDER BY projectid DESC' }
+    else if (req.query.name_asc == '') { querySyntax += ' ORDER BY name ASC' }
+    else if (req.query.name_desc == '') { querySyntax += ' ORDER BY name DESC' }
+    else { querySyntax += ' ORDER BY projectid ASC' }
 
     let projectList = await db.query(querySyntax)
     let dataRaw = await db.query(querySyntax2)
@@ -104,7 +88,6 @@ router.get('/', checkLogIn, async function (req, res, next) {
         url = url.split('&')
         url.pop();
         url = '?' + url.join('&') + '&'
-        console.log(url)
     }
     let urls = url.split('&')
     urls.pop(); urls.pop();
@@ -139,7 +122,7 @@ router.post('/saveoption', checkLogIn, async function (req, res, next) {
     }
     setting = JSON.stringify(setting)
     db.query(`UPDATE users SET setting ='${setting}' WHERE userid = 1;`, (err, res) => {
-        if (err) return console.log(err)
+        if (err) return res.send(err)
     })
     res.redirect('/projects');
 });
@@ -174,7 +157,7 @@ router.post('/add', checkLogIn, async function (req, res, next) {
             })
             db.query(`INSERT INTO members (userid, position, projectid) 
                 VALUES(${member[0].userid},'${member[0].position}',${project[0].projectid});`, (err, res) => {
-                if (err) console.log(err)
+                if (err) res.send(err)
             })
         }
     }
@@ -221,7 +204,7 @@ router.post('/edit/:id', checkLogIn, async function (req, res, next) {
             })
             const update = await db.query(`INSERT INTO members (userid, position, projectid) 
             VALUES(${member[0].userid},'${member[0].position}',${id});`, (err, res) => {
-                if (err) console.log(err)
+                if (err) res.send(err)
 
             })
         }
@@ -266,10 +249,20 @@ router.get('/overview/:projectid', checkLogIn, async function (req, res, next) {
 });
 
 //activity
-router.get('/activity/:projectid', checkLogIn, function (req, res, next) {
+router.get('/activity/:projectid', checkLogIn, async function (req, res, next) {
+    let activity = await db.query(`SELECT activity.title, activity.description, activity.time, users.firstname 
+        FROM activity LEFT JOIN users ON activity.author = users.userid WHERE activity.time>$1`,
+        [moment().subtract(7, 'days').calendar()])
+    let groupActivity = _.groupBy(activity.rows, function (data) {
+        return moment(data.time).format('dddd')
+    })
+
     res.render('projects/activity/view', {
         sidebar: req.url.split('/')[1],
         projectid: req.params.projectid,
+        pastWeek: moment().subtract(7, 'days').calendar(),
+        today: moment().format('L'),
+        groupActivity,
     });
 });
 
@@ -344,7 +337,6 @@ router.get('/members/:projectid', checkLogIn, async function (req, res, next) {
         url = url.split('&')
         url.pop();
         url = '?' + url.join('&') + '&'
-        console.log(url)
     }
     let urls = url.split('&')
     urls.pop(); urls.pop();
@@ -379,7 +371,7 @@ router.post('/members/:projectid/saveoption', checkLogIn, async function (req, r
     }
     setting = JSON.stringify(setting)
     db.query(`UPDATE users SET setting ='${setting}' WHERE userid = 2;`, (err, res) => {
-        if (err) return console.log(err)
+        if (err) return res.send(err)
     })
     res.redirect(`/projects/members/${req.params.projectid}`);
 });
@@ -419,12 +411,12 @@ router.get('/members/:projectid/edit/:memberid', checkLogIn, async function (req
 router.post('/members/:projectid/edit/:memberid', checkLogIn, async function (req, res, next) {
     const updateMembers = await db.query(`UPDATE members SET position = '${req.body.position}' 
         WHERE id = ${req.params.memberid};`, (err, res) => {
-        if (err) return console.log(err)
+        if (err) return res.send(err)
     })
     const selectMember = await db.query(`SELECT userid FROM members WHERE id =${req.params.memberid};`)
     const updateUsers = await db.query(`UPDATE users SET position = '${req.body.position}' 
         WHERE userid = ${selectMember.rows[0].userid};`, (err, res) => {
-        if (err) return console.log(err)
+        if (err) return res.send(err)
     })
     res.redirect(`/projects/members/${req.params.projectid}`);
 });
@@ -455,24 +447,13 @@ router.get('/issues/:projectid', checkLogIn, async function (req, res, next) {
         }
     }
 
-    if (req.query.issueid_asc == '') {
-        querySyntax += 'ORDER BY issueid ASC'
-    }
-    if (req.query.issueid_desc == '') {
-        querySyntax += 'ORDER BY issueid DESC'
-    }
-    if (req.query.subject_asc == '') {
-        querySyntax += 'ORDER BY subject ASC'
-    }
-    if (req.query.subject_desc == '') {
-        querySyntax += 'ORDER BY subject DESC'
-    }
-    if (req.query.tracker_asc == '') {
-        querySyntax += 'ORDER BY tracker ASC'
-    }
-    if (req.query.tracker_desc == '') {
-        querySyntax += 'ORDER BY tracker DESC'
-    }
+    if (req.query.issueid_asc == '') { querySyntax += 'ORDER BY issueid ASC' }
+    else if (req.query.issueid_desc == '') { querySyntax += 'ORDER BY issueid DESC' }
+    else if (req.query.subject_asc == '') { querySyntax += 'ORDER BY subject ASC' }
+    else if (req.query.subject_desc == '') { querySyntax += 'ORDER BY subject DESC' }
+    else if (req.query.tracker_asc == '') { querySyntax += 'ORDER BY tracker ASC' }
+    else if (req.query.tracker_desc == '') { querySyntax += 'ORDER BY tracker DESC' }
+    else { querySyntax += 'ORDER BY issueid ASC' }
 
     let issueList = await db.query(querySyntax)
 
@@ -504,7 +485,6 @@ router.get('/issues/:projectid', checkLogIn, async function (req, res, next) {
         url = url.split('&')
         url.pop();
         url = '?' + url.join('&') + '&'
-        console.log(url)
     }
     let urls = url.split('&')
     urls.pop(); urls.pop();
@@ -540,7 +520,7 @@ router.post('/issues/:projectid/saveoption', checkLogIn, async function (req, re
     }
     setting = JSON.stringify(setting)
     db.query(`UPDATE users SET setting ='${setting}' WHERE userid = 3;`, (err, res) => {
-        if (err) return console.log(err)
+        if (err) return res.send(err)
     })
     res.redirect(`/projects/issues/${req.params.projectid}`);
 });
@@ -556,49 +536,189 @@ router.get('/issues/:projectid/add', checkLogIn, async function (req, res, next)
 });
 
 router.post('/issues/:projectid/add', checkLogIn, async function (req, res, next) {
+    const createddate = await db.query('SELECT NOW()');
+    let closeddate;
+    if (req.body.status == 'Closed') closeddate = createddate.rows[0].now;
+    if (req.body.estimatedtime == '') req.body.estimatedtime = null;
+
     let jsonFiles = [];
-    for (let i = 0; i < Object.keys(req.files).length; i++) {
-        if (!req.files || Object.keys(req.files).length === 0) {
-            return console.log('No files were uploaded.');
+    if (!req.files || Object.keys(req.files).length === 0) {
+        jsonFiles = null
+    } else {
+        for (let i = 0; i < Object.keys(req.files).length; i++) {
+            let uploadFile = Object.values(req.files)[i];
+            let fileName = Date.now() + uploadFile.name;
+            let jsonFile = { name: fileName, type: uploadFile.mimetype, location: `/uploads/${fileName}` };
+            jsonFiles.push(jsonFile);
+            let uploadPath = path.join(__dirname, `../public/uploads/`) + fileName;
+            uploadFile.mv(uploadPath, function (err) {
+                if (err)
+                    return res.status(500).send(err);
+            });
         }
-        let uploadFile = Object.values(req.files)[i];
-        let fileName = `project${req.params.projectid}-` + uploadFile.name;
-        let jsonFile = { name: fileName, type: uploadFile.mimetype, location: 'public/uploads' };
-        jsonFiles.push(jsonFile);
-        let uploadPath = path.join(__dirname, `../public/uploads/`) + fileName;
-        uploadFile.mv(uploadPath, function (err) {
-            if (err)
-                return res.status(500).send(err);
-            console.log(`File${i} uploaded!`);
-        });
     }
-    const insertIssue = await db.query(`INSERT INTO issues (
-        projectid, tracker, subject, description, status, priority, assignee, startdate, duedate, estimatedtime, done, files) 
-        values($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12)`,
+
+    const insertIssue = await db.query(`INSERT INTO issues (projectid, tracker, subject, description, status, priority, 
+        assignee, startdate, duedate, estimatedtime, done, files, createddate, author, updateddate, closeddate) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16)`,
         [req.params.projectid, req.body.tracker, req.body.subject, req.body.description, req.body.status, req.body.priority,
-        req.body.assignee, req.body.startdate, req.body.duedate, req.body.estimatedtime, req.body.done, jsonFiles], (err, res) => {
-            if (err) return console.log(err)
+        req.body.assignee, req.body.startdate, req.body.duedate, req.body.estimatedtime, req.body.done, jsonFiles, createddate.rows[0].now, req.session.user.userid, createddate.rows[0].now, closeddate], (err, res) => {
+            if (err) return res.send(err)
+        })
+
+    let issueid = await db.query(`SELECT issueid FROM issues WHERE projectid = ${req.params.projectid} ORDER BY issueid`)
+    let activityTitle = req.body.subject + ' #' + issueid.rows[issueid.rows.length - 1].issueid + ' (New)';
+    let activityDescription = 'Issue created successfully';
+    const insertActivity = await db.query(`INSERT INTO activity (time, title, description, author) VALUES($1,$2,$3,$4)`,
+        [createddate.rows[0].now, activityTitle, activityDescription, req.session.user.userid], (err, res) => {
+            if (err) return res.send(err)
         })
     res.redirect(`/projects/issues/${req.params.projectid}`);
 });
 
 router.get('/issues/:projectid/edit/:issueid', checkLogIn, async function (req, res, next) {
-    let issue = await db.query(`SELECT * FROM issues WHERE issueid = ${req.params.issueid} AND projectid = ${req.params.projectid}`)
-    console.log(issue.rows)
-    
+    const issue = await db.query(`SELECT * FROM issues WHERE issueid = ${req.params.issueid} AND projectid = ${req.params.projectid}`)
+    const members = await db.query(`SELECT users.userid, users.firstname FROM members
+        LEFT JOIN users ON members.userid = users.userid WHERE members.projectid = ${req.params.projectid}`)
+    const parentTask = await db.query(`SELECT issueid, subject FROM issues WHERE projectid=${req.params.projectid} AND NOT issueid=${req.params.issueid}`)
+
+    issue.rows[0].startdate = dateConvert(issue.rows[0].startdate)
+    issue.rows[0].duedate = dateConvert(issue.rows[0].duedate)
+    issue.rows[0].createddate = moment(issue.rows[0].createddate).format('MMMM Do YYYY, h:mm:ss a')
+    issue.rows[0].updateddate = moment(issue.rows[0].updateddate).format('MMMM Do YYYY, h:mm:ss a')
+
     res.render('projects/issues/formEdit', {
         sidebar: req.url.split('/')[1],
         projectid: req.params.projectid,
         issueid: req.params.issueid,
+        issue: issue.rows[0],
+        members: members.rows,
+        author: req.session.user.firstname,
+        parentTask: parentTask.rows,
+        files: issue.rows[0].files,
     });
 });
 
-router.post('/issues/:projectid/edit/:issueid', checkLogIn, function (req, res, next) {
-    res.redirect('/projects');
+router.post('/issues/:projectid/edit/:issueid', checkLogIn, async function (req, res, next) {
+    if (req.body.oldfiledeleted) {
+        let oldFileDeleted = req.body.oldfiledeleted
+        if (Array.isArray(oldFileDeleted)) {
+            for (let i = 0; i < oldFileDeleted.length; i++) {
+                let deletePath = path.join(__dirname, `../public`) + oldFileDeleted[i].split(",")[2]
+                await fs.unlink(deletePath, (err) => {
+                    if (err) {
+                        console.error(err)
+                        return
+                    }
+                })
+            }
+        } else {
+            let deletePath = path.join(__dirname, `../public`) + oldFileDeleted.split(",")[2]
+            await fs.unlink(deletePath, (err) => {
+                if (err) {
+                    console.error(err)
+                    return
+                }
+            })
+        }
+    }
+
+    let jsonFiles = [];
+
+    if (req.body.oldfile) {
+        let oldFile = req.body.oldfile
+        if (Array.isArray(oldFile)) {
+            for (let i = 0; i < oldFile.length; i++) {
+                let tempFile = oldFile[i].split(",")
+                let jsonFile = { name: tempFile[0], type: tempFile[1], location: tempFile[2] };
+                jsonFiles.push(jsonFile)
+            }
+        } else {
+            oldFile = oldFile.split(",")
+            let jsonFile = { name: oldFile[0], type: oldFile[1], location: oldFile[2] };
+            jsonFiles.push(jsonFile)
+        }
+    }
+
+    if (req.files) {
+        for (let i = 0; i < Object.keys(req.files).length; i++) {
+            let uploadFile = Object.values(req.files)[i];
+            let fileName = Date.now() + uploadFile.name;
+            let jsonFile = { name: fileName, type: uploadFile.mimetype, location: `/uploads/${fileName}` };
+            jsonFiles.push(jsonFile);
+            let uploadPath = path.join(__dirname, `../public/uploads/`) + fileName;
+            uploadFile.mv(uploadPath, function (err) {
+                if (err)
+                    return res.status(500).send(err);
+            });
+        }
+    }
+
+    const updateddate = await db.query('SELECT NOW()')
+    let closeddate
+    if (req.body.status == 'Closed') closeddate = updateddate.rows[0].now;
+    if (req.body.estimatedtime == '') req.body.estimatedtime = null;
+    if (req.body.spenttime == '') req.body.spenttime = null;
+
+    const updateIssue = await db.query(`UPDATE issues SET tracker = $1, subject = $2, description = $3, status = $4, priority = $5,
+        assignee = $6, startdate = $7, duedate = $8, estimatedtime = $9, spenttime = $10, targetversion = $11, updateddate = $12, 
+        closeddate = $13, parenttask = $14, done = $15, files = $16 WHERE issueid = ${req.params.issueid}`,
+        [req.body.tracker, req.body.subject, req.body.description, req.body.status, req.body.priority, req.body.assignee,
+        req.body.startdate, req.body.duedate, req.body.estimatedtime, req.body.spenttime, req.body.targetversion,
+        updateddate.rows[0].now, closeddate, req.body.parenttask, req.body.done, jsonFiles], (err, res) => {
+            if (err) return res.send(err)
+        })
+
+    let activityTitle = req.body.subject + ' #' + req.params.issueid + ' (Edit)';
+    let activityDescription = 'Issue edited successfully';
+    const insertActivity = await db.query(`INSERT INTO activity (time, title, description, author) VALUES($1,$2,$3,$4)`,
+        [updateddate.rows[0].now, activityTitle, activityDescription, req.session.user.userid], (err, res) => {
+            if (err) return res.send(err)
+        })
+    res.redirect(`/projects/issues/${req.params.projectid}`);
 });
 
-router.get('/issues/:projectid/delete/:issueid', checkLogIn, function (req, res, next) {
-    res.redirect('/projects');
+router.get('/issues/:projectid/delete/:issueid', checkLogIn, async function (req, res, next) {
+    let files = await db.query(`SELECT files FROM issues WHERE issueid = ${req.params.issueid}`)
+    files = files.rows[0].files
+    if (files) {
+        for (let i = 0; i < files.length; i++) {
+            let deletePath = path.join(__dirname, `../public`) + files[i].location
+            await fs.unlink(deletePath, (err) => {
+                if (err) {
+                    console.error(err)
+                    return
+                }
+            })
+        }
+    }
+
+    const subject = await db.query(`SELECT subject FROM issues WHERE issueid = ${req.params.issueid}`);
+    const updateddate = await db.query('SELECT NOW()');
+    let activityTitle = subject.rows[0].subject + ' #' + req.params.issueid + ' (Delete)';
+    let activityDescription = 'Issue deleted successfully';
+    const insertActivity = await db.query(`INSERT INTO activity (time, title, description, author) VALUES($1,$2,$3,$4)`,
+        [updateddate.rows[0].now, activityTitle, activityDescription, req.session.user.userid], (err, res) => {
+            if (err) return res.send(err)
+        })
+
+    await db.query(`DELETE FROM issues WHERE issueid =${req.params.issueid}`)
+    res.redirect(`/projects/issues/${req.params.projectid}`);
 });
 
 module.exports = router;
+
+function checkLogIn(req, res, next) {
+    if (req.session.user) {
+        next();
+    } else {
+        res.redirect('/');
+    }
+
+};
+
+function dateConvert(date) {
+    let dd = String(date.getDate()).padStart(2, '0');
+    let mm = String(date.getMonth() + 1).padStart(2, '0');
+    let yyyy = date.getFullYear();
+    return yyyy + '-' + mm + '-' + dd;
+}
