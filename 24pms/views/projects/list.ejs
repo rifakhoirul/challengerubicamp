@@ -8,21 +8,21 @@
                 <div class="containerCheck">
                     <label for="idCheckFilter" style="width: 150px;"><input class="form-check-input" type="checkbox"
                             id="idCheckFilter" name="idCheckFilter" value="idCheckFilter" <%=option.idCheckFilter
-                            ? "checked" :"" %>>ID</label>
+                            ? "checked" :"" %>> ID</label>
                     <input class="form-control" type="number" id="idFilter" name="idFilter" placeholder="ID"
                         value=<%=option.idFilter %>>
                 </div>
                 <div class="containerCheck">
                     <label for="nameCheckFilter" style="width: 150px;"><input class="form-check-input" type="checkbox"
                             id="nameCheckFilter" name="nameCheckFilter" value="nameCheckFilter"
-                            <%=option.nameCheckFilter ? "checked" :""%>>Name</label>
+                            <%=option.nameCheckFilter ? "checked" :""%>> Name</label>
                     <input class="form-control" type="text" id="nameFilter" name="nameFilter" placeholder="Name"
                         value="<%=option.nameFilter %>">
                 </div>
                 <div class="containerCheck">
                     <label for="memberCheckFilter" style="width: 168px;"><input class="form-check-input" type="checkbox"
                             id="memberCheckFilter" name="memberCheckFilter" value="memberCheckFilter"
-                            <%=option.memberCheckFilter ? "checked" :"" %>>Member</label>
+                            <%=option.memberCheckFilter ? "checked" :"" %>> Member</label>
                     <select class="form-control" id="memberFilter" name="memberFilter">
                         <option value="" disabled selected>Choose the member ...</option>
                         <% members.forEach((item, index)=>{ %>
@@ -78,7 +78,7 @@
                 <% data.forEach((item, index)=>{ %>
                     <tr>
                         <% if(setting.idOption=='on' ){ %>
-                            <td><a href="/projects/overview/<%= item.projectid %>">
+                            <td><a href="/projects/overview/<%= item.projectid %>" style="text-decoration: none;">
                                     <%=item.projectid %>
                                 </a></td>
                             <% } %>
@@ -108,10 +108,6 @@
                                                                     <div class="modal-header">
                                                                         <h5 class="modal-title" id="exampleModalLabel">
                                                                             Delete Confirmation</h5>
-                                                                        <button type="button" class="close"
-                                                                            data-dismiss="modal" aria-label="Close">
-                                                                            <span aria-hidden="true">&times;</span>
-                                                                        </button>
                                                                     </div>
                                                                     <div class="modal-body">
                                                                         Are you sure want to delete this project?

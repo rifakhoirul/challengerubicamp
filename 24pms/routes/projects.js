@@ -101,6 +101,7 @@ router.get('/', checkLogIn, async function (req, res, next) {
     const users = await db.query(`SELECT firstname FROM users ORDER BY userid`)
     const setting = await db.query(`SELECT setting FROM users WHERE userid = 1;`)
     res.render('projects/list', {
+        title: 'Projects',
         data: dataEachPage,
         option: req.query,
         members: users.rows,
@@ -131,6 +132,7 @@ router.get('/add', checkLogIn, async function (req, res, next) {
     const users = await db.query(`SELECT firstname FROM users`)
     let projectName, projectMembers;
     res.render('projects/form', {
+        title: 'Add Member',
         members: users.rows,
         projectName,
         projectMembers,
@@ -180,6 +182,7 @@ router.get('/edit/:id', checkLogIn, async function (req, res, next) {
     const users = await db.query(`SELECT firstname FROM users`)
 
     res.render('projects/formEdit', {
+        title: 'Edit Project',
         members: users.rows,
         projectName: project.rows[0].name,
         projectMembers: members,
@@ -236,6 +239,7 @@ router.get('/overview/:projectid', checkLogIn, async function (req, res, next) {
     const members = await db.query(`SELECT users.firstname FROM users 
         LEFT JOIN members ON users.userid = members.userid WHERE members.projectid = ${req.params.projectid}`)
     res.render('projects/overview/view', {
+        title: 'Overview',
         sidebar: req.url.split('/')[1],
         projectid: req.params.projectid,
         bugTotal: bugTotal.rows.length,
@@ -250,18 +254,23 @@ router.get('/overview/:projectid', checkLogIn, async function (req, res, next) {
 
 //activity
 router.get('/activity/:projectid', checkLogIn, async function (req, res, next) {
-    let activity = await db.query(`SELECT activity.title, activity.description, activity.time, users.firstname 
-        FROM activity LEFT JOIN users ON activity.author = users.userid WHERE activity.time>$1`,
-        [moment().subtract(7, 'days').calendar()])
+    let activity = await db.query(`SELECT activity.title, activity.description, activity.time, activity.issueid, users.firstname 
+        FROM activity LEFT JOIN users ON activity.author = users.userid WHERE activity.time>$1 ORDER BY activity.time DESC`,
+        [moment().subtract(10, 'days').format('YYYY-MM-DD')])
+    activity.rows.forEach(element => {
+        element.hour = moment(element.time).format('HH:mm')
+    });
     let groupActivity = _.groupBy(activity.rows, function (data) {
         return moment(data.time).format('dddd')
     })
-
+    console.log(groupActivity)
     res.render('projects/activity/view', {
+        title: 'Activity',
         sidebar: req.url.split('/')[1],
         projectid: req.params.projectid,
         pastWeek: moment().subtract(7, 'days').calendar(),
         today: moment().format('L'),
+        daytoday: moment().format('dddd'),
         groupActivity,
     });
 });
@@ -349,6 +358,7 @@ router.get('/members/:projectid', checkLogIn, async function (req, res, next) {
 
     const setting = await db.query(`SELECT setting FROM users WHERE userid = 2;`)
     res.render('projects/members/list', {
+        title: 'Members',
         sidebar: req.url.split('/')[1],
         projectid: req.params.projectid,
         option: req.query,
@@ -383,6 +393,7 @@ router.get('/members/:projectid/add', checkLogIn, async function (req, res, next
         LEFT JOIN selected ON users.userid = selected.userid WHERE selected.userid IS NULL;`)
     const clearSelected = await db.query('DROP VIEW selected;')
     res.render('projects/members/form', {
+        title: 'Add Member',
         sidebar: req.url.split('/')[1],
         projectid: req.params.projectid,
         members: selectAvailable.rows,
@@ -402,6 +413,7 @@ router.get('/members/:projectid/edit/:memberid', checkLogIn, async function (req
         LEFT JOIN users ON members.userid = users.userid
         WHERE members.id=${req.params.memberid}`)
     res.render('projects/members/formEdit', {
+        title: 'Edit Member',
         member: member.rows[0],
         sidebar: req.url.split('/')[1],
         projectid: req.params.projectid,
@@ -498,6 +510,7 @@ router.get('/issues/:projectid', checkLogIn, async function (req, res, next) {
     const setting = await db.query(`SELECT setting FROM users WHERE userid = 3;`)
 
     res.render('projects/issues/list', {
+        title: 'Issues',
         sidebar: req.url.split('/')[1],
         projectid: req.params.projectid,
         option: req.query,
@@ -529,6 +542,7 @@ router.get('/issues/:projectid/add', checkLogIn, async function (req, res, next)
     const members = await db.query(`SELECT users.userid, users.firstname FROM members
         LEFT JOIN users ON members.userid = users.userid WHERE members.projectid = ${req.params.projectid}`)
     res.render('projects/issues/form', {
+        title: 'Add Issue',
         sidebar: req.url.split('/')[1],
         projectid: req.params.projectid,
         members: members.rows,
@@ -566,10 +580,10 @@ router.post('/issues/:projectid/add', checkLogIn, async function (req, res, next
         })
 
     let issueid = await db.query(`SELECT issueid FROM issues WHERE projectid = ${req.params.projectid} ORDER BY issueid`)
-    let activityTitle = req.body.subject + ' #' + issueid.rows[issueid.rows.length - 1].issueid + ' (New)';
+    let activityTitle = req.body.subject + ' (New)';
     let activityDescription = 'Issue created successfully';
-    const insertActivity = await db.query(`INSERT INTO activity (time, title, description, author) VALUES($1,$2,$3,$4)`,
-        [createddate.rows[0].now, activityTitle, activityDescription, req.session.user.userid], (err, res) => {
+    const insertActivity = await db.query(`INSERT INTO activity (time, title, description, author, issueid) VALUES($1,$2,$3,$4,$5)`,
+        [createddate.rows[0].now, activityTitle, activityDescription, req.session.user.userid, issueid.rows[issueid.rows.length - 1].issueid], (err, res) => {
             if (err) return res.send(err)
         })
     res.redirect(`/projects/issues/${req.params.projectid}`);
@@ -577,25 +591,32 @@ router.post('/issues/:projectid/add', checkLogIn, async function (req, res, next
 
 router.get('/issues/:projectid/edit/:issueid', checkLogIn, async function (req, res, next) {
     const issue = await db.query(`SELECT * FROM issues WHERE issueid = ${req.params.issueid} AND projectid = ${req.params.projectid}`)
-    const members = await db.query(`SELECT users.userid, users.firstname FROM members
+    console.log(issue.rows)
+    if (!issue.rows[0]) {
+        console.log('hai')
+        res.render('projects/issues/notFound', { projectid: req.params.projectid })
+    } else {
+        const members = await db.query(`SELECT users.userid, users.firstname FROM members
         LEFT JOIN users ON members.userid = users.userid WHERE members.projectid = ${req.params.projectid}`)
-    const parentTask = await db.query(`SELECT issueid, subject FROM issues WHERE projectid=${req.params.projectid} AND NOT issueid=${req.params.issueid}`)
+        const parentTask = await db.query(`SELECT issueid, subject FROM issues WHERE projectid=${req.params.projectid} AND NOT issueid=${req.params.issueid}`)
 
-    issue.rows[0].startdate = dateConvert(issue.rows[0].startdate)
-    issue.rows[0].duedate = dateConvert(issue.rows[0].duedate)
-    issue.rows[0].createddate = moment(issue.rows[0].createddate).format('MMMM Do YYYY, h:mm:ss a')
-    issue.rows[0].updateddate = moment(issue.rows[0].updateddate).format('MMMM Do YYYY, h:mm:ss a')
+        issue.rows[0].startdate = dateConvert(issue.rows[0].startdate)
+        issue.rows[0].duedate = dateConvert(issue.rows[0].duedate)
+        issue.rows[0].createddate = moment(issue.rows[0].createddate).format('MMMM Do YYYY, h:mm:ss a')
+        issue.rows[0].updateddate = moment(issue.rows[0].updateddate).format('MMMM Do YYYY, h:mm:ss a')
 
-    res.render('projects/issues/formEdit', {
-        sidebar: req.url.split('/')[1],
-        projectid: req.params.projectid,
-        issueid: req.params.issueid,
-        issue: issue.rows[0],
-        members: members.rows,
-        author: req.session.user.firstname,
-        parentTask: parentTask.rows,
-        files: issue.rows[0].files,
-    });
+        res.render('projects/issues/formEdit', {
+            title: 'Edit Issue',
+            sidebar: req.url.split('/')[1],
+            projectid: req.params.projectid,
+            issueid: req.params.issueid,
+            issue: issue.rows[0],
+            members: members.rows,
+            author: req.session.user.firstname,
+            parentTask: parentTask.rows,
+            files: issue.rows[0].files,
+        });
+    }
 });
 
 router.post('/issues/:projectid/edit/:issueid', checkLogIn, async function (req, res, next) {
@@ -668,10 +689,10 @@ router.post('/issues/:projectid/edit/:issueid', checkLogIn, async function (req,
             if (err) return res.send(err)
         })
 
-    let activityTitle = req.body.subject + ' #' + req.params.issueid + ' (Edit)';
+    let activityTitle = req.body.subject + ' (Edit)';
     let activityDescription = 'Issue edited successfully';
-    const insertActivity = await db.query(`INSERT INTO activity (time, title, description, author) VALUES($1,$2,$3,$4)`,
-        [updateddate.rows[0].now, activityTitle, activityDescription, req.session.user.userid], (err, res) => {
+    const insertActivity = await db.query(`INSERT INTO activity (time, title, description, author, issueid) VALUES($1,$2,$3,$4, $5)`,
+        [updateddate.rows[0].now, activityTitle, activityDescription, req.session.user.userid, req.params.issueid], (err, res) => {
             if (err) return res.send(err)
         })
     res.redirect(`/projects/issues/${req.params.projectid}`);
@@ -694,10 +715,10 @@ router.get('/issues/:projectid/delete/:issueid', checkLogIn, async function (req
 
     const subject = await db.query(`SELECT subject FROM issues WHERE issueid = ${req.params.issueid}`);
     const updateddate = await db.query('SELECT NOW()');
-    let activityTitle = subject.rows[0].subject + ' #' + req.params.issueid + ' (Delete)';
+    let activityTitle = subject.rows[0].subject + ' (Delete)';
     let activityDescription = 'Issue deleted successfully';
-    const insertActivity = await db.query(`INSERT INTO activity (time, title, description, author) VALUES($1,$2,$3,$4)`,
-        [updateddate.rows[0].now, activityTitle, activityDescription, req.session.user.userid], (err, res) => {
+    const insertActivity = await db.query(`INSERT INTO activity (time, title, description, author,issueid) VALUES($1,$2,$3,$4,$5)`,
+        [updateddate.rows[0].now, activityTitle, activityDescription, req.session.user.userid, req.params.issueid], (err, res) => {
             if (err) return res.send(err)
         })
 

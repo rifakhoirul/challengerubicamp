@@ -13,11 +13,15 @@ function checkLogIn(req, res, next) {
 };
 
 router.get('/', checkLogIn, function (req, res, next) {
-    res.render('users/list');
+    res.render('users/list',{
+        title: 'Users',
+    });
 });
 
 router.get('/add', checkLogIn, function (req, res, next) {
-    res.render('users/form');
+    res.render('users/form',{
+        title: 'Add User',
+    });
 });
 
 router.post('/add', checkLogIn, function (req, res, next) {
@@ -33,7 +37,9 @@ router.post('/add', checkLogIn, function (req, res, next) {
 });
 
 router.get('/edit/:id', checkLogIn, function (req, res, next) {
-    res.render('users/form');
+    res.render('users/form',{
+        title:'Edit',
+    });
 });
 
 router.post('/edit/:id', checkLogIn, function (req, res, next) {

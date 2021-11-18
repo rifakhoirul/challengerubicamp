@@ -73,7 +73,11 @@ a.disabled {
 }
 
 .selectedSidebar{
-  background-color: rgb(145, 145, 145);
+  background-color: rgb(33, 110, 253);
+  color: white;
+}
+
+.selectedSidebar:hover{
   color: white;
 }
 

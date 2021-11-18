@@ -14,6 +14,7 @@ function checkLogIn(req, res, next) {
 
 router.get('/', checkLogIn, function (req, res, next) {
     res.render('profile/form', {
+        title: 'Profile',
         email: req.session.user.email,
         position: req.session.user.position,
         fulltime: req.session.user.isfulltime,

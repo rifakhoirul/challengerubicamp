@@ -13,14 +13,14 @@
                             <div class="containerCheck">
                                 <label for="idCheckFilter" style="width: 150px;"><input class="form-check-input"
                                         type="checkbox" id="idCheckFilter" name="idCheckFilter" value="idCheckFilter"
-                                        <%=option.idCheckFilter ? "checked" :"" %>>ID</label>
+                                        <%=option.idCheckFilter ? "checked" :"" %>> ID</label>
                                 <input class="form-control" type="number" id="idFilter" name="idFilter" placeholder="ID"
                                     value=<%=option.idFilter %>>
                             </div>
                             <div class="containerCheck">
                                 <label for="nameCheckFilter" style="width: 150px;"><input class="form-check-input"
                                         type="checkbox" id="nameCheckFilter" name="nameCheckFilter"
-                                        value="nameCheckFilter" <%=option.nameCheckFilter ? "checked" :""%>>Name</label>
+                                        value="nameCheckFilter" <%=option.nameCheckFilter ? "checked" :""%>> Name</label>
                                 <input class="form-control" type="text" id="nameFilter" name="nameFilter"
                                     placeholder="Name" value="<%=option.nameFilter %>">
                             </div>
@@ -28,7 +28,7 @@
                                 <label for="positionCheckFilter" style="width: 168px;"><input class="form-check-input"
                                         type="checkbox" id="positionCheckFilter" name="positionCheckFilter"
                                         value="positionCheckFilter" <%=option.positionCheckFilter ? "checked" :""
-                                        %>>Position</label>
+                                        %>> Position</label>
                                 <select class="form-control" id="positionFilter" name="positionFilter">
                                     <option value="" disabled selected>Choose the position ...</option>
                                     <option value="Manager" <%=option.positionFilter=="Manager" ? "selected" : "" %>>
@@ -69,6 +69,7 @@
                                     Position</input></div>
                             </div>
                         </div>
+                        <p></p>
                         <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Apply</button>
                     </form>
                     <br>

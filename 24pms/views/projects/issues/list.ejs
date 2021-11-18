@@ -13,21 +13,21 @@
                             <div class="containerCheck">
                                 <label for="issueidCheckFilter" style="width: 150px;"><input class="form-check-input"
                                         type="checkbox" id="issueidCheckFilter" name="issueidCheckFilter" value="issueidCheckFilter"
-                                        <%=option.issueidCheckFilter ? "checked" :"" %>>ID</label>
+                                        <%=option.issueidCheckFilter ? "checked" :"" %>> ID</label>
                                 <input class="form-control" type="number" id="issueidFilter" name="issueidFilter" placeholder="ID"
                                     value=<%=option.issueidFilter %>>
                             </div>
                             <div class="containerCheck">
                                 <label for="subjectCheckFilter" style="width: 150px;"><input class="form-check-input"
                                         type="checkbox" id="subjectCheckFilter" name="subjectCheckFilter"
-                                        value="subjectCheckFilter" <%=option.subjectCheckFilter ? "checked" :""%>>Subject</label>
+                                        value="subjectCheckFilter" <%=option.subjectCheckFilter ? "checked" :""%>> Subject</label>
                                 <input class="form-control" type="text" id="subjectFilter" name="subjectFilter"
                                     placeholder="Subject" value="<%=option.subjectFilter %>">
                             </div>
                             <div class="containerCheck">
                                 <label for="trackerCheckFilter" style="width: 168px;"><input class="form-check-input"
                                         type="checkbox" id="trackerCheckFilter" name="trackerCheckFilter"
-                                        value="trackerCheckFilter" <%=option.trackerCheckFilter ? "checked" :""%>>Tracker</label>
+                                        value="trackerCheckFilter" <%=option.trackerCheckFilter ? "checked" :""%>> Tracker</label>
                                 <select class="form-control" id="trackerFilter" name="trackerFilter">
                                     <option value="" disabled selected>Choose the tracker ...</option>
                                     <option value="Bug" <%=option.trackerFilter=="Bug" ? "selected" : "" %>>
