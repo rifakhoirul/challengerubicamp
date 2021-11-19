@@ -18,9 +18,18 @@ select {
   box-sizing: border-box;
 }
 
-table {
+table{
   font-size: large;
 }
+.table-long{
+  display: block;
+  overflow-x:auto;
+  white-space: nowrap
+}
+.table th,
+  td {
+    border-top: 1px solid #ddd;
+  }
 
 thead{
   font-weight: bold

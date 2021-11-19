@@ -5,6 +5,7 @@ const path = require('path');
 const fs = require('fs');
 const moment = require('moment');
 var _ = require('underscore');
+const { Console } = require('console');
 
 router.get('/', checkLogIn, async function (req, res, next) {
     let querySyntax = `SELECT * FROM projects`
@@ -20,14 +21,28 @@ router.get('/', checkLogIn, async function (req, res, next) {
     if (req.query.nameCheckFilter) {
         if (req.query.nameFilter != '') {
             if (req.query.idCheckFilter && req.query.idFilter != '') {
-                querySyntax += ` AND name LIKE '%${req.query.nameFilter}%'`
-            } else { querySyntax += ` WHERE name LIKE '%${req.query.nameFilter}%'` }
+                querySyntax += ` AND LOWER(name) LIKE '%${String(req.query.nameFilter).toLowerCase()}%'`
+            } else { querySyntax += ` WHERE LOWER(name) LIKE '%${String(req.query.nameFilter).toLowerCase()}%'` }
         }
     }
-    if (req.query.id_asc == '') { querySyntax += ' ORDER BY projectid ASC' }
-    else if (req.query.id_desc == '') { querySyntax += ' ORDER BY projectid DESC' }
-    else if (req.query.name_asc == '') { querySyntax += ' ORDER BY name ASC' }
-    else if (req.query.name_desc == '') { querySyntax += ' ORDER BY name DESC' }
+
+    let sorting
+    if (req.query.id_asc == '') {
+        querySyntax += ' ORDER BY projectid ASC'
+        sorting = 'id_asc'
+    }
+    else if (req.query.id_desc == '') {
+        querySyntax += ' ORDER BY projectid DESC'
+        sorting = 'id_desc'
+    }
+    else if (req.query.name_asc == '') {
+        querySyntax += ' ORDER BY name ASC'
+        sorting = 'name_asc'
+    }
+    else if (req.query.name_desc == '') {
+        querySyntax += ' ORDER BY name DESC'
+        sorting = 'name_desc'
+    }
     else { querySyntax += ' ORDER BY projectid ASC' }
 
     let projectList = await db.query(querySyntax)
@@ -55,9 +70,11 @@ router.get('/', checkLogIn, async function (req, res, next) {
 
     if (req.query.members_asc == '') {
         projectList.rows.sort()
+        sorting = 'members_asc'
     }
     else if (req.query.members_desc == '') {
         projectList.rows.sort().reverse()
+        sorting = 'members_desc'
     }
 
     if (!req._parsedUrl.query) { req._parsedUrl.query = '?' }
@@ -98,13 +115,15 @@ router.get('/', checkLogIn, async function (req, res, next) {
     let offset = 3 * (currentPage - 1)
     let dataEachPage = projectList.rows.slice(offset, offset + 3)
 
-    const users = await db.query(`SELECT firstname FROM users ORDER BY userid`)
+    const members = await db.query(`SELECT firstname FROM users ORDER BY userid`)
     const setting = await db.query(`SELECT setting FROM users WHERE userid = 1;`)
     res.render('projects/list', {
         title: 'Projects',
+        base: req.baseUrl,
         data: dataEachPage,
         option: req.query,
-        members: users.rows,
+        members: members.rows,
+        sorting,
         totalPage,
         currentPage,
         offset,
@@ -112,6 +131,7 @@ router.get('/', checkLogIn, async function (req, res, next) {
         bridge,
         urls,
         setting: setting.rows[0].setting,
+        role: req.session.user.role,
     });
 });
 
@@ -119,7 +139,7 @@ router.post('/saveoption', checkLogIn, async function (req, res, next) {
     let setting = {
         idOption: req.body.idOption,
         nameOption: req.body.nameOption,
-        memberOption: req.body.memberOption
+        memberOption: req.body.memberOption,
     }
     setting = JSON.stringify(setting)
     db.query(`UPDATE users SET setting ='${setting}' WHERE userid = 1;`, (err, res) => {
@@ -133,9 +153,11 @@ router.get('/add', checkLogIn, async function (req, res, next) {
     let projectName, projectMembers;
     res.render('projects/form', {
         title: 'Add Member',
+        base: req.baseUrl,
         members: users.rows,
         projectName,
         projectMembers,
+        role: req.session.user.role,
     });
 });
 
@@ -163,6 +185,7 @@ router.post('/add', checkLogIn, async function (req, res, next) {
             })
         }
     }
+    req.flash('infoSuccess', 'Project created successfully.')
     res.redirect('/projects');
 });
 
@@ -183,9 +206,11 @@ router.get('/edit/:id', checkLogIn, async function (req, res, next) {
 
     res.render('projects/formEdit', {
         title: 'Edit Project',
+        base: req.baseUrl,
         members: users.rows,
         projectName: project.rows[0].name,
         projectMembers: members,
+        role: req.session.user.role,
     });
 });
 
@@ -215,11 +240,12 @@ router.post('/edit/:id', checkLogIn, async function (req, res, next) {
     res.redirect('/projects');
 });
 
-router.get('/delete/:id', checkLogIn, function (req, res, next) {
-    const id = Number(req.params.id)
-    db.query(`DELETE FROM members WHERE projectid = ${id} `, (err, res) => { })
-    db.query(`DELETE FROM projects WHERE projectid = ${id} `, (err, res) => { })
-    res.redirect('/projects');
+router.get('/delete/:id', checkLogIn, async function (req, res, next) {
+    if (req.session.user.role == 'Admin') {
+        const id = Number(req.params.id)
+        await db.query(`DELETE FROM projects WHERE projectid = ${id} `, (err, res) => { })
+        res.redirect('/projects');
+    } else {res.redirect('/projects')}
 });
 
 //overview
@@ -240,6 +266,7 @@ router.get('/overview/:projectid', checkLogIn, async function (req, res, next) {
         LEFT JOIN members ON users.userid = members.userid WHERE members.projectid = ${req.params.projectid}`)
     res.render('projects/overview/view', {
         title: 'Overview',
+        base: req.baseUrl,
         sidebar: req.url.split('/')[1],
         projectid: req.params.projectid,
         bugTotal: bugTotal.rows.length,
@@ -249,6 +276,7 @@ router.get('/overview/:projectid', checkLogIn, async function (req, res, next) {
         supportTotal: supportTotal.rows.length,
         supportOpen: supportOpen.rows.length,
         members: members.rows,
+        role: req.session.user.role,
     });
 });
 
@@ -263,15 +291,16 @@ router.get('/activity/:projectid', checkLogIn, async function (req, res, next) {
     let groupActivity = _.groupBy(activity.rows, function (data) {
         return moment(data.time).format('dddd')
     })
-    console.log(groupActivity)
     res.render('projects/activity/view', {
         title: 'Activity',
+        base: req.baseUrl,
         sidebar: req.url.split('/')[1],
         projectid: req.params.projectid,
         pastWeek: moment().subtract(7, 'days').calendar(),
         today: moment().format('L'),
         daytoday: moment().format('dddd'),
         groupActivity,
+        role: req.session.user.role,
     });
 });
 
@@ -288,7 +317,7 @@ router.get('/members/:projectid', checkLogIn, async function (req, res, next) {
     }
     if (req.query.nameCheckFilter) {
         if (req.query.nameFilter != '') {
-            querySyntax += `AND users.firstname LIKE '%${req.query.nameFilter}%'`
+            querySyntax += `AND LOWER(users.firstname) LIKE '%${String(req.query.nameFilter).toLowerCase()}%'`
         }
     }
     if (req.query.positionCheckFilter) {
@@ -297,23 +326,30 @@ router.get('/members/:projectid', checkLogIn, async function (req, res, next) {
         }
     }
 
+    let sorting
     if (req.query.id_asc == '') {
         querySyntax += 'ORDER BY members.id ASC'
+        sorting = 'id_asc'
     }
     if (req.query.id_desc == '') {
         querySyntax += 'ORDER BY members.id DESC'
+        sorting = 'id_desc'
     }
     if (req.query.name_asc == '') {
         querySyntax += 'ORDER BY users.firstname ASC'
+        sorting = 'name_asc'
     }
     if (req.query.name_desc == '') {
         querySyntax += 'ORDER BY users.firstname DESC'
+        sorting = 'name_desc'
     }
     if (req.query.position_asc == '') {
         querySyntax += 'ORDER BY users.position ASC'
+        sorting = 'position_asc'
     }
     if (req.query.position_desc == '') {
         querySyntax += 'ORDER BY users.position DESC'
+        sorting = 'position_desc'
     }
 
     let projectList = await db.query(querySyntax)
@@ -359,6 +395,7 @@ router.get('/members/:projectid', checkLogIn, async function (req, res, next) {
     const setting = await db.query(`SELECT setting FROM users WHERE userid = 2;`)
     res.render('projects/members/list', {
         title: 'Members',
+        base: req.baseUrl,
         sidebar: req.url.split('/')[1],
         projectid: req.params.projectid,
         option: req.query,
@@ -370,6 +407,8 @@ router.get('/members/:projectid', checkLogIn, async function (req, res, next) {
         url,
         bridge,
         urls,
+        sorting,
+        role: req.session.user.role,
     });
 });
 
@@ -394,9 +433,11 @@ router.get('/members/:projectid/add', checkLogIn, async function (req, res, next
     const clearSelected = await db.query('DROP VIEW selected;')
     res.render('projects/members/form', {
         title: 'Add Member',
+        base: req.baseUrl,
         sidebar: req.url.split('/')[1],
         projectid: req.params.projectid,
         members: selectAvailable.rows,
+        role: req.session.user.role,
     });
 });
 
@@ -414,9 +455,11 @@ router.get('/members/:projectid/edit/:memberid', checkLogIn, async function (req
         WHERE members.id=${req.params.memberid}`)
     res.render('projects/members/formEdit', {
         title: 'Edit Member',
+        base: req.baseUrl,
         member: member.rows[0],
         sidebar: req.url.split('/')[1],
         projectid: req.params.projectid,
+        role: req.session.user.role,
     });
 });
 
@@ -440,8 +483,7 @@ router.get('/members/:projectid/delete/:memberid', checkLogIn, async function (r
 
 //issues
 router.get('/issues/:projectid', checkLogIn, async function (req, res, next) {
-    let querySyntax = `SELECT issueid, subject, tracker FROM issues 
-        WHERE projectid = ${req.params.projectid}`
+    let querySyntax = `SELECT * FROM issues WHERE projectid = ${req.params.projectid} `
 
     if (req.query.issueidCheckFilter) {
         if (req.query.issueidFilter != '') {
@@ -450,7 +492,7 @@ router.get('/issues/:projectid', checkLogIn, async function (req, res, next) {
     }
     if (req.query.subjectCheckFilter) {
         if (req.query.subjectFilter != '') {
-            querySyntax += `AND subject LIKE '%${req.query.subjectFilter}%'`
+            querySyntax += `AND LOWER(subject) LIKE '%${String(req.query.subjectFilter).toLowerCase()}%'`
         }
     }
     if (req.query.trackerCheckFilter) {
@@ -458,16 +500,196 @@ router.get('/issues/:projectid', checkLogIn, async function (req, res, next) {
             querySyntax += `AND tracker = '${req.query.trackerFilter}'`
         }
     }
+    if (req.query.statusCheckFilter) {
+        if (req.query.statusFilter) {
+            querySyntax += `AND status = '${req.query.statusFilter}'`
+        }
+    }
+    if (req.query.priorityCheckFilter) {
+        if (req.query.priorityFilter) {
+            querySyntax += `AND priority = '${req.query.priorityFilter}'`
+        }
+    }
+    if (req.query.assigneeCheckFilter) {
+        if (req.query.assigneeFilter) {
+            querySyntax += `AND assignee = '${req.query.assigneeFilter}'`
+        }
+    }
 
-    if (req.query.issueid_asc == '') { querySyntax += 'ORDER BY issueid ASC' }
-    else if (req.query.issueid_desc == '') { querySyntax += 'ORDER BY issueid DESC' }
-    else if (req.query.subject_asc == '') { querySyntax += 'ORDER BY subject ASC' }
-    else if (req.query.subject_desc == '') { querySyntax += 'ORDER BY subject DESC' }
-    else if (req.query.tracker_asc == '') { querySyntax += 'ORDER BY tracker ASC' }
-    else if (req.query.tracker_desc == '') { querySyntax += 'ORDER BY tracker DESC' }
+    let sorting
+    if (req.query.issueid_asc == '') {
+        querySyntax += 'ORDER BY issueid ASC'
+        sorting = 'issueid_asc'
+    }
+    else if (req.query.issueid_desc == '') {
+        querySyntax += 'ORDER BY issueid DESC'
+        sorting = 'issueid_desc'
+    }
+    else if (req.query.subject_asc == '') {
+        querySyntax += 'ORDER BY subject ASC'
+        sorting = 'subject_asc'
+    }
+    else if (req.query.subject_desc == '') {
+        querySyntax += 'ORDER BY subject DESC'
+        sorting = 'subject_desc'
+    }
+    else if (req.query.tracker_asc == '') {
+        querySyntax += 'ORDER BY tracker ASC'
+        sorting = 'tracker_asc'
+    }
+    else if (req.query.tracker_desc == '') {
+        querySyntax += 'ORDER BY tracker DESC'
+        sorting = 'tracker_desc'
+    }
+    else if (req.query.description_asc == '') {
+        querySyntax += 'ORDER BY description ASC'
+        sorting = 'description_asc'
+    }
+    else if (req.query.description_desc == '') {
+        querySyntax += 'ORDER BY description DESC'
+        sorting = 'description_desc'
+    }
+    else if (req.query.status_asc == '') {
+        querySyntax += 'ORDER BY status ASC'
+        sorting = 'status_asc'
+    }
+    else if (req.query.status_desc == '') {
+        querySyntax += 'ORDER BY status DESC'
+        sorting = 'status_desc'
+    }
+    else if (req.query.priority_asc == '') {
+        querySyntax += 'ORDER BY priority ASC'
+        sorting = 'priority_asc'
+    }
+    else if (req.query.priority_desc == '') {
+        querySyntax += 'ORDER BY priority DESC'
+        sorting = 'priority_desc'
+    }
+    else if (req.query.assignee_asc == '') {
+        querySyntax += 'ORDER BY assignee ASC'
+        sorting = 'assignee_asc'
+    }
+    else if (req.query.assignee_desc == '') {
+        querySyntax += 'ORDER BY assignee DESC'
+        sorting = 'assignee_desc'
+    }
+    else if (req.query.startdate_asc == '') {
+        querySyntax += 'ORDER BY startdate ASC'
+        sorting = 'startdate_asc'
+    }
+    else if (req.query.startdate_desc == '') {
+        querySyntax += 'ORDER BY startdate DESC'
+        sorting = 'startdate_desc'
+    }
+    else if (req.query.duedate_asc == '') {
+        querySyntax += 'ORDER BY duedate ASC'
+        sorting = 'duedate_asc'
+    }
+    else if (req.query.duedate_desc == '') {
+        querySyntax += 'ORDER BY duedate DESC'
+        sorting = 'duedate_desc'
+    }
+    else if (req.query.estimatedtime_asc == '') {
+        querySyntax += 'ORDER BY estimatedtime ASC'
+        sorting = 'estimatedtime_asc'
+    }
+    else if (req.query.estimatedtime_desc == '') {
+        querySyntax += 'ORDER BY estimatedtime DESC'
+        sorting = 'estimatedtime_desc'
+    }
+    else if (req.query.done_asc == '') {
+        querySyntax += 'ORDER BY done ASC'
+        sorting = 'done_asc'
+    }
+    else if (req.query.done_desc == '') {
+        querySyntax += 'ORDER BY done DESC'
+        sorting = 'done_desc'
+    }
+    else if (req.query.spenttime_asc == '') {
+        querySyntax += 'ORDER BY spenttime ASC'
+        sorting = 'spenttime_asc'
+    }
+    else if (req.query.spenttime_desc == '') {
+        querySyntax += 'ORDER BY spenttime DESC'
+        sorting = 'spenttime_desc'
+    }
+    else if (req.query.targetversion_asc == '') {
+        querySyntax += 'ORDER BY targetversion ASC'
+        sorting = 'targetversion_asc'
+    }
+    else if (req.query.targetversion_desc == '') {
+        querySyntax += 'ORDER BY targetversion DESC'
+        sorting = 'targetversion_desc'
+    }
+    else if (req.query.author_asc == '') {
+        querySyntax += 'ORDER BY author ASC'
+        sorting = 'author_asc'
+    }
+    else if (req.query.author_desc == '') {
+        querySyntax += 'ORDER BY author DESC'
+        sorting = 'author_desc'
+    }
+    else if (req.query.parenttask_asc == '') {
+        querySyntax += 'ORDER BY parenttask ASC'
+        sorting = 'parenttask_asc'
+    }
+    else if (req.query.parenttask_desc == '') {
+        querySyntax += 'ORDER BY parenttask DESC'
+        sorting = 'parenttask_desc'
+    }
+    else if (req.query.createddate_asc == '') {
+        querySyntax += 'ORDER BY createddate ASC'
+        sorting = 'createddate_asc'
+    }
+    else if (req.query.createddate_desc == '') {
+        querySyntax += 'ORDER BY createddate DESC'
+        sorting = 'createddate_desc'
+    }
+    else if (req.query.updateddate_asc == '') {
+        querySyntax += 'ORDER BY updateddate ASC'
+        sorting = 'updateddate_asc'
+    }
+    else if (req.query.updateddate_desc == '') {
+        querySyntax += 'ORDER BY updateddate DESC'
+        sorting = 'updateddate_desc'
+    }
+    else if (req.query.closeddate_asc == '') {
+        querySyntax += 'ORDER BY closeddate ASC'
+        sorting = 'closeddate_asc'
+    }
+    else if (req.query.closeddate_desc == '') {
+        querySyntax += 'ORDER BY closeddate DESC'
+        sorting = 'closeddate_desc'
+    }
     else { querySyntax += 'ORDER BY issueid ASC' }
 
     let issueList = await db.query(querySyntax)
+    const userList = await db.query(`SELECT userid,firstname FROM users`)
+    const parentList = await db.query(`SELECT issueid,subject FROM issues WHERE projectid = ${req.params.projectid}`)
+
+    issueList.rows.forEach(element => {
+        element.startdate = moment(element.startdate).format('L');
+        element.duedate = moment(element.duedate).format('L');
+        element.createddate = moment(element.createddate).format('lll');
+        element.updateddate ? element.updateddate = moment(element.updateddate).format('lll') : element.updateddate;
+        element.closeddate ? element.closeddate = moment(element.closeddate).format('lll') : element.closeddate;
+        if (element.assignee) {
+            let checkAssignee = userList.rows.filter(item => {
+                return item.userid == element.assignee
+            })
+            element.assignee = checkAssignee[0].firstname
+        }
+        if (element.parenttask) {
+            let checkParent = parentList.rows.filter(item => {
+                return item.issueid == element.parenttask
+            })
+            element.parenttask = checkParent[0].subject
+        }
+        let checkAuthor = userList.rows.filter(item => {
+            return item.userid == element.author
+        })
+        element.author = checkAuthor[0].firstname
+    });
 
     if (!req._parsedUrl.query) { req._parsedUrl.query = '?' }
     let url = `${req._parsedUrl.query}`
@@ -489,7 +711,22 @@ router.get('/issues/:projectid', checkLogIn, async function (req, res, next) {
     //moving page with sort only
     if (url == 'issueid_asc' || url == 'issueid_desc' ||
         url == 'subject_asc' || url == 'subject_desc' ||
-        url == 'tracker_asc' || url == 'tracker_desc') {
+        url == 'tracker_asc' || url == 'tracker_desc' ||
+        url == 'description_asc' || url == 'description_desc' ||
+        url == 'status_asc' || url == 'status_desc' ||
+        url == 'priority_asc' || url == 'priority_desc' ||
+        url == 'assignee_asc' || url == 'assignee_desc' ||
+        url == 'startdate_asc' || url == 'startdate_desc' ||
+        url == 'duedate_asc' || url == 'duedate_desc' ||
+        url == 'estimatedtime_asc' || url == 'estimatedtime_desc' ||
+        url == 'done_asc' || url == 'done_desc' ||
+        url == 'spenttime_asc' || url == 'spenttime_desc' ||
+        url == 'targetversion_asc' || url == 'targetversion_desc' ||
+        url == 'author_asc' || url == 'author_desc' ||
+        url == 'parenttask_asc' || url == 'parenttask_desc' ||
+        url == 'createddate_asc' || url == 'createddate_desc' ||
+        url == 'updateddate_asc' || url == 'updateddate_desc' ||
+        url == 'closeddate_asc' || url == 'closeddate_desc') {
         url = '?' + url;
         bridge = "&"
     }
@@ -508,9 +745,11 @@ router.get('/issues/:projectid', checkLogIn, async function (req, res, next) {
     let dataEachPage = issueList.rows.slice(offset, offset + 3)
 
     const setting = await db.query(`SELECT setting FROM users WHERE userid = 3;`)
-
+    const members = await db.query(`SELECT users.userid, users.firstname FROM members
+        LEFT JOIN users ON members.userid = users.userid WHERE members.projectid = ${req.params.projectid}`)
     res.render('projects/issues/list', {
         title: 'Issues',
+        base: req.baseUrl,
         sidebar: req.url.split('/')[1],
         projectid: req.params.projectid,
         option: req.query,
@@ -522,6 +761,9 @@ router.get('/issues/:projectid', checkLogIn, async function (req, res, next) {
         url,
         bridge,
         urls,
+        members: members.rows,
+        sorting,
+        role: req.session.user.role,
     });
 });
 
@@ -530,6 +772,21 @@ router.post('/issues/:projectid/saveoption', checkLogIn, async function (req, re
         issueidOption: req.body.issueidOption,
         subjectOption: req.body.subjectOption,
         trackerOption: req.body.trackerOption,
+        descriptionOption: req.body.descriptionOption,
+        statusOption: req.body.statusOption,
+        priorityOption: req.body.priorityOption,
+        assigneeOption: req.body.assigneeOption,
+        startdateOption: req.body.startdateOption,
+        duedateOption: req.body.duedateOption,
+        estimatedtimeOption: req.body.estimatedtimeOption,
+        doneOption: req.body.doneOption,
+        spenttimeOption: req.body.spenttimeOption,
+        targetversionOption: req.body.targetversionOption,
+        authorOption: req.body.authorOption,
+        parenttaskOption: req.body.parenttaskOption,
+        createddateOption: req.body.createddateOption,
+        updateddateOption: req.body.updateddateOption,
+        closeddateOption: req.body.closeddateOption,
     }
     setting = JSON.stringify(setting)
     db.query(`UPDATE users SET setting ='${setting}' WHERE userid = 3;`, (err, res) => {
@@ -543,9 +800,11 @@ router.get('/issues/:projectid/add', checkLogIn, async function (req, res, next)
         LEFT JOIN users ON members.userid = users.userid WHERE members.projectid = ${req.params.projectid}`)
     res.render('projects/issues/form', {
         title: 'Add Issue',
+        base: req.baseUrl,
         sidebar: req.url.split('/')[1],
         projectid: req.params.projectid,
         members: members.rows,
+        role: req.session.user.role,
     });
 });
 
@@ -591,9 +850,7 @@ router.post('/issues/:projectid/add', checkLogIn, async function (req, res, next
 
 router.get('/issues/:projectid/edit/:issueid', checkLogIn, async function (req, res, next) {
     const issue = await db.query(`SELECT * FROM issues WHERE issueid = ${req.params.issueid} AND projectid = ${req.params.projectid}`)
-    console.log(issue.rows)
     if (!issue.rows[0]) {
-        console.log('hai')
         res.render('projects/issues/notFound', { projectid: req.params.projectid })
     } else {
         const members = await db.query(`SELECT users.userid, users.firstname FROM members
@@ -607,6 +864,7 @@ router.get('/issues/:projectid/edit/:issueid', checkLogIn, async function (req, 
 
         res.render('projects/issues/formEdit', {
             title: 'Edit Issue',
+            base: req.baseUrl,
             sidebar: req.url.split('/')[1],
             projectid: req.params.projectid,
             issueid: req.params.issueid,
@@ -615,6 +873,7 @@ router.get('/issues/:projectid/edit/:issueid', checkLogIn, async function (req, 
             author: req.session.user.firstname,
             parentTask: parentTask.rows,
             files: issue.rows[0].files,
+            role: req.session.user.role,
         });
     }
 });

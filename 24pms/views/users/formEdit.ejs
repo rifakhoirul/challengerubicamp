@@ -1,32 +1,38 @@
 <% include ../partial/header.ejs %>
     <div style="padding-top: 80px;padding-left: 40px;padding-right: 40px;">
-        <h1>Add User</h1>
+        <h1>Edit User</h1>
         <hr>
         <br>
         <div style="padding-left: 100px;padding-right: 100px;">
-            <form action="/users/add" method="post">
+            <form action="" method="post">
+                <div class="row mb-3">
+                    <label for="userid" class="col-sm-2 col-form-label">ID</label>
+                    <div class="col-sm-10">
+                        <input type="text" class="form-control" id="userid" name="userid" value="<%= user.userid %>" disabled>
+                    </div>
+                </div>
                 <div class="row mb-3">
                     <label for="inputEmail3" class="col-sm-2 col-form-label">Email</label>
                     <div class="col-sm-9">
-                        <input type="email" class="form-control" id="inputEmail3" name="email" placeholder="example@mail.com" required>
+                        <input type="email" class="form-control" id="inputEmail3" name="email" value="<%= user.email %>" disabled>
                     </div>
                 </div>
                 <div class="row mb-3">
                     <label for="inputPassword3" class="col-sm-2 col-form-label">Password</label>
                     <div class="col-sm-9">
-                        <input type="password" class="form-control" id="inputPassword3" name="password" placeholder="Password" required>
+                        <input type="password" class="form-control" id="inputPassword3" name="password">
                     </div>
                 </div>
                 <div class="row mb-3">
                     <label for="inputfirstname" class="col-sm-2 col-form-label">First Name</label>
                     <div class="col-sm-10">
-                        <input type="text" class="form-control" id="inputfirstname" name="firstname" placeholder="First Name" required>
+                        <input type="text" class="form-control" id="inputfirstname" name="firstname" placeholder="First Name" value="<%= user.firstname %>" required>
                     </div>
                 </div>
                 <div class="row mb-3">
                     <label for="inputlastname" class="col-sm-2 col-form-label">Last Name</label>
                     <div class="col-sm-10">
-                        <input type="text" class="form-control" id="inputlastname" name="lastname" placeholder="Last Name">
+                        <input type="text" class="form-control" id="inputlastname" name="lastname" placeholder="Last Name" value="<%= user.lastname ? user.lastname:"" %>">
                     </div>
                 </div>
                 <div class="row mb-3">
@@ -34,21 +40,21 @@
                     <div class="col-sm-10">
                         <div class="form-check">
                             <input class="form-check-input" type="radio" name="position" id="gridRadios1"
-                                value="Manager" checked>
+                                value="Manager" <%= user.position =='Manager' ? 'checked':'' %>>
                             <label class="form-check-label" for="gridRadios1">
                                 Manager
                             </label>
                         </div>
                         <div class="form-check">
                             <input class="form-check-input" type="radio" name="position" id="gridRadios2"
-                                value="Software Developer">
+                                value="Software Developer" <%= user.position =='Software Developer' ? 'checked':'' %>>
                             <label class="form-check-label" for="gridRadios2">
                                 Software Developer
                             </label>
                         </div>
                         <div class="form-check">
                             <input class="form-check-input" type="radio" name="position" id="gridRadios3"
-                                value="Quality Assurance">
+                                value="Quality Assurance" <%= user.position =='Quality Assurance' ? 'checked':'' %>>
                             <label class="form-check-label" for="gridRadios3">
                                 Quality Assurance
                             </label>
@@ -59,7 +65,7 @@
                     <legend class="col-form-label col-sm-2 pt-0">Type</legend>
                     <div class="col-sm-10">
                         <div class="form-check">
-                            <input class="form-check-input" type="checkbox" id="gridCheck1" name="isfulltime">
+                            <input class="form-check-input" type="checkbox" id="gridCheck1" name="isfulltime" <%= user.isfulltime ? 'checked':'' %>>
                             <label class="form-check-label" for="gridCheck1">
                                 Fulltime
                             </label>
@@ -71,13 +77,14 @@
                     <div class="col-sm-10">
                         <div class="form-check">
                             <input class="form-check-input" type="radio" name="role" id="gridRadios1" value="Admin"
-                                checked>
+                            <%= user.role =='Admin' ? 'checked':'' %>>
                             <label class="form-check-label" for="gridRadios1">
                                 Admin
                             </label>
                         </div>
                         <div class="form-check">
-                            <input class="form-check-input" type="radio" name="role" id="gridRadios2" value="User">
+                            <input class="form-check-input" type="radio" name="role" id="gridRadios2" value="User"
+                            <%= user.role =='User' ? 'checked':'' %>>
                             <label class="form-check-label" for="gridRadios2">
                                 User
                             </label>

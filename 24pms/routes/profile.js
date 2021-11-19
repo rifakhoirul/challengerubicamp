@@ -15,52 +15,46 @@ function checkLogIn(req, res, next) {
 router.get('/', checkLogIn, function (req, res, next) {
     res.render('profile/form', {
         title: 'Profile',
-        email: req.session.user.email,
-        position: req.session.user.position,
-        fulltime: req.session.user.isfulltime,
+        base: req.baseUrl,
+        user: req.session.user,
         infoFailed: req.flash('infoFailed'),
-        infoSuccess: req.flash('infoSuccess')
+        infoSuccess: req.flash('infoSuccess'),
+        role: req.session.user.role,
     });
 });
 
-router.post('/', checkLogIn, function (req, res, next) {
-    let fulltime = req.body.fulltime
-    fulltime == 'on' ? fulltime = true : fulltime = false;
-    console.log(req.session.user.email)
-    if (req.body.password == '') {
-        db.query(`UPDATE users SET position = '${req.body.position}', isfulltime = ${fulltime} WHERE email = '${req.session.user.email}'; `, (err, res) => {
+router.post('/', checkLogIn, async function (req, res, next) {
+    console.log(req.body.password[0])
+    req.body.isfulltime == 'on' ? req.body.isfulltime = true : req.body.isfulltime = false;
+    if (!req.body.password[0]) {
+        await db.query(`UPDATE users SET position = '${req.body.position}', isfulltime = ${req.body.isfulltime} WHERE email = '${req.session.user.email}'; `, (err, res) => {
             if (err) {
                 req.flash('infoFailed', 'Error.');
                 return console.log(err);
             }
         })
-        req.session.user.position = req.body.position;
-        req.session.user.isfulltime = fulltime;
-        req.flash('infoSuccess', 'Profil updated successfully.')
-        res.render('profile/form', {
-            email: req.session.user.email,
-            position: req.session.user.position,
-            fulltime: req.session.user.isfulltime,
-            infoFailed: req.flash('infoFailed'),
-            infoSuccess: req.flash('infoSuccess')
-        });
+
     } else {
-        bcrypt.hash(req.body.password, saltRounds, function (err, hash) {
+        bcrypt.hash(req.body.password, saltRounds, async function (err, hash) {
             if (err) return console.log(err);
-            db.query(`UPDATE users SET password = '${hash}', position = '${req.body.position}', isfulltime = ${fulltime} WHERE email = '${req.session.user.email}'`, (err, res) => {
+            await db.query(`UPDATE users SET password = '${hash}', position = '${req.body.position}', isfulltime = ${req.body.isfulltime} WHERE email = '${req.session.user.email}'`, (err, res) => {
                 if (err) {
                     req.flash('infoFailed', 'Error.');
                     return console.log(err);
                 };
-                req.session.user.position = req.body.position;
-                req.session.user.isfulltime = fulltime;
             })
-            req.session.user.position = req.body.position;
-            req.session.user.isfulltime = fulltime;
-            req.flash('infoSuccess', 'Profil updated successfully.')
-            res.redirect('/profile');
         });
     }
+    req.flash('infoSuccess', 'Profil updated successfully.')
+    req.session.user.position = req.body.position;
+    req.session.user.isfulltime = req.body.isfulltime;
+    res.render('profile/form', {
+        title: 'Profile',
+        base: req.baseUrl,
+        user: req.session.user,
+        infoFailed: req.flash('infoFailed'),
+        infoSuccess: req.flash('infoSuccess')
+    });
 });
 
 module.exports = router;

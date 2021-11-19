@@ -1,12 +1,5 @@
 </body>
 <script>
-    function getDelete(id){
-        deleteId = id
-        console.log(deleteId)
-    }
-    $('#myModal').on('shown.bs.modal', function () {
-        $('#myInput').trigger('focus')
-    })
     let btnPage = document.querySelectorAll(".btn-page")
     btnPage.forEach(element => {
         if (window.location.href.includes("page=")) {
@@ -20,4 +13,5 @@
         }
     })
 </script>
+
 </html>
