@@ -24,7 +24,6 @@ router.get('/', checkLogIn, function (req, res, next) {
 });
 
 router.post('/', checkLogIn, async function (req, res, next) {
-    console.log(req.body.password[0])
     req.body.isfulltime == 'on' ? req.body.isfulltime = true : req.body.isfulltime = false;
     if (!req.body.password[0]) {
         await db.query(`UPDATE users SET position = '${req.body.position}', isfulltime = ${req.body.isfulltime} WHERE email = '${req.session.user.email}'; `, (err, res) => {
@@ -53,7 +52,8 @@ router.post('/', checkLogIn, async function (req, res, next) {
         base: req.baseUrl,
         user: req.session.user,
         infoFailed: req.flash('infoFailed'),
-        infoSuccess: req.flash('infoSuccess')
+        infoSuccess: req.flash('infoSuccess'),
+        role: req.session.user.role,
     });
 });
 

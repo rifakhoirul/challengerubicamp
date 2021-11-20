@@ -5,7 +5,6 @@ const path = require('path');
 const fs = require('fs');
 const moment = require('moment');
 var _ = require('underscore');
-const { Console } = require('console');
 
 router.get('/', checkLogIn, async function (req, res, next) {
     let querySyntax = `SELECT * FROM projects`
@@ -76,7 +75,6 @@ router.get('/', checkLogIn, async function (req, res, next) {
         projectList.rows.sort().reverse()
         sorting = 'members_desc'
     }
-
     if (!req._parsedUrl.query) { req._parsedUrl.query = '?' }
     let url = `${req._parsedUrl.query}`
     let bridge = ''
@@ -283,8 +281,8 @@ router.get('/overview/:projectid', checkLogIn, async function (req, res, next) {
 //activity
 router.get('/activity/:projectid', checkLogIn, async function (req, res, next) {
     let activity = await db.query(`SELECT activity.title, activity.description, activity.time, activity.issueid, users.firstname 
-        FROM activity LEFT JOIN users ON activity.author = users.userid WHERE activity.time>$1 ORDER BY activity.time DESC`,
-        [moment().subtract(10, 'days').format('YYYY-MM-DD')])
+        FROM activity LEFT JOIN users ON activity.author = users.userid WHERE activity.time>$1 AND activity.projectid=$2 ORDER BY activity.time DESC`,
+        [moment().subtract(10, 'days').format('YYYY-MM-DD'), req.params.projectid])
     activity.rows.forEach(element => {
         element.hour = moment(element.time).format('HH:mm')
     });
@@ -841,8 +839,8 @@ router.post('/issues/:projectid/add', checkLogIn, async function (req, res, next
     let issueid = await db.query(`SELECT issueid FROM issues WHERE projectid = ${req.params.projectid} ORDER BY issueid`)
     let activityTitle = req.body.subject + ' (New)';
     let activityDescription = 'Issue created successfully';
-    const insertActivity = await db.query(`INSERT INTO activity (time, title, description, author, issueid) VALUES($1,$2,$3,$4,$5)`,
-        [createddate.rows[0].now, activityTitle, activityDescription, req.session.user.userid, issueid.rows[issueid.rows.length - 1].issueid], (err, res) => {
+    const insertActivity = await db.query(`INSERT INTO activity (time, title, description, author, issueid, projectid) VALUES($1,$2,$3,$4,$5,$6)`,
+        [createddate.rows[0].now, activityTitle, activityDescription, req.session.user.userid, issueid.rows[issueid.rows.length - 1].issueid, req.params.projectid], (err, res) => {
             if (err) return res.send(err)
         })
     res.redirect(`/projects/issues/${req.params.projectid}`);
@@ -950,8 +948,8 @@ router.post('/issues/:projectid/edit/:issueid', checkLogIn, async function (req,
 
     let activityTitle = req.body.subject + ' (Edit)';
     let activityDescription = 'Issue edited successfully';
-    const insertActivity = await db.query(`INSERT INTO activity (time, title, description, author, issueid) VALUES($1,$2,$3,$4, $5)`,
-        [updateddate.rows[0].now, activityTitle, activityDescription, req.session.user.userid, req.params.issueid], (err, res) => {
+    const insertActivity = await db.query(`INSERT INTO activity (time, title, description, author, issueid, projectid) VALUES($1,$2,$3,$4,$5,$6)`,
+        [updateddate.rows[0].now, activityTitle, activityDescription, req.session.user.userid, req.params.issueid, req.params.projectid], (err, res) => {
             if (err) return res.send(err)
         })
     res.redirect(`/projects/issues/${req.params.projectid}`);
@@ -976,8 +974,8 @@ router.get('/issues/:projectid/delete/:issueid', checkLogIn, async function (req
     const updateddate = await db.query('SELECT NOW()');
     let activityTitle = subject.rows[0].subject + ' (Delete)';
     let activityDescription = 'Issue deleted successfully';
-    const insertActivity = await db.query(`INSERT INTO activity (time, title, description, author,issueid) VALUES($1,$2,$3,$4,$5)`,
-        [updateddate.rows[0].now, activityTitle, activityDescription, req.session.user.userid, req.params.issueid], (err, res) => {
+    const insertActivity = await db.query(`INSERT INTO activity (time, title, description, author,issueid, projectid) VALUES($1,$2,$3,$4,$5,$6)`,
+        [updateddate.rows[0].now, activityTitle, activityDescription, req.session.user.userid, req.params.issueid, req.params.projectid], (err, res) => {
             if (err) return res.send(err)
         })
 

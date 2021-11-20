@@ -207,6 +207,7 @@ router.get('/add', checkLogIn, function (req, res, next) {
     res.render('users/form', {
         title: 'Add User',
         base: req.baseUrl,
+        role: req.session.user.role,
     });
 });
 
