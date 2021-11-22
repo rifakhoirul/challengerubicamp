@@ -1,3 +1,4 @@
+require('dotenv').config()
 var createError = require('http-errors');
 var express = require('express');
 var path = require('path');
@@ -6,6 +7,7 @@ var logger = require('morgan');
 var session = require('express-session')
 var flash = require('connect-flash');
 const fileUpload = require('express-fileupload');
+
 
 var indexRouter = require('./routes/index');
 var projectsRouter = require('./routes/projects');
