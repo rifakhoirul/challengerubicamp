@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Picturico</title>
+  <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+    integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+    crossorigin="anonymous"></script>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p"
+    crossorigin="anonymous"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.1/font/bootstrap-icons.css">
+  <link href='https://fonts.googleapis.com/css?family=Sofia' rel='stylesheet'>
+  <link rel='stylesheet' href='/stylesheets/style.css' />
+</head>
+
+<body>
+  <nav class="navbar navbar-expand-lg bg-light navbar-light fixed-top">
+    <div class="container">
+      <a href="#" class="me-4 text-dark" style="font-size:26px"><i class="bi bi-arrow-left-circle"></i></a>
+      <a class="text-dark" style="font-size:26px">New Post</a>
+      <div class="navbar-nav ms-auto">
+      </div>
+    </div>
+  </nav>
+  <section>
+    <div class="container">
+      <div class="row justify-content-center">
+        <div class="col-md-8">
+          <form id="form-add-issue">
+            <div class="input-group mt-3 mb-3 file-input">
+              <input type="file" data-id="0" id="files0" class="form-control file-preview"
+                aria-describedby="inputGroupFileAddon04" aria-label="Upload">
+            </div>
+            <div class="form-floating mb-3">
+              <textarea class="form-control" placeholder="Leave a comment here" id="floatingTextarea2"
+                style="height: 100px"></textarea>
+              <label for="floatingTextarea2">Write a caption...</label>
+            </div>
+            <button type="submit" class="btn btn-primary mb-3"><i class="bi bi-check-circle"></i> Post</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </section>
+  <script src="/javascripts/bootstrap.js"
+    integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p"
+    crossorigin="anonymous"></script>
+  <script>
+    let countFileInput = 1;
+    $("#form-add-issue").on('click', '#add-file-form', function (event) {
+      event.preventDefault()
+      $('.file-input').last().after(`
+        <div class="mb-3 d-flex file-input">
+            <input type="file" data-id="${countFileInput}" id="files${countFileInput}" name="files${countFileInput}" class="form-control file-preview" placeholder="Files">
+            <button id="delete-file-input" type="button" class="btn btn-outline-danger ms-3">-</button>
+            </div>
+        `)
+      countFileInput++
+    })
+
+    $("#form-add-issue").on('click', '#delete-file-input', function (event) {
+      event.preventDefault()
+
+      let idFile = $(this).parent().prev().attr('data-id')
+      let firstInput = $(this).prev().attr('data-id')
+
+      if (idFile == "img-preview") {
+        $(this).parent().prev().remove();
+        if (firstInput == "0") {
+          $(this).prev().val("")
+          $('#delete-file-input').attr('hidden', true)
+        } else {
+          $(this).parent().remove();
+        }
+      } else {
+        $(this).parent().remove();
+      }
+    })
+
+    $('#form-add-issue').on('change', '.file-preview', function (event) {
+      let tes = $(this).val().split(".")
+      switch (tes.pop()) {
+        case "jpg":
+        case "png":
+        case "svg":
+
+          var reader = new FileReader();
+          reader.onload = function () {
+            $(`#img${idFile}`).attr("src", reader.result)
+          }
+
+          let idFile = $(this).attr('data-id')
+
+          if (idFile == "0") {
+            $('#delete-file-input').attr('hidden', false)
+          }
+
+          let idImgOne = $(this).parent().prev().attr('data-id')
+          if (idImgOne == "img-preview") {
+            $(this).parent().prev().html(`
+                <div data-id="img-preview" class="text-center"><img id="img${idFile}" src="" class="" style="max-width:75%"></div>
+                `)
+          } else {
+            $(this).parent().before(`
+                <div data-id="img-preview text-center" class="text-center"><img id="img${idFile}" src="" class="" style="max-width:75%"></div>
+                `)
+          }
+          reader.readAsDataURL(event.target.files[0]);
+          break;
+        default:
+          break;
+      }
+    })
+  </script>
+</body>
+
+</html>

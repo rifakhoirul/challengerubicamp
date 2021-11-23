@@ -1,0 +1,42 @@
+/* *{
+  box-sizing: border-box;
+} */
+
+body::before{
+  display:block;
+  content:'';
+  height:60px;
+}
+
+.header-right{
+  margin-left:10px
+}
+
+.navbartitle{
+  font-family: 'Sofia';
+  font-size:26px;
+}
+
+@media(min-width:768px){
+  .bg-index{
+    height:100%;
+  }
+}
+@media(max-width:768px){
+  .col-4 img{
+    height: 150px;
+    width: 150px
+  }
+  
+  #search{
+    display:none;
+  }
+}
+
+.col-3 img{
+  object-fit: cover;
+}
+
+a {
+  text-decoration: none;
+}
