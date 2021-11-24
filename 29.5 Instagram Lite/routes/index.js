@@ -1,8 +1,25 @@
 var express = require('express');
 var router = express.Router();
+var models = require('../models')
 
-/* GET home page. */
-router.get('/', function (req, res, next) {
+router.get('/', async function (req, res, next) {
+  try{
+    // await models.Users.create({
+    //   email:'riko@mail.com',
+    //   password:'123',
+    //   username:'riko'
+    // });
+
+    //const todo = await models.Todo.create({...req.body})
+    //res.json(todo)
+
+    const users = await models.Users.findAll();
+    console.log(users[1].dataValues)
+  } catch (error){
+    console.log(error)
+    res.status(500).json(error)
+  }
+  
   res.render('index');
 });
 
