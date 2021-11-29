@@ -9,7 +9,8 @@ body::before{
 }
 
 .header-right{
-  margin-left:10px
+  margin-left:10px;
+  cursor: pointer;
 }
 
 .navbartitle{
@@ -31,12 +32,53 @@ body::before{
   #search{
     display:none;
   }
+  #profilePage{
+    text-align: center;
+  }
+  #profileCounter{
+    display:flex;
+    justify-content: center;
+  }
 }
 
 .col-3 img{
   object-fit: cover;
 }
 
+.profileThumbnail, .profilepic{
+  object-fit: cover;
+}
+
 a {
   text-decoration: none;
+}
+
+input.middle:focus {
+  outline-width: 5px;
+}
+
+.usernamePost{
+  color:black;
+}
+
+h4 i, div i, .list-group-item{
+  cursor: pointer;
+}
+
+.miniProfilePic{
+  height: 35px;
+  width: 35px;
+  max-height: 35px;
+  max-width: 35px;
+  border-radius: 100%;
+  object-fit: cover;
+}
+
+.bi-heart-fill{
+  color:#DC3545;
+}
+
+.modal-header, .btn-primary{
+  background-color:#6610f2;
+  color:white;
 }

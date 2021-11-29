@@ -8,7 +8,24 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      userid: {
+      caption: {
+        type: Sequelize.TEXT
+      },
+      likes: {
+        type: Sequelize.ARRAY(Sequelize.INTEGER)
+      },
+      file: {
+        type: Sequelize.ARRAY(Sequelize.JSON)
+      },
+      createdAt: {
+        allowNull: false,
+        type: Sequelize.DATE
+      },
+      updatedAt: {
+        allowNull: false,
+        type: Sequelize.DATE
+      },
+      UserId: {
         type: Sequelize.INTEGER,
         allowNull: false,
         references: {
@@ -18,23 +35,6 @@ module.exports = {
         onUpdate: 'cascade',
         onDelete: 'cascade'
       },
-      caption: {
-        type: Sequelize.TEXT
-      },
-      likes: {
-        type: Sequelize.ARRAY(Sequelize.INTEGER)
-      },
-      file: {
-        type: Sequelize.JSON
-      },
-      createdAt: {
-        allowNull: false,
-        type: Sequelize.DATE
-      },
-      updatedAt: {
-        allowNull: false,
-        type: Sequelize.DATE
-      }
     });
   },
   down: async (queryInterface, Sequelize) => {

@@ -15,7 +15,6 @@ module.exports = (sequelize, DataTypes) => {
     }
   };
   Profile.init({
-    username: DataTypes.STRING,
     name: DataTypes.STRING,
     bio: DataTypes.TEXT,
     following: DataTypes.ARRAY(DataTypes.INTEGER),

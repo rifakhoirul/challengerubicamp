@@ -1,0 +1,96 @@
+<% include partial/header.ejs %>
+
+  <div class="container border mt-4">
+    <div class="row">
+      <div class="col-6">
+        <%if(posts.dataValues.file.length>1){%>
+          <div id="carouselPost" class="carousel slide" data-bs-ride="carousel" data-bs-interval="false">
+            <div class="carousel-indicators">
+              <% posts.dataValues.file.forEach((element,index)=>{ %>
+                <button type="button" data-bs-target="#carouselPost" data-bs-slide-to="<%= index %>" class=<%=index==0
+                  ? "active" : "" %>></button>
+                <% }) %>
+            </div>
+            <div class="carousel-inner">
+              <% posts.dataValues.file.forEach((element,index)=>{ %>
+                <div class="carousel-item <%= index == 0 ? 'active':''%>">
+                  <img src="<%= element.location %>" class="d-block w-100" alt="...">
+                </div>
+                <% }) %>
+            </div>
+            <button class="carousel-control-prev" type="button" data-bs-target="#carouselPost" data-bs-slide="prev">
+              <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+              <span class="visually-hidden">Previous</span>
+            </button>
+            <button class="carousel-control-next" type="button" data-bs-target="#carouselPost" data-bs-slide="next">
+              <span class="carousel-control-next-icon" aria-hidden="true"></span>
+              <span class="visually-hidden">Next</span>
+            </button>
+          </div>
+          <%}else{%>
+            <img src="<%= posts.dataValues.file[0].location %>" alt="img" class="w-100">
+            <%}%>
+      </div>
+      <div class="col-6">
+        <div class="row justify-content-between mb-1 mt-3 align-items-center">
+          <div class="col-4">
+            <a class="usernamePost" href="/profile/<%=posts.dataValues.User.dataValues.username%>"><img
+                src="<%=posts.dataValues.User.dataValues.Profile.dataValues.profilepic.location%>"
+                class="miniProfilePic me-2"><strong>
+                <%=posts.dataValues.User.dataValues.username%>
+              </strong>
+            </a>
+          </div>
+          <div class="col-4 text-end me-1">
+            <i class="bi bi-three-dots" data-bs-toggle="modal" data-bs-target="#pagePostModal"></i>
+          </div>
+        </div>
+        <hr>
+        <div class="mt-4">
+          <p>
+            <a class="usernamePost me-2" href="/profile/<%=posts.dataValues.User.dataValues.username%>"><img
+                src="<%=posts.dataValues.User.dataValues.Profile.dataValues.profilepic.location%>"
+                class="miniProfilePic me-2"><strong>
+                <%=posts.dataValues.User.dataValues.username%>
+              </strong>
+            </a>
+            <%= posts.dataValues.caption %>
+          </p>
+        </div>
+        <div class="mb-3">Comments:</div>
+        <%comments.forEach(item=>{%>
+          <div class="mt-1">
+            <p>
+              <a class="usernamePost me-2" href="/profile/<%=item.dataValues.User.dataValues.username%>"><img
+                  src="<%=item.dataValues.User.dataValues.Profile.dataValues.profilepic.location%>"
+                  class="miniProfilePic me-2"><strong>
+                  <%=item.dataValues.User.dataValues.username%>
+                </strong>
+              </a>
+              <%= item.dataValues.comment %>
+            </p>
+          </div>
+          <%})%>
+      </div>
+    </div>
+  </div>
+  <!-- Modal On Post -->
+  <div class="modal fade" id="pagePostModal" tabindex="-1" aria-labelledby="pagePostModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-sm modal-dialog-centered">
+      <div class="modal-content">
+        <div class="card">
+          <ul class="list-group list-group-flush text-center">
+            <li class="list-group-item"><a href="/deletepost/<%=posts.dataValues.id%>" class="text-danger">Delete</a>
+            </li>
+            <li class="list-group-item" data-bs-dismiss="modal">Share to...</li>
+            <li class="list-group-item" data-bs-dismiss="modal">Copy link</li>
+            <li class="list-group-item" data-bs-dismiss="modal">Embed</li>
+            <li class="list-group-item" data-bs-dismiss="modal">Cancel</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <% include partial/modal.ejs %>
+    <% include partial/footer.ejs %>

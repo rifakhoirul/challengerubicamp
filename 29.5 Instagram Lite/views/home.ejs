@@ -1,176 +1,177 @@
-<!DOCTYPE html>
-<html>
-
-<head>
-  <title>
-    Picturico
-  </title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"
-    integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
-    integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p"
-    crossorigin="anonymous"></script>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.1/font/bootstrap-icons.css">
-  <link href='https://fonts.googleapis.com/css?family=Sofia' rel='stylesheet'>
-  <link rel='stylesheet' href='/stylesheets/style.css' />
-</head>
-<style>
-  input.middle:focus {
-    outline-width: 5px;
-  }
-</style>
-
-<body>
-  <nav class="navbar navbar-expand-lg bg-primary navbar-dark fixed-top">
-    <div class="container">
-      <a href="#" class="navbartitle text-light">Picturico</a>
-      <form class="navbar-nav ms-auto" id="search">
-        <input type="text" class="form-control" placeholder="Search">
-      </form>
-      <div class="navbar-nav ms-auto">
-        <div>
-          <a href="#" class="fs-4 header-right"><i class="bi bi-plus-circle link-light"></i></a>
-          <a href="#" class="fs-4 header-right"><i class="bi bi-house-door link-light"></i></a>
-          <a href="#" class="fs-4 header-right"><i class="bi bi-heart link-light"></i></a>
-          <a href="#" class="fs-4 header-right"><i class="bi bi-person link-light"></i></a>
-        </div>
-      </div>
-    </div>
-  </nav>
+<% include partial/header.ejs %>
 
   <section>
     <div class="container">
       <div class="d-flex flex-column align-items-center">
-        <div class="card mb-3" style="max-width: 400px;">
-          <div class="card-header bg-transparent">
-            <div class="row justify-content-between">
-              <div class="col-4">
-                <i class="bi bi-person-circle align-items-start"></i> username
+
+        <% posts.forEach((item,i)=> { %>
+          <%if(item.dataValues.file.length>1){%>
+            <div class="card mb-3" style="max-width: 600px;">
+              <div class="card-header bg-transparent">
+                <div class="row justify-content-between mb-1 mt-1 align-items-center">
+                  <div class="col-4">
+                    <a class="usernamePost" href="/profile/<%=item.dataValues.User.dataValues.username%>"><img
+                        src="<%=item.dataValues.User.dataValues.Profile.dataValues.profilepic.location%>"
+                        class="miniProfilePic me-2"><strong>
+                        <%=item.dataValues.User.dataValues.username%>
+                      </strong>
+                    </a>
+                  </div>
+                  <div class="col-4 text-end">
+                    <i class="bi bi-three-dots" data-bs-toggle="modal" data-bs-target="#onPostModal"></i>
+                  </div>
+                </div>
+              </div>
+              <div id="carousel<%=i%>" class="carousel slide" data-bs-ride="carousel" data-bs-interval="false">
+                <div class="carousel-indicators">
+                  <% item.dataValues.file.forEach((element,index)=>{ %>
+                    <button type="button" data-bs-target="#carousel<%=i%>" data-bs-slide-to="<%= index %>"
+                      class=<%=index==0 ? "active" : "" %>></button>
+                    <% }) %>
+                </div>
+                <div class="carousel-inner">
+                  <% item.dataValues.file.forEach((element,index)=>{ %>
+                    <div class="carousel-item <%= index == 0 ? 'active':''%>">
+                      <img src="<%= element.location %>" class="d-block w-100" alt="...">
+                    </div>
+                    <% }) %>
+                </div>
+                <button class="carousel-control-prev" type="button" data-bs-target="#carousel<%=i%>"
+                  data-bs-slide="prev">
+                  <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                  <span class="visually-hidden">Previous</span>
+                </button>
+                <button class="carousel-control-next" type="button" data-bs-target="#carousel<%=i%>"
+                  data-bs-slide="next">
+                  <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                  <span class="visually-hidden">Next</span>
+                </button>
+              </div>
+              <div class="card-body text-dark">
+                <div class="row justify-content-between">
+                  <div class="col-4">
+                    <%if(item.dataValues.likes){%>
+                      <h4><i class="bi <%=item.dataValues.likes.indexOf(useridLogged)<0?'bi-heart':'bi-heart-fill'%>"
+                          postId="<%=item.dataValues.id%>"></i><span class="ms-3"></span><i class="bi bi-chat-square"><a
+                            href=></a></i><span class="ms-3"></span><i class="bi bi-send" data-bs-toggle="modal"
+                          data-bs-target="#sendModal"></i></h4>
+                  </div>
+                  <div class="col-4 text-end">
+                    <h4><i class="bi bi-bookmark"></i></h4>
+                  </div>
+                </div>
+                <strong>
+                  <%=item.dataValues.likes.length%> likes
+                </strong>
+                <%}else{%>
+                  <h4><i class="bi bi-heart" postId="<%= item.dataValues.id %>"></i><span class="ms-3"></span><i
+                      class="bi bi-chat-square"></i><span class="ms-3"></span><i class="bi bi-send"
+                      data-bs-toggle="modal" data-bs-target="#sendModal"></i></h4>
               </div>
               <div class="col-4 text-end">
-                <i class="bi bi-three-dots" data-bs-toggle="modal" data-bs-target="#exampleModal"></i>
+                <h4><i class="bi bi-bookmark"></i></h4>
               </div>
             </div>
-          </div>
-          <img src="images/1.jpeg" class="card-img-top" alt="img">
-          <div class="card-body text-dark">
-            <div class="row justify-content-between">
-              <div class="col-4">
-                <h5><i class="bi bi-heart"></i><span class="ms-3"></span><i class="bi bi-chat-square"></i><span
-                    class="ms-3"></span><i class="bi bi-send"></i></h5>
+            <%}%>
+              <div class="mt-1 mb-1">
+                <p class="card-text">
+                  <a class="usernamePost me-2" href="/profile/<%=item.dataValues.User.dataValues.username%>"><strong>
+                      <%=item.dataValues.User.dataValues.username%>
+                    </strong>
+                  </a>
+                  <%= item.dataValues.caption %>
+                </p>
               </div>
-              <div class="col-4 text-end">
-                <h5><i class="bi bi-bookmark"></i></h5>
+              <div>
+                <a href="/posts/<%= item.dataValues.id %>" style="color:grey">View all comments</a>
               </div>
-            </div>
-            <div class="mt-1">
-              <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's
-                content.</p>
-            </div>
-          </div>
-          <div class="card-footer bg-transparent">
-            <div class="row">
-              <div class="col-12">
-                <form>
-                  <input type="text" style="border:none" placeholder="Add a comment...">
-                </form>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="card mb-3" style="max-width: 400px;">
-          <div class="card-header bg-transparent">
-            <div class="row justify-content-between">
-              <div class="col-4">
-                <i class="bi bi-person-circle align-items-start"></i> username
-              </div>
-              <div class="col-4 text-end">
-                <i class="bi bi-three-dots"></i>
-              </div>
-            </div>
-          </div>
-          <img src="images/3.jpeg" class="card-img-top" alt="img">
-          <div class="card-body text-dark">
-            <div class="row justify-content-between">
-              <div class="col-4">
-                <h5><i class="bi bi-heart"></i><span class="ms-3"></span><i class="bi bi-chat-square"></i><span
-                    class="ms-3"></span><i class="bi bi-send"></i></h5>
-              </div>
-              <div class="col-4 text-end">
-                <h5><i class="bi bi-bookmark"></i></h5>
-              </div>
-            </div>
-            <div class="mt-1">
-              <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's
-                content.</p>
-            </div>
-          </div>
-          <div class="card-footer bg-transparent">
-            <div class="row">
-              <div class="col-12">
-                <form>
-                  <input type="text" style="border:none" placeholder="Add a comment...">
-                </form>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="card mb-3" style="max-width: 400px;">
-          <div class="card-header bg-transparent">
-            <div class="row justify-content-between">
-              <div class="col-4">
-                <i class="bi bi-person-circle align-items-start"></i> username
-              </div>
-              <div class="col-4 text-end">
-                <i class="bi bi-three-dots"></i>
-              </div>
-            </div>
-          </div>
-          <img src="images/5.jpeg" class="card-img-top" alt="img">
-          <div class="card-body text-dark">
-            <div class="row justify-content-between">
-              <div class="col-4">
-                <h5><i class="bi bi-heart"></i><span class="ms-3"></span><i class="bi bi-chat-square"></i><span
-                    class="ms-3"></span><i class="bi bi-send"></i></h5>
-              </div>
-              <div class="col-4 text-end">
-                <h5><i class="bi bi-bookmark"></i></h5>
-              </div>
-            </div>
-            <div class="mt-1">
-              <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's
-                content.</p>
-            </div>
-          </div>
-          <div class="card-footer bg-transparent">
-            <div class="row">
-              <div class="col-12">
-                <form>
-                  <input type="text" style="border:none" placeholder="Add a comment...">
-                </form>
-              </div>
-            </div>
+      </div>
+      <div class="card-footer bg-transparent">
+        <div class="row">
+          <div class="col-12">
+            <form class="comment" postId="<%= item.dataValues.id %>">
+              <input type="text" style="border:none" placeholder="Add a comment...">
+            </form>
           </div>
         </div>
       </div>
     </div>
+    <%} else {%>
+      <div class="card mb-3" style="max-width: 600px;">
+        <div class="card-header bg-transparent">
+          <div class="row justify-content-between mb-1 mt-1 align-items-center">
+            <div class="col-4">
+              <a class="usernamePost" href="/profile/<%=item.dataValues.User.dataValues.username%>"><img
+                  src="<%=item.dataValues.User.dataValues.Profile.dataValues.profilepic.location%>"
+                  class="miniProfilePic me-2"><strong>
+                  <%=item.dataValues.User.dataValues.username%>
+                </strong>
+              </a>
+            </div>
+            <div class="col-4 text-end">
+              <i class="bi bi-three-dots" data-bs-toggle="modal" data-bs-target="#onPostModal"></i>
+            </div>
+          </div>
+        </div>
+        <img src="<%= item.dataValues.file[0].location %>" class="card-img-top" alt="img">
+        <div class="card-body text-dark">
+          <div class="row justify-content-between">
+            <div class="col-4">
+              <%if(item.dataValues.likes){%>
+                <h4><i class="bi <%=item.dataValues.likes.indexOf(useridLogged)<0?'bi-heart':'bi-heart-fill'%>"
+                    postId="<%=item.dataValues.id%>"></i><span class="ms-3"></span><i
+                    class="bi bi-chat-square"></i><span class="ms-3"></span><i class="bi bi-send" data-bs-toggle="modal"
+                    data-bs-target="#sendModal"></i></h4>
+            </div>
+            <div class="col-4 text-end">
+              <h4><i class="bi bi-bookmark"></i></h4>
+            </div>
+          </div>
+          <strong>
+            <%=item.dataValues.likes.length%> likes
+          </strong>
+          <%}else{%>
+            <h4><i class="bi bi-heart" postId="<%= item.dataValues.id %>"></i><span class="ms-3"></span><i
+                class="bi bi-chat-square"></i><span class="ms-3"></span><i class="bi bi-send" data-bs-toggle="modal"
+                data-bs-target="#sendModal"></i></h4>
+        </div>
+        <div class="col-4 text-end">
+          <h4><i class="bi bi-bookmark"></i></h4>
+        </div>
+      </div>
+      <%}%>
+        <div class="mt-1 mb-1">
+          <p class="card-text">
+            <a class="usernamePost me-2" href="/profile/<%=item.dataValues.User.dataValues.username%>"><strong>
+                <%=item.dataValues.User.dataValues.username%>
+              </strong>
+            </a>
+            <%= item.dataValues.caption %>
+          </p>
+        </div>
+        <div>
+          <a href="/posts/<%= item.dataValues.id %>" style="color:grey">View all comments</a>
+        </div>
+        </div>
+        <div class="card-footer bg-transparent">
+          <div class="row">
+            <div class="col-12">
+              <form class="comment" postId="<%= item.dataValues.id %>">
+                <input type="text" style="border:none" placeholder="Add a comment...">
+              </form>
+            </div>
+          </div>
+        </div>
+        </div>
+        <%}%>
+          <% }); %>
+            </div>
+            </div>
   </section>
 
-  <!-- Modal -->
-  <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-sm modal-dialog-centered">
-      <div class="modal-content">
-        <div class="card" >
-          <ul class="list-group list-group-flush">
-            <li class="list-group-item">An item</li>
-            <li class="list-group-item">A second item</li>
-            <li class="list-group-item">A third item</li>
-          </ul>
-        </div>
-      </div>
-    </div>
-  </div>
 
-</body>
 
-</html>
+
+  <% include partial/modal.ejs %>
+
+    <% include partial/footer.ejs %>

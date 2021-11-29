@@ -16,10 +16,9 @@ module.exports = (sequelize, DataTypes) => {
     }
   };
   Posts.init({
-    userid: DataTypes.INTEGER,
     caption: DataTypes.TEXT,
     likes: DataTypes.ARRAY(DataTypes.INTEGER),
-    file: DataTypes.JSON
+    file: DataTypes.ARRAY(DataTypes.JSON)
   }, {
     sequelize,
     modelName: 'Posts',

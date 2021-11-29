@@ -11,16 +11,6 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      userid: {
-        type: Sequelize.INTEGER,
-        allowNull: false,
-        references: {
-          model: 'Users',
-          key: 'id'
-        },
-        onUpdate: 'cascade',
-        onDelete: 'cascade'
-      },
       name: {
         type: Sequelize.STRING
       },
@@ -37,7 +27,12 @@ module.exports = {
         type: Sequelize.STRING
       },
       profilepic: {
-        type: Sequelize.JSON
+        type: Sequelize.JSON,
+        defaultValue: {
+          name:'default-profile-picture.png',
+          type:'image/png',
+          location:'/images/default-profile-picture.png'
+        }
       },
       createdAt: {
         allowNull: false,
@@ -46,7 +41,17 @@ module.exports = {
       updatedAt: {
         allowNull: false,
         type: Sequelize.DATE
-      }
+      },
+      UserId: {
+        type: Sequelize.INTEGER,
+        allowNull: false,
+        references: {
+          model: 'Users',
+          key: 'id'
+        },
+        onUpdate: 'cascade',
+        onDelete: 'cascade'
+      },
     });
   },
   down: async (queryInterface, Sequelize) => {

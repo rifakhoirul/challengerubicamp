@@ -14,6 +14,7 @@ module.exports = (sequelize, DataTypes) => {
       Users.hasOne(models.Profile)
       Users.hasMany(models.Posts)
       Users.hasMany(models.Comments)
+      Users.hasMany(models.Notifications)
     }
   };
   Users.init({
