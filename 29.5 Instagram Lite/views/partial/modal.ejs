@@ -1,4 +1,4 @@
-<!-- Modal On Post -->
+<!-- Setting -->
 <div class="modal fade" id="settingModal" tabindex="-1" aria-labelledby="settingModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-sm modal-dialog-centered">
         <div class="modal-content">
@@ -11,7 +11,7 @@
     </div>
 </div>
 
-<!-- Modal On Post -->
+<!-- Share -->
 <div class="modal fade" id="sendModal" tabindex="-1" aria-labelledby="sendModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-sm modal-dialog-centered">
         <div class="modal-content">
@@ -24,7 +24,7 @@
     </div>
 </div>
 
-<!-- Modal On Post -->
+<!-- On Post -->
 <div class="modal fade" id="onPostModal" tabindex="-1" aria-labelledby="onPostModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-sm modal-dialog-centered">
         <div class="modal-content">
@@ -43,48 +43,7 @@
     </div>
 </div>
 
-<!-- Modal New Post -->
-<div class="modal fade" id="newPostModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
-    aria-labelledby="newPostModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <form id="form-add-issue" action="/add" method="POST" encType="multipart/form-data">
-                <div class="modal-header" >
-                    <h5 class="modal-title" id="newPostModalLabel">New Post</h5>
-                </div>
-                <div class="modal-body">
-                    <section class="">
-                        <div class="container">
-                            <div class="row justify-content-center">
-                                <div class="col">
-                                    <div class="input-group mb-3 file-input">
-                                        <input type="file" data-id="0" id="files0" name="files0"
-                                            class="form-control file-preview" aria-describedby="inputGroupFileAddon04"
-                                            aria-label="Upload" required />
-                                        <button id="delete-file-input" type="button" class="btn btn-outline-danger ms-3"
-                                            hidden="">-</button>
-                                    </div>
-                                    <button id="add-file-form" type="button" class="btn btn-outline-primary">Add more
-                                        image</button>
-                                    <div class="form-floating mb-3 mt-3">
-                                        <textarea class="form-control" placeholder="Leave a comment here"
-                                            id="floatingTextarea2" name="caption" style="height: 100px"></textarea>
-                                        <label for="floatingTextarea2">Write a caption...</label>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </section>
 
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><i class="bi bi-x-lg"></i> Cancel</button>
-                    <button type="submit" class="btn btn-primary"><i class="bi bi-check-circle"></i> Post</button>
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
 
 <!-- Notification Modal -->
 <div class="modal fade" id="notificationModal" tabindex="-1" aria-labelledby="notificationModalLabel"

@@ -1,12 +1,12 @@
 <script>
     $(document).ready(function () {
-        $(".carousel-control-next-icon").hide();
-        $(".carousel-control-prev-icon").hide();
-        $(".carousel").hover(function () {
-            $(".carousel-control-next-icon").toggle();
-            $(".carousel-control-prev-icon").toggle();
-        });
         $("body").on("click", "h4 .bi-heart", function () {
+            if ($(this).parent().parent().parent().next().hasClass("mt-1")) {
+                $(this).parent().parent().parent().after('<strong>1 like</strong>')
+            } else {
+                let replace = Number($(this).parent().parent().parent().next().text().split(' ')[0]) + 1 + ' likes'
+                $(this).parent().parent().parent().next().text(replace)
+            }
             let postId = $(this).attr("postId")
             $.ajax({
                 method: "GET",
@@ -19,6 +19,13 @@
             $(this).removeClass("bi-heart").addClass("bi-heart-fill")
         })
         $("body").on("click", "h4 .bi-heart-fill", function () {
+            if ($(this).parent().parent().parent().next().text() == '1 like') {
+                $(this).parent().parent().parent().next().remove()
+            } else {
+                let replace = Number($(this).parent().parent().parent().next().text().split(' ')[0]) - 1 + ' likes'
+                console.log(replace)
+                $(this).parent().parent().parent().next().text(replace)
+            }
             let postId = $(this).attr("postId")
             let option = 'remove'
             $.ajax({
@@ -31,18 +38,13 @@
             });
             $(this).removeClass("bi-heart-fill").addClass("bi-heart")
         })
-        $("body").on("submit", ".comment", function () {
-            let postId = $(this).attr("postId")
-            event.preventDefault()
-            let addComment = $(this).children().val()
-            $.ajax({
-                method: "GET",
-                url: "/comment",
-                data: { postId, addComment }
-            }).done(function (data) {
-            });
-            $(this).children().val('')
-        })
+
+        $(".carousel-control-next-icon").hide();
+        $(".carousel-control-prev-icon").hide();
+        $(".carousel").hover(function () {
+            $(".carousel-control-next-icon").toggle();
+            $(".carousel-control-prev-icon").toggle();
+        });
         $("body").on("click", "h4 .bi-bookmark", function () {
             $(this).removeClass("bi-bookmark").addClass("bi-bookmark-check-fill")
         })
@@ -61,15 +63,7 @@
         $("body").on("click", ".bi-chat-square-fill", function () {
             $(this).removeClass("bi-chat-square-fill").addClass("bi-chat-square")
         })
-
-        bi-chat-square
-        // $(window).scroll(function () {
-        //     if ($(window).scrollTop() + $(window).height() == $(document).height()) {
-        //         alert("bottom!");
-        //     }
-        // });
     })
-
     let countFileInput = 1;
     $("#form-add-issue").on('click', '#add-file-form', function (event) {
         event.preventDefault()
@@ -80,7 +74,6 @@
           </div>
       `)
         countFileInput++
-        console.log('hai')
     })
 
     $("#form-add-issue").on('click', '#delete-file-input', function (event) {
@@ -109,6 +102,7 @@
             case "jpeg":
             case "png":
             case "svg":
+            case "webp":
 
                 var reader = new FileReader();
                 reader.onload = function () {
@@ -137,6 +131,7 @@
                 break;
         }
     })
+    
 </script>
 </body>
 

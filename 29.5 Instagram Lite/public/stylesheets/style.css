@@ -18,29 +18,6 @@ body::before{
   font-size:26px;
 }
 
-@media(min-width:768px){
-  .bg-index{
-    height:100%;
-  }
-}
-@media(max-width:768px){
-  .col-4 img{
-    height: 150px;
-    width: 150px
-  }
-  
-  #search{
-    display:none;
-  }
-  #profilePage{
-    text-align: center;
-  }
-  #profileCounter{
-    display:flex;
-    justify-content: center;
-  }
-}
-
 .col-3 img{
   object-fit: cover;
 }
@@ -74,6 +51,15 @@ h4 i, div i, .list-group-item{
   object-fit: cover;
 }
 
+.navProfilePic{
+  height: 28px;
+  width: 28px;
+  max-height: 28px;
+  max-width: 28px;
+  border-radius: 100%;
+  object-fit: cover;
+}
+
 .bi-heart-fill{
   color:#DC3545;
 }
@@ -81,4 +67,51 @@ h4 i, div i, .list-group-item{
 .modal-header, .btn-primary{
   background-color:#6610f2;
   color:white;
+}
+
+.sizePic{
+  width:600px;
+  height:auto;
+}
+
+.commentPostPage{
+  display: block;
+  height: 200px;
+  overflow-x:auto;
+  white-space: nowrap
+}
+
+#moreCommentPage{
+  color:grey;
+  cursor:pointer;
+}
+#moreCommentPage:hover{
+  color:black;
+}
+
+@media(min-width:768px){
+  .bg-index{
+    height:100%;
+  }
+}
+@media(max-width:768px){
+  .col-4 img{
+    height: 150px;
+    width: 150px
+  }
+  
+  #search{
+    display:none;
+  }
+  #profilePage{
+    text-align: center;
+  }
+  #profileCounter{
+    display:flex;
+    justify-content: center;
+  }
+  .sizePic{
+    width:auto;
+    height:auto;
+  }
 }

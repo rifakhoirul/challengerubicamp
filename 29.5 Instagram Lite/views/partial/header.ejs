@@ -19,25 +19,34 @@
 <body>
   <nav class="navbar navbar-expand-lg navbar-dark fixed-top" style="background-color:#6610f2">
     <div class="container">
-      <a href="#" class="navbartitle text-light">Picturico</a>
+      <a href="/home" class="navbartitle text-light">Picturico</a>
       <!-- <form class="navbar-nav ms-auto" id="search">
         <input type="text" class="form-control" placeholder="Search">
       </form> -->
-      <div class="navbar-nav ms-auto">
-        <div>
+      <div class="navbar-nav ms-auto ">
+        <div class="row align-items-center">
           <%if(url=="/home"){%>
-            <a class="fs-4 header-right" data-bs-toggle="modal" data-bs-target="#newPostModal"><i
-                class="bi bi-plus-circle link-light"></i></a>
+            <div class="col">
+              <a class="fs-4 header-right" data-bs-toggle="modal" data-bs-target="#newPostModal"><i
+                  class="bi bi-plus-circle link-light"></i></a>
+            </div>
             <%}%>
               <%if(url!="/home"){%>
-                <a href="/home" class="fs-4 header-right"><i class="bi bi-house-door link-light"></i></a>
+                <div class="col">
+                  <a href="/home" class="fs-4 header-right"><i class="bi bi-house-door link-light"></i></a>
+                </div>
                 <%}%>
-                  <a class="fs-4 header-right" data-bs-toggle="modal" data-bs-target="#notificationModal"><i
-                      class="bi bi-heart link-light"></i></a>
-                  <a href="/profile/<%=usernameLogged%>" class="fs-4 header-right"><i
-                      class="bi bi-person link-light"></i></a>
-                  <a data-bs-toggle="modal" data-bs-target="#settingModal" class="fs-4 header-right"><i
+                  <div class="col">
+                    <a class="fs-4 header-right" data-bs-toggle="modal" data-bs-target="#notificationModal"><i
+                        class="bi bi-heart link-light"></i></a>
+                  </div>
+                  <div class="col">
+                    <a data-bs-toggle="modal" data-bs-target="#settingModal" class="fs-4 header-right"><i
                       class="bi bi-gear link-light"></i></a>
+                  </div>
+                  <div class="col">
+                    <a href="/profile/<%=usernameLogged%>"><img class="navProfilePic" src="<%=profilePic%>" alt="profilePic"></a>
+                  </div>
         </div>
       </div>
     </div>

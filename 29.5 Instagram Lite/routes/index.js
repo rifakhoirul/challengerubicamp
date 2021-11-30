@@ -71,7 +71,10 @@ router.get('/logout', function (req, res, next) {
   })
 });
 
+let limitter,offsetter
 router.get('/home', checkLogIn, async function (req, res, next) {
+  limitter = 3
+  offsetter = 0
   try {
     let posts = await models.Posts.findAll({
       include: {
@@ -80,14 +83,71 @@ router.get('/home', checkLogIn, async function (req, res, next) {
           model: models.Profile,
         }
       },
-      order: [['id', 'DESC']]
+      order: [['id', 'DESC']],
+      limit: limitter,
+      offset: offsetter
+    });
+    let comments = await models.Comments.findAll({
+      include: [{
+        model: models.Users,
+        include: {
+          model: models.Profile,
+        }
+      }],
+      order: [['id', 'ASC']]
+    })
+    let profilePic = await models.Profile.findAll({
+      where:{
+        UserId: req.session.user.id
+      }
     });
     res.render('home', {
       title: 'Home',
       posts,
+      comments,
       usernameLogged: req.session.user.username,
       useridLogged: req.session.user.id,
       url: req.url,
+      commentLimitter:0,
+      profilePic:profilePic[0].dataValues.profilepic.location
+    });
+  } catch (error) {
+    console.log(error)
+    res.status(500).json(error)
+  }
+});
+
+router.get('/timeline', checkLogIn, async function (req, res, next) {
+  offsetter += 3;
+  try {
+    let posts = await models.Posts.findAll({
+      include: {
+        model: models.Users,
+        include: {
+          model: models.Profile,
+        }
+      },
+      order: [['id', 'DESC']],
+      limit: limitter,
+      offset: offsetter
+    });
+    let comments = await models.Comments.findAll({
+      include: [{
+        model: models.Users,
+        include: {
+          model: models.Profile,
+        }
+      }],
+      order: [['id', 'ASC']]
+    })
+    res.json({
+      title: 'Home',
+      posts,
+      comments,
+      usernameLogged: req.session.user.username,
+      useridLogged: req.session.user.id,
+      url: req.url,
+      offsetter,
     });
   } catch (error) {
     console.log(error)
@@ -144,6 +204,13 @@ router.get('/profile/:id', checkLogIn, async function (req, res, next) {
         }
       }],
     });
+    console.log(profile[0].dataValues.id)
+    console.log(profile[0].dataValues.name)
+    let profilePic = await models.Profile.findAll({
+      where:{
+        UserId: req.session.user.id
+      }
+    });
     res.render('profile', {
       title: req.params.id,
       posts,
@@ -151,6 +218,7 @@ router.get('/profile/:id', checkLogIn, async function (req, res, next) {
       username: req.params.id,
       usernameLogged: req.session.user.username,
       url: req.url,
+      profilePic:profilePic[0].dataValues.profilepic.location
     });
   } catch (error) {
     console.log(error)
@@ -159,13 +227,6 @@ router.get('/profile/:id', checkLogIn, async function (req, res, next) {
 });
 
 router.post('/profile/:id', checkLogIn, async function (req, res, next) {
-  console.log(req.params.id)
-  console.log(req.body)
-  console.log(req.files)
-  req.body.editName
-  req.body.editBio
-  req.body.editWebsite
-
   let jsonFile;
   if (!req.files || Object.keys(req.files).length === 0) {
     jsonFile = {
@@ -199,11 +260,12 @@ router.post('/profile/:id', checkLogIn, async function (req, res, next) {
     console.log(error)
     res.status(500).json(error)
   }
-
   res.redirect(`/profile/${req.params.id}`);
 });
 
 router.get('/posts/:id', checkLogIn, async function (req, res, next) {
+  limitter = 5
+  offsetter = 0
   try {
     let posts = await models.Posts.findAll({
       where: {
@@ -216,7 +278,6 @@ router.get('/posts/:id', checkLogIn, async function (req, res, next) {
         }
       }],
     });
-
     let comments = await models.Comments.findAll({
       where: {
         PostId: req.params.id
@@ -225,17 +286,59 @@ router.get('/posts/:id', checkLogIn, async function (req, res, next) {
         model: models.Users,
         include: {
           model: models.Profile,
-        }
+        },
       }],
-      order: [['id', 'ASC']]
+      limit:limitter,
+      offset:offsetter,
+      order: [['id', 'DESC']]
     })
+    let commentsLength = await models.Comments.findAll({
+      where: {
+        PostId: req.params.id
+      },
+    })
+    commentsLength = commentsLength.length
+    let profilePic = await models.Profile.findAll({
+      where:{
+        UserId: req.session.user.id
+      }
+    });
     res.render('posts', {
       title: 'Post',
-      username: req.params.id,
       usernameLogged: req.session.user.username,
+      useridLogged: req.session.user.id,
       posts: posts[0],
       comments,
+      commentsLength,
       url: req.url,
+      profilePic:profilePic[0].dataValues.profilepic.location
+    });
+  } catch (error) {
+    console.log(error)
+    res.status(500).json(error)
+  }
+});
+
+router.get('/commentpage/:id', checkLogIn, async function (req, res, next) {
+  offsetter += 5;
+  try {
+    let comments = await models.Comments.findAll({
+      where: {
+        PostId: req.params.id
+      },
+      include: [{
+        model: models.Users,
+        include: {
+          model: models.Profile,
+        },
+      }],
+      limit:limitter,
+      offset:offsetter,
+      order: [['id', 'DESC']]
+    })
+    
+    res.json({
+      comments,
     });
   } catch (error) {
     console.log(error)
@@ -244,7 +347,6 @@ router.get('/posts/:id', checkLogIn, async function (req, res, next) {
 });
 
 router.get('/likes', checkLogIn, async function (req, res, next) {
-  console.log(req.query)
   try {
     let posts = await models.Posts.findAll({
       where: {
@@ -275,13 +377,21 @@ router.get('/likes', checkLogIn, async function (req, res, next) {
 });
 
 router.get('/comment', checkLogIn, async function (req, res, next) {
-  console.log(req.query)
   try {
     await models.Comments.create({
       comment: req.query.addComment,
       PostId: req.query.postId,
       UserId: req.session.user.id,
     });
+    let user = await models.Profile.findAll({
+      where:{
+        UserId: req.session.user.id
+      }
+    });
+    res.json({
+      username: req.session.user.username,
+      user
+    })
   } catch (error) {
     console.log(error)
     res.status(500).json(error)
@@ -312,32 +422,3 @@ function checkLogIn(req, res, next) {
   }
 
 };
-
-// router.put('/:id', async function (req, res, next) {
-//   res.render('redirect');
-// })
-
-  // try {
-  // await models.Users.create({
-  //   email: 'riko@mail.com',
-  //   password: '123',
-  //   username: 'riko'
-  // });
-
-  //const todo = await models.Todo.create({...req.body})
-  //res.json(todo)
-
-  //   const users = await models.Users.findAll({
-  //     include: [
-  //       {
-  //         model: models.Todo
-  //       }
-  //     ]
-  //   });
-
-    // const users = await models.Users.findAll();
-    // console.log(users[1].dataValues)
-  // } catch (error) {
-  //   console.log(error)
-  //   res.status(500).json(error)
-  // }

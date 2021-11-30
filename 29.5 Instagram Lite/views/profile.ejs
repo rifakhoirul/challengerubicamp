@@ -76,6 +76,7 @@ aria-labelledby="ediProfileModalLabel" aria-hidden="true">
     <form id="form-add-issue" action="/profile/<%=usernameLogged%>" method="POST" encType="multipart/form-data">
       <div class="modal-body">
         <label for="ediitProfilePic" class="form-label">Profile Photo</label>
+        <div data-id="img-preview" class="text-center"><img id="imgOld" src="<%=profile[0].dataValues.profilepic.location%>" class="mb-3" style="max-width:30%"></div>
         <div class="mb-3 file-input">
           <input type="file" data-id="0" id="ediitProfilePic" name="files0" class="form-control file-preview" />
           <button id="delete-file-input" type="button" class="btn btn-outline-danger mt-2" hidden="">Remove
@@ -83,15 +84,15 @@ aria-labelledby="ediProfileModalLabel" aria-hidden="true">
         </div>
         <div class="mb-3">
           <label for="editName" class="form-label">Name</label>
-          <input type="text" class="form-control" id="editName" name="editName">
+          <input type="text" class="form-control" id="editName" name="editName" value="<%=profile[0].dataValues.name?profile[0].dataValues.name:''%>">
         </div>
         <div class="mb-3">
           <label for="editBio" class="form-label">Bio</label>
-          <textarea type="text" class="form-control" id="editBio" name="editBio"></textarea>
+          <textarea type="text" class="form-control" id="editBio" name="editBio"><%=profile[0].dataValues.name?profile[0].dataValues.bio:''%></textarea>
         </div>
         <div class="mb-3">
           <label for="editWebsite" class="form-label">Website</label>
-          <input type="text" class="form-control" id="editWebsite" name="editWebsite">
+          <input type="text" class="form-control" id="editWebsite" name="editWebsite" value="<%=profile[0].dataValues.name?profile[0].dataValues.website:''%>">
         </div>
       </div>
       <div class="modal-footer">
