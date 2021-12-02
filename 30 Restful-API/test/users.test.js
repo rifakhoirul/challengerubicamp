@@ -6,7 +6,7 @@ const User = require('../models/User');
 chai.should();
 chai.use(chaiHTTP);
 
-describe('users', function () {
+describe('Testing Users', async function () {
     let token
 
     // beforeEach(function (done) {
@@ -69,7 +69,6 @@ describe('users', function () {
             .post('/api/users/check')
             .send({ token: token })
             .end(function (err, res) {
-                console.log(res.body)
                 res.should.have.status(200);
                 res.should.be.json;
                 res.body.should.be.a('object');
