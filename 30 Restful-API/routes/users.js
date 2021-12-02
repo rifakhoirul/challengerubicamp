@@ -47,17 +47,20 @@ router.post('/login', async function (req, res, next) {
 
 router.post('/check', async function (req, res, next) {
   let check
-  let token = req.header('Authorization');
-  token = token.split(' ')[1];
-  if (token == req.body.token) {
-    check = true
-  } else {
-    check = false
+  try {
+    const user = await User.findOne({ token: req.body.token })
+    if(user){
+      check = true
+    } else {
+      check = false
+    }
+    res.json(new Response({ valid: check }))
+  } catch (err) {
+    res.status(500).json(new Response({ message: err }, false))
   }
-  res.json(new Response({ valid: check }))
 });
 
-router.get('/destroy', async function (req, res, next) {
+router.get('/destroy', helpers.isLogged, async function (req, res, next) {
   let token = req.header('Authorization');
   token = token.split(' ')[1];
   const { email } = jwt.verify(token, key.privatekey)
@@ -74,7 +77,7 @@ router.get('/destroy', async function (req, res, next) {
 });
 
 //nonsoal
-router.get('/', helpers.isLogged, async function (req, res, next) {
+router.get('/', async function (req, res, next) {
   try {
     const users = await User.find()
     res.json(new Response(users))
