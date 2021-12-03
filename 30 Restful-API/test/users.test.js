@@ -6,7 +6,7 @@ const User = require('../models/User');
 chai.should();
 chai.use(chaiHTTP);
 
-describe('Testing Users', async function () {
+describe('Testing Users', function () {
     let token
 
     // beforeEach(function (done) {

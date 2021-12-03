@@ -47,7 +47,7 @@ router.put('/:id', helpers.isLogged, async function (req, res, next) {
 });
 
 //4 ADD
-router.post('/', async function (req, res, next) {
+router.post('/', helpers.isLogged, async function (req, res, next) {
     try {
         const data = await Data.create({ ...req.body })
         res.json(new Response({ message: 'Data have been added', _id: data._id, letter: data.letter, frequency: data.frequency }))

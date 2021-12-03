@@ -2,108 +2,185 @@ const chai = require('chai');
 const chaiHTTP = require('chai-http');
 const server = require('../app');
 const Data = require('../models/Data');
+const User = require('../models/User');
 
 chai.should();
 chai.use(chaiHTTP);
 
-describe('Testing Data', async function () {
-    const user = await User.create({email: 'testingdata@mailcom', password:'123', token: 'tokentesting' })
-    console.log(user)
+describe('Testing Data', function () {
+    let id
+    //ADD
     it('ADD', function (done) {
         chai.request(server)
-            .post('/api/data/')
-            .send({ letter: 'A', frequency: 1.1})
-            .end(function (err, res) {
-                res.should.have.status(200);
-                res.should.be.json;
-                res.body.should.be.a('object');
-                res.body.status.should.equal(true);
-                res.body.data.should.be.a('object');
-                // res.body.data.should.have.property('email')
-                // res.body.data.should.have.property('token')
-                // res.body.data.email.should.equal('rubi.henjaya@gmail.com')
-                done()
+            .post('/api/users/login')
+            .send({ email: 'riko@mail.com', password: '123' })
+            .then(function (res) {
+                return chai.request(server)
+                    .post('/api/data/')
+                    .send({ letter: 'A', frequency: 1.1 })
+                    .set({ 'Authorization': `Bearer ${res.body.data.token}` })
+                    .then(function (res) {
+                        res.should.have.status(200);
+                        res.should.be.json;
+                        res.body.should.be.a('object');
+                        res.body.status.should.equal(true);
+                        res.body.data.should.be.a('object');
+                        res.body.data.should.have.property('message')
+                        res.body.data.should.have.property('_id')
+                        res.body.data.should.have.property('letter')
+                        res.body.data.should.have.property('frequency')
+                        res.body.data.message.should.equal('Data have been added')
+                        res.body.data.letter.should.equal('A')
+                        res.body.data.frequency.should.equal(1.1)
+                        id = res.body.data._id
+                        done()
+                    })
+            }).catch(function (err) {
+                done(err)
             })
     })
-    // it('#2 endpoint untuk oauth system', function (done) {
-    //     chai.request(server)
-    //         .post('/api/users/login')
-    //         .send({ email: 'rubi.henjaya@gmail.com', password: '1234' })
-    //         .end(function (err, res) {
-    //             res.should.have.status(200);
-    //             res.should.be.json;
-    //             res.body.should.be.a('object');
-    //             res.body.status.should.equal(true);
-    //             res.body.data.should.be.a('object');
-    //             res.body.data.should.have.property('email')
-    //             res.body.data.should.have.property('token')
-    //             res.body.data.email.should.equal('rubi.henjaya@gmail.com')
-    //             token = res.body.data.token
-    //             done();
-    //         })
-    // })
-    // it('#3 endpoint untuk pengecekan token yang dimiliki', function (done) {
-    //     chai.request(server)
-    //         .post('/api/users/check')
-    //         .send({ token: token })
-    //         .end(function (err, res) {
-    //             console.log(res.body)
-    //             res.should.have.status(200);
-    //             res.should.be.json;
-    //             res.body.should.be.a('object');
-    //             res.body.status.should.equal(true);
-    //             res.body.data.should.be.a('object');
-    //             res.body.data.should.have.property('valid');
-    //             res.body.data.valid.should.equal(true);
-    //             done();
-    //         })
-    // })
-    // it('#4 endpoint untuk menghancurkan token ketika melakukan logout', function (done) {
-    //     chai.request(server)
-    //         .post('/api/users/login')
-    //         .send({ email: 'rubi.henjaya@gmail.com', password: '1234' })
-    //         .then(function (res) {
-    //             return chai.request(server)
-    //                 .get('/api/users/destroy')
-    //                 .set({ 'Authorization': `Bearer ${res.body.data.token}` })
-    //                 .then(function (res) {
-    //                     res.should.have.status(200);
-    //                     res.should.be.json;
-    //                     res.body.should.be.a('object');
-    //                     res.body.status.should.equal(true);
-    //                     res.body.data.should.be.a('object');
-    //                     res.body.data.should.have.property('logout');
-    //                     res.body.data.logout.should.equal(true);
-    //                     User.deleteOne({ email: 'rubi.henjaya@gmail.com' }).then(() => {
-    //                         done()
-    //                     })
-    //                 }).catch(function (err) {
-    //                     User.deleteOne({ email: 'rubi.henjaya@gmail.com' }).then(() => {
-    //                         done(err)
-    //                     })
-    //                 })
-    //         })
-    // })
+    //READ
+    it('READ', function (done) {
+        chai.request(server)
+            .post('/api/users/login')
+            .send({ email: 'riko@mail.com', password: '123' })
+            .then(function (res) {
+                return chai.request(server)
+                    .get('/api/data/')
+                    .set({ 'Authorization': `Bearer ${res.body.data.token}` })
+                    .then(function (res) {
+                        console.log(res.body.data[res.body.data - 1])
+                        res.should.have.status(200);
+                        res.should.be.json;
+                        res.body.should.be.a('object');
+                        res.body.status.should.equal(true);
+                        res.body.data.should.be.a('array');
+                        res.body.data[res.body.data.length - 1].should.have.property('_id')
+                        res.body.data[res.body.data.length - 1].should.have.property('letter')
+                        res.body.data[res.body.data.length - 1].should.have.property('frequency')
+                        res.body.data[res.body.data.length - 1].letter.should.equal('A')
+                        res.body.data[res.body.data.length - 1].frequency.should.equal(1.1)
+                        done()
+                    })
+            }).catch(function (err) {
+                done(err)
+            })
+    })
+    //BROWSE
+    it('BROWSE', function (done) {
+        chai.request(server)
+            .post('/api/users/login')
+            .send({ email: 'riko@mail.com', password: '123' })
+            .then(function (res) {
+                return chai.request(server)
+                    .post('/api/data/search')
+                    .send({ letter: 'A', frequency: 1.1 })
+                    .set({ 'Authorization': `Bearer ${res.body.data.token}` })
+                    .then(function (res) {
+                        res.should.have.status(200);
+                        res.should.be.json;
+                        res.body.should.be.a('object');
+                        res.body.status.should.equal(true);
+                        res.body.data.should.be.a('array');
+                        res.body.data[0].should.have.property('_id')
+                        res.body.data[0].should.have.property('letter')
+                        res.body.data[0].should.have.property('frequency')
+                        res.body.data[0].letter.should.equal('A')
+                        res.body.data[0].frequency.should.equal(1.1)
+                        done()
+                    })
+            }).catch(function (err) {
+                done(err)
+            })
+    })
+    //FIND
+    it('FIND', function (done) {
+        chai.request(server)
+            .post('/api/users/login')
+            .send({ email: 'riko@mail.com', password: '123' })
+            .then(function (res) {
+                return chai.request(server)
+                    .get(`/api/data/${id}`)
+                    .set({ 'Authorization': `Bearer ${res.body.data.token}` })
+                    .then(function (res) {
+                        res.should.have.status(200);
+                        res.should.be.json;
+                        res.body.should.be.a('object');
+                        res.body.status.should.equal(true);
+                        res.body.data.should.be.a('object');
+                        res.body.data.should.have.property('message')
+                        res.body.data.should.have.property('_id')
+                        res.body.data.should.have.property('letter')
+                        res.body.data.should.have.property('frequency')
+                        res.body.data.message.should.equal('Data found')
+                        res.body.data.letter.should.equal('A')
+                        res.body.data.frequency.should.equal(1.1)
+                        done()
+                    })
+            }).catch(function (err) {
+                done(err)
+            })
+    })
+    //EDIT
+    it('EDIT', function (done) {
+        chai.request(server)
+            .post('/api/users/login')
+            .send({ email: 'riko@mail.com', password: '123' })
+            .then(function (res) {
+                return chai.request(server)
+                    .put(`/api/data/${id}`)
+                    .send({ letter: 'B', frequency: 1.2 })
+                    .set({ 'Authorization': `Bearer ${res.body.data.token}` })
+                    .then(function (res) {
+                        res.should.have.status(200);
+                        res.should.be.json;
+                        res.body.should.be.a('object');
+                        res.body.status.should.equal(true);
+                        res.body.data.should.be.a('object');
+                        res.body.data.should.have.property('message')
+                        res.body.data.should.have.property('_id')
+                        res.body.data.should.have.property('letter')
+                        res.body.data.should.have.property('frequency')
+                        res.body.data.message.should.equal('Data have been updated')
+                        res.body.data.letter.should.equal('B')
+                        res.body.data.frequency.should.equal(1.2)
+                        done()
+                    })
+            }).catch(function (err) {
+                done(err)
+            })
+    })
+    //DELETE
+    it('DELETE', function (done) {
+        chai.request(server)
+            .post('/api/users/login')
+            .send({ email: 'riko@mail.com', password: '123' })
+            .then(function (res) {
+                return chai.request(server)
+                    .delete(`/api/data/${id}`)
+                    .set({ 'Authorization': `Bearer ${res.body.data.token}` })
+                    .then(function (res) {
+                        res.should.have.status(200);
+                        res.should.be.json;
+                        res.body.should.be.a('object');
+                        res.body.status.should.equal(true);
+                        res.body.data.should.be.a('object');
+                        res.body.data.should.have.property('message')
+                        res.body.data.should.have.property('_id')
+                        res.body.data.should.have.property('letter')
+                        res.body.data.should.have.property('frequency')
+                        res.body.data.message.should.equal('Data have been deleted')
+                        res.body.data.letter.should.equal('B')
+                        res.body.data.frequency.should.equal(1.2)
+                        Data.deleteOne({ _id: id }).then(() => {
+                            done()
+                        })
+                    })
+            }).catch(function (err) {
+                Data.deleteOne({ _id: id }).then(() => {
+                    done(err)
+                })
+            })
+    })
 
-    // it('seharusnya menghasilkan apa yaa dengan metode GET', function (done) {
-    //     chai.request(server)
-    //         .get('/api/users/')
-    //         .end(function (err, res) {
-    //             console.log(res.body)
-    //             res.should.have.status(200);
-    //             res.should.be.json;
-    //             res.body.should.be.a('object');
-    //             res.body.status.should.equal(true);
-    //             res.body.data.should.be.a('array');
-    //             res.body.data[res.body.data.length-1].should.have.property('_id')
-    //             res.body.data[res.body.data.length-1].should.have.property('email')
-    //             res.body.data[res.body.data.length-1].should.have.property('password')
-    //             res.body.data[res.body.data.length-1].should.have.property('createdAt')
-    //             res.body.data[res.body.data.length-1].should.have.property('updatedAt')
-    //             res.body.data[res.body.data.length-1].should.have.property('__v')
-    //             res.body.data[res.body.data.length-1].should.have.property('_id')
-    //             res.body.data[res.body.data.length-1].email.should.equal('tes@mail.com')
-    //             done();
-    //         })
-    // })
 });
