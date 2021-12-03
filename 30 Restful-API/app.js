@@ -13,6 +13,7 @@ async function main() {
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 var dataRouter = require('./routes/data');
+var datadateRouter = require('./routes/datadate');
 
 var app = express();
 
@@ -25,5 +26,6 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/', indexRouter);
 app.use('/api/users', usersRouter);
 app.use('/api/data', dataRouter);
+app.use('/api/datadate', datadateRouter);
 
 module.exports = app;
