@@ -14,6 +14,7 @@ var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 var dataRouter = require('./routes/data');
 var datadateRouter = require('./routes/datadate');
+var mapsRouter = require('./routes/maps');
 
 var app = express();
 
@@ -27,5 +28,6 @@ app.use('/', indexRouter);
 app.use('/api/users', usersRouter);
 app.use('/api/data', dataRouter);
 app.use('/api/datadate', datadateRouter);
+app.use('/api/maps', mapsRouter);
 
 module.exports = app;
