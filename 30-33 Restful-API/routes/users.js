@@ -21,7 +21,7 @@ router.post('/register', async function (req, res, next) {
     }
   } catch (err) {
     console.log(err)
-    res.status(500).json(new Response({ message: err }, false))
+    res.status(500).json(new Response({ message: 'Email already used' }, false))
   }
 });
 

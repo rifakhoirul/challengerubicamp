@@ -29,9 +29,23 @@
           </li>
         </ul>
         <form class="form-inline my-2 my-lg-0">
-          <a class="btn btn-outline-success my-2 my-sm-0" href="#"> Logout</a>
+          <a class="btn btn-outline-success my-2 my-sm-0" @click="logout">
+            Logout</a
+          >
         </form>
       </div>
     </div>
   </nav>
 </template>
+
+<script>
+export default {
+  methods: {
+    logout:function(){
+      this.$store.dispatch("logout").then(()=>{
+        this.$router.push("/")
+      })
+    }
+  },
+};
+</script>

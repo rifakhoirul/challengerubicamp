@@ -1,6 +1,7 @@
 import Vue from "vue";
 import VueRouter from "vue-router";
 import Index from "../views/Index.vue";
+import store from '../store/index.js'
 
 Vue.use(VueRouter);
 
@@ -39,6 +40,9 @@ const routes = [
     name: "Login",
     component: () =>
       import(/* webpackChunkName: "login" */ "../views/Login.vue"),
+    meta: {
+      guest: true
+    }
   },
   {
     path: "/register",
@@ -51,24 +55,36 @@ const routes = [
     name: "Home",
     component: () =>
       import(/* webpackChunkName: "home" */ "../views/Home.vue"),
+    meta: {
+      auth: true
+    }
   },
   {
     path: "/data",
     name: "Data",
     component: () =>
       import(/* webpackChunkName: "data" */ "../views/Data.vue"),
+    meta: {
+      auth: true
+    }
   },
   {
     path: "/datadatae",
     name: "DataDate",
     component: () =>
       import(/* webpackChunkName: "datadatae" */ "../views/DataDate.vue"),
+    meta: {
+      auth: true
+    }
   },
   {
     path: "/maps",
     name: "Maps",
     component: () =>
       import(/* webpackChunkName: "maps" */ "../views/Maps.vue"),
+    meta: {
+      auth: true
+    }
   },
 ];
 
@@ -77,5 +93,25 @@ const router = new VueRouter({
   base: process.env.BASE_URL,
   routes,
 });
+
+router.beforeEach((to, from, next) => {
+  if (to.matched.some(record => record.meta.auth)) {
+    if (store.getters.isLoggedIn && store.getters.user) {
+      next()
+      return
+    }
+    next('/login')
+  }
+
+  if (to.matched.some(record => record.meta.guest)) {
+    if (!store.getters.isLoggedIn) {
+      next()
+      return
+    }
+    next('/home')
+  }
+
+  next()
+})
 
 export default router;
