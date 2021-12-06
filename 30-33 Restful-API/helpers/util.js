@@ -6,17 +6,18 @@ const Response = require('../models/Response')
 module.exports = {
     isLogged: async function (req, res, next) {
         let token = req.header('Authorization');
-        token = token.split(' ')[1]
-        const { email } = jwt.verify(token, key.privatekey)
         try {
+            if (!token) throw 'token undefined'
+            token = token.split(' ')[1]
+            const { email } = jwt.verify(token, key.privatekey)
             const user = await User.findOne({ email })
-            if(user.token){
+            if (user.token) {
                 return next()
             }
-            res.json(new Response({message: 'user not valid'}, false))
+            res.json(new Response({ message: 'user not valid' }, false))
         } catch (err) {
             console.log(err)
-            res.status(500).json(new Response({message: 'not valid'}, false))
+            res.status(500).json(new Response({ message: 'not valid' }, false))
         }
     }
 }

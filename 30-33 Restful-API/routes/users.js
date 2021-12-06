@@ -29,16 +29,25 @@ router.post('/login', async function (req, res, next) {
   const { email, password } = req.body
   try {
     const user = await User.findOne({ email })
-    user.comparePassword(password, function (err, isMatch) {
-      if (err) throw err
-      if (!isMatch) throw isMatch
-      const token = jwt.sign({ email: user.email }, key.privatekey);
-      user.token = token
-      user.save(() => {
-        const data = { email: user.email, token }
-        res.json(new Response(data))
+    console.log(user)
+    if (!user) { res.json(new Response({ message: 'User not found' }, false)) }
+    else {
+      user.comparePassword(password, function (err, isMatch) {
+        console.log(isMatch)
+        if (err) {
+          throw err
+        } else if (!isMatch) {
+          res.json(new Response({ message: 'Password not match' }, false))
+        } else {
+          const token = jwt.sign({ email: user.email }, key.privatekey);
+          user.token = token
+          user.save(() => {
+            const data = { email: user.email, token }
+            res.json(new Response(data))
+          })
+        }
       })
-    })
+    }
   } catch (err) {
     console.log(err)
     res.status(500).json(new Response({ message: err }, false))
@@ -49,7 +58,7 @@ router.post('/check', async function (req, res, next) {
   let check
   try {
     const user = await User.findOne({ token: req.body.token })
-    if(user){
+    if (user) {
       check = true
     } else {
       check = false
