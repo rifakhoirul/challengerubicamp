@@ -1,5 +1,5 @@
 <template>
-  <div class="pie container mt-5 mb-5">
+  <div class="container mt-5 mb-5">
     <div class="card">
       <router-link to="/" style="text-decoration: none">
         <div class="card-header bg-warning text-start text-white">
@@ -33,7 +33,7 @@
 import { mapState } from "vuex";
 
 export default {
-  name: "Bar",
+  name: "Pie",
   computed: {
     ...mapState({
       table: (state) => state.data.tableData,

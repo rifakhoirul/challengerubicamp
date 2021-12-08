@@ -10,14 +10,22 @@ const moment = require('moment');
 //1 BROWSE
 router.post('/search', helpers.isLogged, async function (req, res, next) {
     let { letter, frequency } = req.body
+    if (letter == '') { letter = null }
+    if (frequency == '') { frequency = null }
     try {
-        let data = await DataDate.find({
-            $or: [
-                { 'letter': letter, 'frequency': frequency },
-                { 'letter': letter },
-                { 'frequency': frequency }
-            ]
-        });
+        let data
+        if (!letter && !frequency) {
+            data = await DataDate.find();
+        } else if (letter && frequency) {
+            data = await DataDate.find({ 'letter': letter, 'frequency': frequency })
+        } else {
+            data = await DataDate.find({
+                $or: [
+                    { 'letter': letter },
+                    { 'frequency': frequency }
+                ]
+            });
+        }
         let temp = []
         data.forEach(item => {
             let element = { _id: item._id, letter: moment(item.letter).format('YYYY-MM-DD'), frequency: item.frequency }

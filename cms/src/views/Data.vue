@@ -53,7 +53,7 @@
           role="alert"
           v-if="showAddDataSuccess"
         >
-          Data added successfully.
+          {{ msg }}
           <button
             type="button"
             class="btn-close"
@@ -88,7 +88,10 @@
         </div>
       </div>
       <div>
-        <TableData @showModalParent="showModals($event)" />
+        <TableData
+          @showModalParent="showModals($event)"
+          @showInfoParent="showInfo($event)"
+        />
       </div>
     </div>
   </div>
@@ -104,6 +107,7 @@ export default {
     return {
       showAddData: false,
       showAddDataSuccess: false,
+      msg: "Data added successfully.",
       form: {
         letter: "",
         frequency: null,
@@ -134,14 +138,21 @@ export default {
     showModals(id) {
       if (id == false) {
         this.showModal = false;
+        this.msg = "Data deleted successfully";
+        this.showAddDataSuccess = true;
       } else {
         this.showModal = true;
-        this.idDelete = id;
+        this.idDelete = `Data ${id}`;
       }
     },
     searchData() {
       let data = { letter: this.searchLetter, frequency: this.searchFrequency };
       this.$store.dispatch("searchData", data);
+    },
+    showInfo(msg) {
+      console.log(msg);
+      this.msg = msg;
+      this.showAddDataSuccess = true;
     },
   },
 };

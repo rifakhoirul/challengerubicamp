@@ -39,11 +39,19 @@ export default {
       this.$emit("closeParent", false);
     },
     deleteData() {
-      this.$store.dispatch("deleteData", this.id).then(() => {
-        this.$store.dispatch("getData", this.id).then(() => {
-          this.$emit("closeParent", false);
+      if (this.id.split(" ")[0] == "Data") {
+        this.$store.dispatch("deleteData", this.id.split(" ")[1]).then(() => {
+          this.$store.dispatch("getData", this.id.split(" ")[1]).then(() => {
+            this.$emit("closeParent", false);
+          });
         });
-      });
+      } else {
+        this.$store.dispatch("deleteDataDate", this.id.split(" ")[1]).then(() => {
+          this.$store.dispatch("getDataDate", this.id.split(" ")[1]).then(() => {
+            this.$emit("closeParent", false);
+          });
+        });
+      }
     },
   },
 };

@@ -2,27 +2,27 @@ import axios from 'axios'
 
 export default {
     state: {
-        tableData: [],
+        tableDataDate: [],
     },
     mutations: {
-        set_data(state, data) {
-            state.tableData = data
+        set_datadate(state, data) {
+            state.tableDataDate = data
         },
-        add_data(state, data) {
-            state.tableData.push(data)
+        add_datadate(state, data) {
+            state.tableDataDate.push(data)
         }
     },
     getters: {
-        tableData(state) {
-            return state.tableData
+        tableDataDate(state) {
+            return state.tableDataDate
         },
     },
     actions: {
-        getData({ commit }) {
+        getDataDate({ commit }) {
             return new Promise((resolve, reject) => {
-                axios.get('data')
+                axios.get('datadate')
                     .then(res => {
-                        commit('set_data', res.data.data)
+                        commit('set_datadate', res.data.data)
                         resolve(res)
                     })
                     .catch(err => {
@@ -31,11 +31,11 @@ export default {
                     })
             })
         },
-        addData({ commit }, data) {
+        addDataDate({ commit }, data) {
             return new Promise((resolve, reject) => {
-                axios.post('data', data)
+                axios.post('datadate', data)
                     .then(res => {
-                        commit('add_data', data)
+                        commit('add_datadate', data)
                         resolve(res)
                     })
                     .catch(err => {
@@ -44,21 +44,9 @@ export default {
                     })
             })
         },
-        editData({ commit }, data) {
+        editDataDate({ commit }, data) {
             return new Promise((resolve, reject) => {
-                axios.put(`data/${data.id}`, data.data)
-                    .then(res => {
-                        resolve(res)
-                    })
-                    .catch(err => {
-                        console.log(err)
-                        reject(err)
-                    })
-            })
-        },
-        deleteData({ commit }, id) {
-            return new Promise((resolve, reject) => {
-                axios.delete(`data/${id}`)
+                axios.put(`datadate/${data.id}`, data.data)
                     .then(res => {
                         resolve(res)
                     })
@@ -68,11 +56,23 @@ export default {
                     })
             })
         },
-        searchData({ commit }, data) {
+        deleteDataDate({ commit }, id) {
             return new Promise((resolve, reject) => {
-                axios.post('data/search', data)
+                axios.delete(`datadate/${id}`)
                     .then(res => {
-                        commit('set_data', res.data.data)
+                        resolve(res)
+                    })
+                    .catch(err => {
+                        console.log(err)
+                        reject(err)
+                    })
+            })
+        },
+        searchDataDate({ commit }, data) {
+            return new Promise((resolve, reject) => {
+                axios.post('datadate/search', data)
+                    .then(res => {
+                        commit('set_datadate', res.data.data)
                         resolve(res)
                     })
                     .catch(err => {

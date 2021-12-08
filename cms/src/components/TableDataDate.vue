@@ -14,7 +14,7 @@
         <td class="align-middle">
           <input
             class="form-control form-control-sm"
-            type="text"
+            type="date"
             v-model="item.letter"
             v-if="item._id == isUpdate"
             v-on:keyup.enter="updateData(item._id, item.letter, item.frequency)"
@@ -54,9 +54,9 @@
 
 <script>
 import ActionButton from "@/components/ActionButton.vue";
-import { mapState, mapActions } from "vuex";
+import { mapState } from "vuex";
 export default {
-  name: "TableData",
+  name: "TableDataDate",
   components: {
     ActionButton,
   },
@@ -67,22 +67,21 @@ export default {
   },
   computed: {
     ...mapState({
-      table: (state) => state.data.tableData,
+      table: (state) => state.datadate.tableDataDate,
     }),
   },
-  // methods: mapActions("data", ["addProductToCart"]),
   methods: {
     updateData(id, letter, frequency) {
       let data = { letter: letter, frequency: frequency };
-      this.$store.dispatch("editData", {id:id,data}).then(() => {
+      this.$store.dispatch("editDataDate", {id:id,data}).then(() => {
         // this.$store.dispatch("getData");
         this.isUpdate = -1;
         this.$emit('showInfoParent', 'Data updated successfully.')
       });
     },
     deleteData(id) {
-      this.$store.dispatch("deleteData", id).then(() => {
-        this.$store.dispatch("getData");
+      this.$store.dispatch("deleteDataDate", id).then(() => {
+        this.$store.dispatch("getDataDate");
       });
     },
     showModalChild(id){
@@ -90,7 +89,7 @@ export default {
     }
   },
   created() {
-    this.$store.dispatch("getData");
+    this.$store.dispatch("getDataDate");
   },
 };
 </script>
