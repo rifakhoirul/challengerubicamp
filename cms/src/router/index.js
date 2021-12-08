@@ -69,7 +69,7 @@ const routes = [
     }
   },
   {
-    path: "/datadatae",
+    path: "/datadate",
     name: "DataDate",
     component: () =>
       import(/* webpackChunkName: "datadatae" */ "../views/DataDate.vue"),

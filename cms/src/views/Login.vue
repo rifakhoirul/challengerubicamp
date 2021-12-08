@@ -1,5 +1,5 @@
 <template>
-  <div class="about">
+  <div class="login">
     <div class="container mt-5 border" style="max-width: 500px">
       <ul class="nav justify-content-around m-2">
         <li class="nav-item">
@@ -44,7 +44,6 @@
 </template>
 
 <script>
-import axios from "axios";
 export default {
   data() {
     return {
@@ -65,23 +64,6 @@ export default {
         .catch((error) => {
           this.errors = error;
         });
-      // axios
-      //   .post("users/login", {
-      //     email: this.form.email,
-      //     password: this.form.password,
-      //   })
-      //   .then(function (res) {
-      //     console.log(res)
-      //     if (res.data.status) {
-      //       localStorage.setItem("token", res.data.data.token);
-      //       localStorage.setItem("email", res.data.data.email);
-      //     } else {
-      //       alert(res.data.data.message)
-      //     }
-      //   })
-      //   .catch(function (err) {
-      //     console.log(err);
-      //   });
     },
   },
 };

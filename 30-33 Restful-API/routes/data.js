@@ -9,14 +9,22 @@ const helpers = require('../helpers/util')
 //1 BROWSE
 router.post('/search', helpers.isLogged, async function (req, res, next) {
     let { letter, frequency } = req.body
+    if (letter == '') { letter = null }
+    if (frequency == '') { frequency = null }
     try {
-        const data = await Data.find({
-            $or: [
-                { 'letter': letter, 'frequency': frequency },
-                { 'letter': letter },
-                { 'frequency': frequency }
-            ]
-        });
+        let data
+        if (!letter && !frequency) {
+            data = await Data.find();
+        } else if (letter && frequency) {
+            data = await Data.find({ 'letter': letter, 'frequency': frequency })
+        } else {
+            data = await Data.find({
+                $or: [
+                    { 'letter': letter },
+                    { 'frequency': frequency }
+                ]
+            });
+        }
         res.json(new Response(data))
     } catch (err) {
         console.log(err)

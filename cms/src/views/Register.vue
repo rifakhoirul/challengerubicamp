@@ -1,5 +1,5 @@
 <template>
-  <div class="about">
+  <div class="register">
     <div class="container mt-5 border" style="max-width: 500px">
       <ul class="nav justify-content-around m-2">
         <li class="nav-item">
@@ -89,7 +89,7 @@ export default {
             name: "Home",
           });
         }).catch((error)=>{
-          this.errors = 'Email already used'
+          this.errors = error
         });
       }
     },
