@@ -3,7 +3,7 @@
     <Navbar submenu="Home"/>
     <div class="container p-5 mt-5">
       <div class="alert alert-secondary" role="alert">
-        Welcome {{user}}
+        Welcome {{user}}!
       </div>
     </div>
   </div>

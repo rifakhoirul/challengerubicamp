@@ -17,11 +17,11 @@ router.post('/search', helpers.isLogged, async function (req, res, next) {
         if (!letter && !frequency) {
             data = await DataDate.find();
         } else if (letter && frequency) {
-            data = await DataDate.find({ 'letter': letter, 'frequency': frequency })
+            data = await DataDate.find({ 'letter': { $regex: letter }, 'frequency': frequency })
         } else {
             data = await DataDate.find({
                 $or: [
-                    { 'letter': letter },
+                    { 'letter': { $regex: letter } },
                     { 'frequency': frequency }
                 ]
             });

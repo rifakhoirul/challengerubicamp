@@ -36,12 +36,18 @@ export default {
   },
   methods: {
     closeChild() {
-      this.$emit("closeParent", false);
+      this.$emit("closeParent", 'close');
     },
     deleteData() {
       if (this.id.split(" ")[0] == "Data") {
         this.$store.dispatch("deleteData", this.id.split(" ")[1]).then(() => {
           this.$store.dispatch("getData", this.id.split(" ")[1]).then(() => {
+            this.$emit("closeParent", false);
+          });
+        });
+      } else if(this.id.split(" ")[0] == "Maps") {
+        this.$store.dispatch("deleteMaps", this.id.split(" ")[1]).then(() => {
+          this.$store.dispatch("getMaps", this.id.split(" ")[1]).then(() => {
             this.$emit("closeParent", false);
           });
         });

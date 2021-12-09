@@ -29,11 +29,9 @@ router.post('/login', async function (req, res, next) {
   const { email, password } = req.body
   try {
     const user = await User.findOne({ email })
-    console.log(user)
     if (!user) { res.json(new Response({ message: 'User not found' }, false)) }
     else {
       user.comparePassword(password, function (err, isMatch) {
-        console.log(isMatch)
         if (err) {
           throw err
         } else if (!isMatch) {

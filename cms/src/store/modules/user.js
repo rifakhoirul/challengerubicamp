@@ -56,7 +56,6 @@ export default {
             })
         },
         register({ commit }, data) {
-            console.log(data)
             return new Promise((resolve, reject) => {
                 axios.post('users/register', data)
                     .then(res => {

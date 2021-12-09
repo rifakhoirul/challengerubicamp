@@ -6,8 +6,16 @@ import store from './store'
 import 'bootstrap'
 import 'bootstrap/dist/css/bootstrap.min.css'
 import axios from 'axios'
+import * as VueGoogleMaps from "vue2-google-maps"
 
 Vue.config.productionTip = false
+
+Vue.use(VueGoogleMaps, {
+  load: {
+    key: 'AIzaSyB7KczFXBMqdiitBBHmp1YD1l0JYjzCv64',
+    libraries: 'places',
+  }
+});
 
 axios.defaults.baseURL = 'http://localhost:3000/api/'
 

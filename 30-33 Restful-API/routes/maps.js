@@ -8,16 +8,15 @@ const helpers = require('../helpers/util')
 
 //1 BROWSE
 router.post('/search', helpers.isLogged, async function (req, res, next) {
-    let { title, lat, lng } = req.body
+    let { title } = req.body
+    if (title == '') { title = null }
     try {
-        let data = await Maps.find({
-            $or: [
-                { 'title': title, 'lat': lat, 'lng': lng },
-                { 'title': title },
-                { 'lat': lat },
-                { 'lng': lng },
-            ]
-        });
+        let data
+        if (!title) {
+            data = await Maps.find()
+        } else {
+            data = await Maps.find({ 'title': { $regex: title } })
+        }
         res.json(new Response(data))
     } catch (err) {
         console.log(err)

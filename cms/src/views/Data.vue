@@ -140,6 +140,9 @@ export default {
         this.showModal = false;
         this.msg = "Data deleted successfully";
         this.showAddDataSuccess = true;
+      } else if (id == "close") {
+        this.showModal = false;
+        this.msg = "Data deleted successfully";
       } else {
         this.showModal = true;
         this.idDelete = `Data ${id}`;
@@ -150,7 +153,6 @@ export default {
       this.$store.dispatch("searchData", data);
     },
     showInfo(msg) {
-      console.log(msg);
       this.msg = msg;
       this.showAddDataSuccess = true;
     },
