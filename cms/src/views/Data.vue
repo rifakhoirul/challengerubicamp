@@ -22,6 +22,7 @@
                   type="text"
                   placeholder="A"
                   v-model="form.letter"
+                  @keyup="upperCase"
                 />
               </div>
               <div class="col-md-1">
@@ -32,6 +33,7 @@
                   class="form-control me-auto"
                   type="number"
                   placeholder="0.0000"
+                  @keyup="forceNumber"
                   v-model="form.frequency"
                   step="any"
                 />
@@ -117,6 +119,7 @@ export default {
       idDelete: "",
       searchLetter: "",
       searchFrequency: null,
+      numberBefore: null,
     };
   },
   components: {
@@ -155,6 +158,34 @@ export default {
     showInfo(msg) {
       this.msg = msg;
       this.showAddDataSuccess = true;
+    },
+    upperCase() {
+      this.form.letter = this.form.letter.toUpperCase();
+    },
+    forceNumber() {
+      this.form.frequency = Number(this.form.frequency)
+      console.log(this.form.frequency)
+      // if(this.form.frequency == ""){this.form.frequency=1}
+      // if (this.form.frequency == "") {
+      //   this.form.frequency = 0;
+      //   this.numberBefore = 0
+      // }
+      // else if (this.numberBefore == 0) {
+      //   this.form.frequency = null
+      // }
+      // if (this.form.frequency == 0 && this.numberBefore == 0) {
+      //   this.form.frequency = null;
+      // }
+      // if (this.form.frequency == 0) {
+      //   this.form.frequency = null;
+      // }
+      
+      
+      // else if (this.form.frequency == "" && this.numberBefore == 0) {
+      //   this.form.frequency = null;
+      // } 
+      
+      // this.numberBefore = this.form.frequency;
     },
   },
 };

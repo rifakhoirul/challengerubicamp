@@ -14,7 +14,8 @@ Vue.use(VueGoogleMaps, {
   load: {
     key: '',
     libraries: 'places',
-  }
+  },
+  installComponents: true,
 });
 
 axios.defaults.baseURL = 'http://localhost:3000/api/'

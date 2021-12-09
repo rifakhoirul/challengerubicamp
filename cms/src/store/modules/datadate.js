@@ -34,9 +34,11 @@ export default {
         addDataDate({ commit }, data) {
             return new Promise((resolve, reject) => {
                 axios.post('datadate', data)
-                    .then(res => {
-                        commit('add_datadate', data)
-                        resolve(res)
+                    .then(() => {
+                        axios.get('datadate').then((res) => {
+                            commit('set_datadate', res.data.data)
+                            resolve(res)
+                        })
                     })
                     .catch(err => {
                         console.log(err)

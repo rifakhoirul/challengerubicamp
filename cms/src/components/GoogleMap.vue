@@ -1,5 +1,33 @@
 <template>
   <div>
+    <div
+      class="alert alert-warning alert-dismissible fade show"
+      role="alert"
+      v-if="showError"
+    >
+      Location not found
+      <button
+        type="button"
+        class="btn-close"
+        data-bs-dismiss="alert"
+        aria-label="Close"
+        @click="showError = !showError"
+      ></button>
+    </div>
+    <div class="row mb-2 justify-content-center align-items-center">
+      <div class="col-md-4">
+        <input
+          type="text"
+          class="form-control mb-1"
+          placeholder="search"
+          v-model="searchValue"
+          @keyup.enter="searchMap"
+        />
+      </div>
+      <div class="col-md-1">
+        <button class="btn btn-primary" @click="searchMap">Search</button>
+      </div>
+    </div>
     <gmap-map
       ref="gmap"
       :center="center"
@@ -50,6 +78,12 @@ export default {
         },
       },
       markers: [],
+      setmark: {
+        lat: null,
+        lng: null,
+      },
+      searchValue: "",
+      showError: false,
     };
   },
   computed: {
@@ -73,6 +107,26 @@ export default {
     });
   },
   methods: {
+    searchMap() {
+      function filterItems(arr, query) {
+        return arr.filter(function (el) {
+          return el.title.toLowerCase().indexOf(query.toLowerCase()) !== -1;
+        });
+      }
+      let selected = filterItems(this.markers, this.searchValue)[0];
+      console.log(selected)
+      if (!selected) {
+        this.showError = true;
+      } else {
+        selected = {
+          title: selected.title,
+          position: { lat: selected.lat, lng: selected.lng },
+        };
+        this.center.lat = selected.position.lat;
+        this.center.lng = selected.position.lng;
+        this.toggleInfoWindow(selected);
+      }
+    },
     toggleInfoWindow: function (marker, idx) {
       this.infoWindowPos = marker.position;
       this.infoContent = this.getInfoWindowContent(marker);

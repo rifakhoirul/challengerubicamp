@@ -28,6 +28,19 @@
   </div>
 </template>
 
+<style>
+.Modals {
+  background-color: rgba(0, 0, 0, 0.5);
+  position: fixed;
+  width: 100%;
+  height:100%;
+  text-align: center;
+  padding: 80px;
+  transform: translate(0, -9%);
+  z-index: 99;
+}
+</style>
+
 <script>
 export default {
   name: "Modals",
@@ -63,15 +76,3 @@ export default {
 };
 </script>
 
-<style scoped>
-.Modals {
-  background-color: rgba(0, 0, 0, 0.5);
-  position: fixed;
-  width: 100%;
-  text-align: center;
-  top: 25%;
-  left: 50%;
-  padding: 20px;
-  transform: translate(-50%, 0);
-}
-</style>

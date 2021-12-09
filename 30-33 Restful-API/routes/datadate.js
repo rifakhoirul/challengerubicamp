@@ -15,13 +15,13 @@ router.post('/search', helpers.isLogged, async function (req, res, next) {
     try {
         let data
         if (!letter && !frequency) {
-            data = await DataDate.find();
+            data = await DataDate.find().sort({ updatedAt: -1 });
         } else if (letter && frequency) {
-            data = await DataDate.find({ 'letter': { $regex: letter }, 'frequency': frequency })
+            data = await DataDate.find({ 'letter': letter, 'frequency': frequency })
         } else {
             data = await DataDate.find({
                 $or: [
-                    { 'letter': { $regex: letter } },
+                    { 'letter': letter },
                     { 'frequency': frequency }
                 ]
             });
@@ -42,7 +42,7 @@ router.post('/search', helpers.isLogged, async function (req, res, next) {
 //2 READ
 router.get('/', helpers.isLogged, async function (req, res, next) {
     try {
-        let data = await DataDate.find();
+        let data = await DataDate.find().sort({ updatedAt: -1 });
         let temp = []
         data.forEach(item => {
             let element = { _id: item._id, letter: moment(item.letter).format('YYYY-MM-DD'), frequency: item.frequency }

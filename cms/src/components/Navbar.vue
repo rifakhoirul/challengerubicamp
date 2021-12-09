@@ -1,5 +1,5 @@
 <template>
-  <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark mb-4">
+  <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark mb-4" id="NavbarMain">
     <div class="container-fluid">
       <router-link to="/" style="text-decoration: none">
       <a class="navbar-brand">Content Management System</a>
@@ -38,7 +38,11 @@
     </div>
   </nav>
 </template>
-
+<style>
+#NavbarMain{
+  z-index: 5;
+}
+</style>
 <script>
 export default {
   name: 'Navbar',

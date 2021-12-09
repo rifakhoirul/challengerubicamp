@@ -14,9 +14,11 @@ router.post('/search', helpers.isLogged, async function (req, res, next) {
     try {
         let data
         if (!letter && !frequency) {
-            data = await Data.find();
+            data = await Data.find().sort({ updatedAt: -1 });
         } else if (letter && frequency) {
             data = await Data.find({ 'letter': { $regex: letter }, 'frequency': frequency })
+        } else if (!letter & frequency){
+            data = await Data.find({ 'frequency': frequency })
         } else {
             data = await Data.find({
                 $or: [
@@ -35,7 +37,7 @@ router.post('/search', helpers.isLogged, async function (req, res, next) {
 //2 READ
 router.get('/', helpers.isLogged, async function (req, res, next) {
     try {
-        const data = await Data.find();
+        const data = await Data.find().sort({ updatedAt: -1 });
         res.json(new Response(data))
     } catch (err) {
         console.log(err)

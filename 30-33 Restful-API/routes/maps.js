@@ -13,7 +13,7 @@ router.post('/search', helpers.isLogged, async function (req, res, next) {
     try {
         let data
         if (!title) {
-            data = await Maps.find()
+            data = await Maps.find().sort({ updatedAt: -1 })
         } else {
             data = await Maps.find({ 'title': { $regex: title } })
         }
@@ -27,7 +27,7 @@ router.post('/search', helpers.isLogged, async function (req, res, next) {
 //2 READ
 router.get('/', helpers.isLogged, async function (req, res, next) {
     try {
-        let data = await Maps.find();
+        let data = await Maps.find().sort({ updatedAt: -1 });
         res.json(new Response(data))
     } catch (err) {
         console.log(err)

@@ -34,9 +34,11 @@ export default {
         addData({ commit }, data) {
             return new Promise((resolve, reject) => {
                 axios.post('data', data)
-                    .then(res => {
-                        commit('add_data', data)
-                        resolve(res)
+                    .then(() => {
+                        axios.get('data').then((res) => {
+                            commit('set_data', res.data.data)
+                            resolve(res)
+                        })
                     })
                     .catch(err => {
                         console.log(err)

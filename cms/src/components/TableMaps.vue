@@ -18,7 +18,9 @@
             type="text"
             v-model="item.title"
             v-if="item._id == isUpdate"
-            v-on:keyup.enter="updateMaps(item._id, item.title, item.lat, item.lng)"
+            v-on:keyup.enter="
+              updateMaps(item._id, item.title, item.lat, item.lng)
+            "
           />
           <div v-else>{{ item.title }}</div>
         </td>
@@ -29,7 +31,9 @@
             step="any"
             v-model="item.lat"
             v-if="item._id == isUpdate"
-            v-on:keyup.enter="updateMaps(item._id, item.title, item.lat, item.lng)"
+            v-on:keyup.enter="
+              updateMaps(item._id, item.title, item.lat, item.lng)
+            "
           />
           <div v-else>{{ item.lat }}</div>
         </td>
@@ -40,22 +44,40 @@
             step="any"
             v-model="item.lng"
             v-if="item._id == isUpdate"
-            v-on:keyup.enter="updateMaps(item._id, item.title, item.lat, item.lng)"
+            v-on:keyup.enter="
+              updateMaps(item._id, item.title, item.lat, item.lng)
+            "
           />
           <div v-else>{{ item.lng }}</div>
         </td>
         <td class="align-middle">
-          <button class="btn btn-sm btn-primary" @click="updateMaps(item._id, item.title, item.lat, item.lng)" v-if="item._id == isUpdate">
+          <button
+            class="btn btn-sm btn-primary"
+            @click="updateMaps(item._id, item.title, item.lat, item.lng)"
+            v-if="item._id == isUpdate"
+          >
             <i class="bi bi-save"></i> Save
           </button>
-          <button class="btn btn-sm btn-success" @click="isUpdate = item._id" v-else>
+          <button
+            class="btn btn-sm btn-success"
+            @click="updateMaps(item._id, item.title, item.lat, item.lng)"
+            v-else
+          >
             <i class="bi bi-pencil-fill"></i> Update
           </button>
           <span class="ms-1"></span>
-          <button class="btn btn-sm btn-secondary" @click="isUpdate = -1" v-if="item._id == isUpdate">
+          <button
+            class="btn btn-sm btn-secondary"
+            @click="isUpdate = -1"
+            v-if="item._id == isUpdate"
+          >
             <i class="bi bi-x-circle"></i> Cancel
           </button>
-          <button class="btn btn-sm btn-danger" @click="showModalChild(item._id)" v-else>
+          <button
+            class="btn btn-sm btn-danger"
+            @click="showModalChild(item._id)"
+            v-else
+          >
             <i class="bi bi-trash-fill"></i> Delete
           </button>
         </td>
@@ -74,7 +96,7 @@ export default {
   },
   data() {
     return {
-      isUpdate: '',
+      isUpdate: "",
     };
   },
   computed: {
@@ -84,21 +106,19 @@ export default {
   },
   methods: {
     updateMaps(id, title, lat, lng) {
-      let data = { title: title, lat: lat, lng: lng };
-      this.$store.dispatch("editMaps", {id:id,data}).then(() => {
-        // this.$store.dispatch("getMaps");
-        this.isUpdate = -1;
-        this.$emit('showInfoParent', 'Data updated successfully.')
-      });
+      let data = { id:id, title: title, lat: lat, lng: lng };
+      this.$emit("showUpdateParent", data);
+      // this.$store.dispatch("editMaps", {id:id,data}).then(() => {
+      // });
     },
     deleteMaps(id) {
       this.$store.dispatch("deleteMaps", id).then(() => {
         this.$store.dispatch("getMaps");
       });
     },
-    showModalChild(id){
-      this.$emit('showModalParent', id)
-    }
+    showModalChild(id) {
+      this.$emit("showModalParent", id);
+    },
   },
   created() {
     this.$store.dispatch("getMaps");

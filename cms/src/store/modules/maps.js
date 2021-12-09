@@ -35,8 +35,10 @@ export default {
             return new Promise((resolve, reject) => {
                 axios.post('maps', data)
                     .then(res => {
-                        commit('add_maps', data)
-                        resolve(res)
+                        axios.get('maps').then((res) => {
+                            commit('set_maps', res.data.data)
+                            resolve(res)
+                        })
                     })
                     .catch(err => {
                         console.log(err)
@@ -48,7 +50,10 @@ export default {
             return new Promise((resolve, reject) => {
                 axios.put(`maps/${data.id}`, data.data)
                     .then(res => {
-                        resolve(res)
+                        axios.get('maps').then((res) => {
+                            commit('set_maps', res.data.data)
+                            resolve(res)
+                        })
                     })
                     .catch(err => {
                         console.log(err)
