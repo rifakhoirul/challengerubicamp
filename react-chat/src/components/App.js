@@ -70,7 +70,6 @@ const App = () => {
       setGroups(old => [...old, data])
     })
     return () => {
-      socket.off('receive-message')
       socket.off('update-users')
       socket.off('update-groups')
     }
@@ -103,11 +102,11 @@ const App = () => {
     } else {
       request.post('users', { username: usernameRef.current.value })
         .then(response => {
-          setUsernameLogin(response.data.username)
-          setUseridLogin(response.data._id)
           localStorage.setItem('react-chat-username', response.data.username)
           localStorage.setItem('react-chat-userid', response.data._id)
           setUsers(old => [...old, response.data])
+          setUsernameLogin(response.data.username)
+          setUseridLogin(response.data._id)
           const tempSocket = io('http://localhost:4000', { query: { id: useridLogin } })
           setSocket(tempSocket)
           tempSocket.emit("new-user", response.data)

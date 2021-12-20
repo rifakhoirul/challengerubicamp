@@ -12,7 +12,7 @@ io.on('connection', socket => {
     const id = socket.handshake.query.id
     socket.join(id)
     socket.on("send-message", (data) => {
-        data.data[0].room.participants.forEach(user => {
+        data.data[0].room.participants.filter(i=>{return i!==id}).forEach(user => {
             socket.broadcast.to(user).emit('receive-message', data.data[0])
         })
     })
