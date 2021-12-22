@@ -1,7 +1,7 @@
 import React from 'react'
 import { Alert, Row, Col, Button, Collapse, Form, Card } from 'react-bootstrap'
 
-export default function AddPhonebook({ open, setOpen, handleSubmitAdd, handleAddName, addName, handleAddPhone, addPhone, showAlert, setShowAlert }) {
+export default function AddPhonebook({ open, setOpen, handleSubmitAdd, handleAddName, addName, handleAddPhone, addPhone, showAlert, setShowAlert, showAlertCon, setShowAlertCon }) {
     return (
         <>
             <Button
@@ -39,6 +39,11 @@ export default function AddPhonebook({ open, setOpen, handleSubmitAdd, handleAdd
             {showAlert && (
                 <Alert className="mt-2" variant="success" onClose={() => setShowAlert(false)} dismissible>
                     Add data success.
+                </Alert>
+            )}
+            {showAlertCon && (
+                <Alert className="mt-2" variant="danger" onClose={() => setShowAlertCon(false)} dismissible>
+                    Warning! No connection. You must resend when adding phonebook. Also search, sort, and actions feature won't work.
                 </Alert>
             )}
         </>

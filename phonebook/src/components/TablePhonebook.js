@@ -1,7 +1,7 @@
 import React from 'react'
 import { Button, Form, Table, Spinner } from 'react-bootstrap'
 
-export default function TablePhonebook({ sortBy, handleSort, loading, currentPosts, editId, handleSubmitEdit, submitEdit, editName, handleEditName, editPhone, handleEditPhone, setEditId, handleEdit, currentPage, handleDelete, postsPerPage }) {
+export default function TablePhonebook({ sortBy, handleSort, loading, currentPosts, editId, handleSubmitEdit, submitEdit, editName, handleEditName, editPhone, handleEditPhone, setEditId, handleEdit, currentPage, handleDelete, postsPerPage, handleResend, handleCancelResend }) {
   return (
     <Table className="mt-4" striped bordered hover>
       <thead>
@@ -22,6 +22,15 @@ export default function TablePhonebook({ sortBy, handleSort, loading, currentPos
                 <td className="align-middle"><Form onSubmit={handleSubmitEdit}><Form.Control size="sm" type="text" value={editName} onChange={handleEditName} /></Form></td>
                 <td className="align-middle"><Form onSubmit={handleSubmitEdit}><Form.Control size="sm" type="text" value={editPhone} onChange={handleEditPhone} /></Form></td>
                 <td className="align-middle"><Button onClick={submitEdit} variant="primary" type="submit" className="me-1" size="sm"><i className="bi bi-pencil"></i> Save</Button><Button variant="secondary" size="sm" onClick={() => { setEditId('') }}><i className="bi bi-x-circle"></i> Cancel</Button></td>
+              </tr>
+            )
+          } else if (item.sent === false) {
+            return (
+              <tr key={item._id}>
+                <td className="align-middle text-danger">{index + 1 + ((currentPage - 1) * postsPerPage)}</td>
+                <td className="align-middle text-danger">{item.name}</td>
+                <td className="align-middle text-danger">{item.phone}</td>
+                <td className="align-middle"><Button onClick={() => { handleResend(item._id, item.name, item.phone) }} variant="warning" className="me-1" size="sm"><i className="bi bi-arrow-clockwise"></i> Retry</Button><Button variant="secondary" size="sm" onClick={() => handleCancelResend(item._id)}><i className="bi bi-x-circle"></i> Cancel</Button></td>
               </tr>
             )
           } else {
