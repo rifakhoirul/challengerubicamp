@@ -29,7 +29,7 @@ router.post('/search', async function (req, res, next) {
       case 'phone-asc':
         sort = { phone: 1 }
         break
-      case 'phone-asc':
+      case 'phone-desc':
         sort = { phone: -1 }
         break
       case 'id-asc':
