@@ -1,19 +1,38 @@
 import React, { Component } from 'react';
 import { Text, StyleSheet, View, Image } from 'react-native';
-import { colors, fonts, responsiveHeight, responsiveWidth } from '../../utils'
-import { dummyProfile,dummyMenu } from '../../data'
+import { colors, fonts, getData, responsiveHeight, responsiveWidth } from '../../utils'
+import { dummyProfile, dummyMenu } from '../../data'
 import { RFValue } from "react-native-responsive-fontsize";
 import { heightMobileUI } from '../../utils/constant';
-import {ListMenu} from '../../components';
+import { ListMenu } from '../../components';
+import { DefaultImage } from '../../assets';
 
 export default class Profile extends Component {
   constructor(props) {
     super(props)
 
     this.state = {
-      profile: dummyProfile,
+      profile: false,
       menus: dummyMenu
     }
+  }
+
+  componentDidMount() {
+    this._unsubscribe = this.props.navigation.addListener('focus', () => {
+      this.getUserData()
+    });
+  }
+
+  getUserData = () => {
+    getData('user').then(res => {
+      if (res) {
+        this.setState({
+          profile:res
+        })
+      } else {
+        this.props.navigation.replace('Login')
+      }
+    })
   }
 
   render() {
@@ -21,13 +40,13 @@ export default class Profile extends Component {
     return (
       <View style={styles.page}>
         <View style={styles.container}>
-          <Image source={profile.avatar} style={styles.foto} />
+          <Image source={profile.avatar ? {uri:profile.avatar}:DefaultImage} style={styles.foto} />
           <View style={styles.profile}>
             <Text style={styles.nama}>{profile.nama}</Text>
-            <Text style={styles.desc}>Np. HP:{profile.nomerHp}</Text>
-            <Text style={styles.desc}>{profile.alamat} {profile.kota}</Text>
+            <Text style={styles.desc}>Np. HP:{profile.nohp}</Text>
+            <Text style={styles.desc}>{profile.alamat}</Text>
           </View>
-          <ListMenu menus={menus} navigation={this.props.navigation}/>
+          <ListMenu menus={menus} navigation={this.props.navigation} />
         </View>
       </View>
     );
@@ -59,12 +78,12 @@ const styles = StyleSheet.create({
     marginTop: 10,
     alignItems: 'center',
   },
-  nama:{
+  nama: {
     fontFamily: fonts.primary.bold,
-    fontSize:RFValue(24, heightMobileUI)
+    fontSize: RFValue(24, heightMobileUI)
   },
-  desc:{
+  desc: {
     fontFamily: fonts.primary.regular,
-    fontSize:RFValue(18, heightMobileUI)
+    fontSize: RFValue(18, heightMobileUI)
   }
 });

@@ -1,27 +1,71 @@
 import React, { Component } from 'react'
-import { StyleSheet, View, Text } from 'react-native'
+import { StyleSheet, View, Text, Alert } from 'react-native'
 import { Logo, Ilustrasi } from '../../assets'
 import { Inputan, Jarak, Tombol } from '../../components'
 import { colors, fonts, responsiveHeight } from '../../utils'
+import { loginUser } from '../../actions/AuthAction'
+import { connect } from 'react-redux'
 
-export default class Login extends Component {
+class Login extends Component {
+    constructor(props) {
+        super(props)
+
+        this.state = {
+            email: '',
+            password: '',
+        }
+    }
+
+    login = () => {
+        const { email, password } = this.state
+        if (email && password) {
+            this.props.dispatch(loginUser(email, password))
+        } else {
+            Alert.alert("Error! Email dan password harus diisi!")
+        }
+    }
+
+    componentDidUpdate(prevProps) {
+        const { loginResult } = this.props
+        if (loginResult && prevProps.loginResult !== loginResult) {
+            this.props.navigation.replace('MainApp')
+        }
+    }
+
     render() {
+        const { email, password } = this.state
+        const {loginLoading} = this.props
         return (
             <View style={styles.pages}>
                 <View style={styles.logo}>
                     <Logo />
                 </View>
                 <View style={styles.cardLogin}>
-                    <Inputan label='Email' />
-                    <Inputan label='Password' secureTextEntry />
+                    <Inputan
+                        label='Email'
+                        value={email}
+                        onChangeText={(email) => this.setState({ email })}
+                    />
+                    <Inputan
+                        label='Password'
+                        value={password}
+                        onChangeText={(password) => this.setState({ password })}
+                        secureTextEntry />
                     <Jarak height={25} />
-                    <Tombol title='Login' type='text' padding={12} fontSize={18} />
+                    <Tombol 
+                    title='Login' 
+                    type='text' 
+                    padding={12} 
+                    fontSize={18} 
+                    loading={loginLoading}
+                    onPress={()=>this.login()}
+                    />
                 </View>
                 <View style={styles.register}>
                     <Text style={styles.textBlue}>Belum punya akun?</Text>
-                    <Text 
-                    style={styles.textBlue}
-                    onPress={()=>this.props.navigation.navigate('Register1')}
+                    <Text
+                        style={styles.textBlue}
+                        onPress={() => this.props.navigation.navigate('Register1')}
                     >Klik untuk daftar.</Text>
 
                 </View>
@@ -32,6 +76,14 @@ export default class Login extends Component {
         )
     }
 }
+
+const mapStateToProps = (state) => ({
+    loginLoading: state.AuthReducer.loginLoading,
+    loginResult: state.AuthReducer.loginResult,
+    loginError: state.AuthReducer.loginError,
+})
+
+export default connect(mapStateToProps, null)(Login)
 
 const styles = StyleSheet.create({
     pages: {
@@ -62,13 +114,13 @@ const styles = StyleSheet.create({
         borderRadius: 10,
         marginTop: 10
     },
-    register:{
-        alignItems:'center',
-        marginTop:10,
+    register: {
+        alignItems: 'center',
+        marginTop: 10,
     },
-    textBlue:{
-        fontSize:20,
-        fontFamily:fonts.primary.bold,
-        color:colors.primary
+    textBlue: {
+        fontSize: 20,
+        fontFamily: fonts.primary.bold,
+        color: colors.primary
     }
 })

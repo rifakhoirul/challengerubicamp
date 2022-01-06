@@ -10,19 +10,26 @@
     "lint": "eslint ."
   },
   "dependencies": {
+    "@react-native-async-storage/async-storage": "^1.15.14",
     "@react-native-picker/picker": "^2.2.1",
     "@react-navigation/bottom-tabs": "^6.0.9",
     "@react-navigation/native": "^6.0.6",
     "@react-navigation/native-stack": "^6.2.5",
+    "axios": "^0.24.0",
+    "firebase": "^9.6.1",
     "react": "17.0.2",
     "react-native": "0.66.4",
+    "react-native-image-picker": "^4.7.0",
     "react-native-image-slider-box": "^1.1.14",
     "react-native-image-zoom-viewer": "^3.0.1",
     "react-native-responsive-fontsize": "^0.5.1",
     "react-native-safe-area-context": "^3.3.2",
     "react-native-screens": "^3.10.1",
     "react-native-svg": "^12.1.1",
-    "react-native-svg-transformer": "^1.0.0"
+    "react-native-svg-transformer": "^1.0.0",
+    "react-redux": "^7.2.6",
+    "redux": "^4.1.2",
+    "redux-thunk": "^2.4.1"
   },
   "devDependencies": {
     "@babel/core": "^7.12.9",

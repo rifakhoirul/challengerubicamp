@@ -1,14 +1,30 @@
 import React from 'react'
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import { StyleSheet, Text, TouchableOpacity, View, Alert } from 'react-native'
 import { IconArrowRight } from '../../../assets'
-import { colors, fonts, responsiveHeight } from '../../../utils'
+import { colors, fonts, responsiveHeight, clearStorage } from '../../../utils'
+import { getAuth, signOut } from "firebase/auth";
 
-const CardMenu = ({ menu,navigation }) => {
+const CardMenu = ({ menu, navigation }) => {
+
+    const onSubmit = () => {
+        if (menu.halaman === 'Login') {
+            const auth = getAuth();
+            signOut(auth).then(() => {
+                clearStorage()
+                navigation.replace('Login')
+            }).catch((error) => {
+                Alert.alert(error)
+            });
+        } else {
+            navigation.navigate(menu.halaman)
+        }
+    }
+
     return (
-        <TouchableOpacity style={styles.container} onPress={()=>navigation.navigate(menu.halaman)}>
+        <TouchableOpacity style={styles.container} onPress={() => onSubmit()}>
             <View style={styles.menu}>
-            {menu.gambar}
-            <Text style={styles.text}>{menu.nama}</Text>
+                {menu.gambar}
+                <Text style={styles.text}>{menu.nama}</Text>
             </View>
             <IconArrowRight />
         </TouchableOpacity>
@@ -32,18 +48,18 @@ const styles = StyleSheet.create({
         shadowRadius: 3.84,
 
         elevation: 5,
-        marginHorizontal:30,
-        padding:responsiveHeight(15),
-        borderRadius:10,
-        alignItems:'center'
+        marginHorizontal: 30,
+        padding: responsiveHeight(15),
+        borderRadius: 10,
+        alignItems: 'center'
     },
-    text:{
-        fontSize:18,
-        fontFamily:fonts.primary.bold,
-        marginLeft:20
+    text: {
+        fontSize: 18,
+        fontFamily: fonts.primary.bold,
+        marginLeft: 20
     },
-    menu:{
-        flexDirection:'row',
-        alignItems:'center'
+    menu: {
+        flexDirection: 'row',
+        alignItems: 'center'
     }
 })
