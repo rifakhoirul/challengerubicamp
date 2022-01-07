@@ -9,13 +9,13 @@ const NewsPopuler = ({dataNewsPopular}) => {
 
       <SecondSeparator first={'News Populer'} />
       <div className={styles['popular-news-container']}>
-        {dataNewsPopular.map((value, index) => {
+        {dataNewsPopular && dataNewsPopular.map((value, index) => {
           return (
             <div key={index} className={styles['card-popular-news']}>
               <Link href={`/news/${value.id}`}>
                 <a>
                   <div className={styles['img-card-popular-news-container']}>
-                    <div className={styles['img-card-popular-news']} style={{ backgroundImage: `url(${value.image})` }}></div>
+                    <div className={styles['img-card-popular-news']} style={{ backgroundImage: `url(${value.image[0]})` }}></div>
                   </div>
                   <div className={styles['content-popular-news']}>
                     <p className={styles['title-content-popular-news']}>{value.title}</p>

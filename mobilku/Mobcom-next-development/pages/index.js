@@ -4,12 +4,12 @@ import Separator from '../components/Separator';
 import styles from '../styles/Home.module.css';
 
 // All data is static
-export default function Home({ dataNews,dataNewsPopular }) {
+export default function Home({ dataNews, dataNewsPopular, dataAdsPopular }) {
   // const elements = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
   // const id = 12;
 
   return (
-    <Layout dataNewsPopular={dataNewsPopular}>
+    <Layout dataNewsPopular={dataNewsPopular} dataAdsPopular={dataAdsPopular}>
       {/* Tes Cek Data Hasil Fetch */}
       {/* {console.log('dataNews',dataNews)} */}
       <Separator first={'Auto'} second={'News'} />
@@ -21,7 +21,7 @@ export default function Home({ dataNews,dataNewsPopular }) {
               <Link key={value.id} href={`/news/${value.id}`}>
                 <a className={styles['pagin-autonews']}>
                   <div className={styles['img-autonews-big']}>
-                    <img src={value.image} />
+                    <img src={value.image[0]} />
                     <div className={styles['content-autonews-big']}>
                       <h3 className={styles['title-content-autonews-big']}>{value.title} {value.content}</h3>
                       <p className={styles['date-content-autonews-big']}>{value.updatedAt}</p>
@@ -37,7 +37,7 @@ export default function Home({ dataNews,dataNewsPopular }) {
                 <a className={styles['pagin-autonews']}>
                   <div className={styles['card-autonews']}>
                     <div className={styles['img-card-autonews-container']}>
-                      <div className={styles['img-card-autonews']} style={{ backgroundImage: `url(${value.image})` }}></div>
+                      <div className={styles['img-card-autonews']} style={{ backgroundImage: `url(${value.image[0]})` }}></div>
                     </div>
                     <div className={styles['content-autonews']}>
                       <h3 className={styles['title-content-autonews']}>{value.title}</h3>
@@ -57,22 +57,27 @@ export default function Home({ dataNews,dataNewsPopular }) {
 
 // tes Fetch Pakai Json Placeholder dengan GetSertverSideProps
 export async function getServerSideProps() {
-  const resDataNews = await fetch('http://localhost:3001/api/news/');
-  const resDataNewsPopular = await fetch('http://localhost:3001/api/news/popular');
+  try {
+    const resDataNews = await fetch('http://localhost:3001/api/news?limit=5');
+    const resDataNewsPopular = await fetch('http://localhost:3001/api/news/popular?limit=4');
+    const resDataAdsPopular = await fetch('http://localhost:3001/api/ads/popular?limit=4');
 
-  const dataNews = await resDataNews.json();
-  const dataNewsPopular = await resDataNewsPopular.json();
-
-  if (!dataNews.status || !dataNewsPopular.status) {
+    const dataNews = await resDataNews.json();
+    const dataNewsPopular = await resDataNewsPopular.json();
+    const dataAdsPopular = await resDataAdsPopular.json();
+    if (!dataNews.status || !dataNewsPopular.status || !dataAdsPopular.status) {
+      return {
+        notFound: true,
+      }
+    }
     return {
-      notFound: true,
+      props: {
+        dataNews: dataNews.data,
+        dataNewsPopular: dataNewsPopular.data,
+        dataAdsPopular: dataAdsPopular.data,
+      }
     }
-  }
-
-  return {
-    props: {
-      dataNews: dataNews.data,
-      dataNewsPopular: dataNewsPopular.data
-    }
+  } catch (error) {
+    console.log(error);
   }
 }

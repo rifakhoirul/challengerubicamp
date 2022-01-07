@@ -11,7 +11,7 @@ const adsSchema = new Schema({
     km: Number,
     transmission: String,
     bbm: String,
-    views:{ type: Number, default: 0 },
+    views: { type: Number, default: 0 },
 },
     {
         timestamps: true
