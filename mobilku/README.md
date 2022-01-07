@@ -1,19 +1,35 @@
 ## Getting Started
 
-
-### Prerequisites
-
-* npm
+### API
+* Instalation
   ```sh
-  npm install npm@latest -g
+  cd api-mobilku
+  npm install
+  ```
+* Seeder
+  ```sh
+  npm run seeder
+  ```
+* Start
+  ```sh
+  npm run dev
+  ```
+
+### Client
+* Instalation
+  ```sh
+  cd api-mobilku
+  npm install
+  ```
+* Start
+  ```sh
+  npm run dev
   ```
 
 
-
-
-### Built With
-* [Node.js]
-* [Next.js]
-* [Express.js]
-* [MongoDB]
-* [Mongoose]
+## Built With
+* Node.js
+* Next.js
+* Express.js
+* MongoDB
+* Mongoose
