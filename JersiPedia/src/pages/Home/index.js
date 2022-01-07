@@ -1,42 +1,48 @@
 import React, { Component } from 'react';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import { BannerSlider, HeaderComponent, Jarak, ListJerseys, ListLiga, Tombol } from '../../components';
-import { dummyJerseys, dummyLigas } from '../../data';
 import { colors, fonts } from '../../utils';
+import { connect } from 'react-redux'
+import { getListLiga } from '../../actions/LigaAction';
+import { limitJersey } from '../../actions/JerseyAction';
 
-export default class Home extends Component {
-  constructor(props) {
-    super(props)
+class Home extends Component {
 
-    this.state = {
-      ligas: dummyLigas,
-      jerseys: dummyJerseys
-    }
+  componentDidMount() {
+    this._unsubscribe = this.props.navigation.addListener('focus', () => {
+      this.props.dispatch(getListLiga())
+      this.props.dispatch(limitJersey())
+    });
+  }
+
+  componentWillUnmount(){
+    this._unsubscribe();
   }
 
   render() {
-    const { ligas, jerseys } = this.state
-    const {navigation} = this.props
+    const { navigation } = this.props
     return (
       <View style={styles.page}>
         <ScrollView showsVerticalScrollIndicator={false}>
-          <HeaderComponent navigation={navigation}/>
+          <HeaderComponent navigation={navigation} />
           <BannerSlider />
           <View style={styles.pilihLiga}>
             <Text style={styles.label}>Pilih Liga</Text>
-            <ListLiga ligas={ligas} />
+            <ListLiga/>
           </View>
           <View style={styles.pilihJersey}>
             <Text style={styles.label}>Pilih <Text style={styles.boldLabel}>Jersey</Text> Yang Anda Inginkan</Text>
-            <ListJerseys jerseys={jerseys} navigation={navigation}/>
-            <Tombol title="Lihat Semua" type="text" padding={7}/>
+            <ListJerseys navigation={navigation} />
+            <Tombol title="Lihat Semua" type="text" padding={7} />
           </View>
-          <Jarak height={100}/>
+          <Jarak height={100} />
         </ScrollView>
       </View>
     );
   }
 }
+
+export default connect()(Home)
 
 const styles = StyleSheet.create({
   page: {

@@ -13,13 +13,12 @@ export default class ListJersey extends Component {
       jerseys: dummyJerseys
     }
   }
-
   render() {
     const { ligas, jerseys } = this.state
-    const {navigation} = this.props
+    const { navigation } = this.props
     return (
       <View style={styles.page}>
-        <HeaderComponent navigation={navigation}/>
+        <HeaderComponent navigation={navigation} />
         <ScrollView showsVerticalScrollIndicator={false} style={styles.container}>
           <View style={styles.pilihLiga}>
             <ListLiga ligas={ligas} />
@@ -31,7 +30,7 @@ export default class ListJersey extends Component {
           <Jarak height={100} />
         </ScrollView>
       </View>
-    );
+    )
   }
 }
 

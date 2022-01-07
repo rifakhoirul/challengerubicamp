@@ -5,7 +5,7 @@ import { colors, responsiveHeight, responsiveWidth } from '../../../utils'
 const CardLiga = ({ liga }) => {
     return (
         <TouchableOpacity style={styles.container}>
-            <Image source={liga.gambar} style={styles.logo} />
+            <Image source={{uri: liga.image}} style={styles.logo} />
         </TouchableOpacity>
     )
 }

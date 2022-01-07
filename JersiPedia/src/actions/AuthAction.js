@@ -1,8 +1,9 @@
-import { storeData } from '../utils'
+import { dispatchError, dispatchLoading, dispatchSuccess, storeData } from '../utils'
 import { initializeApp } from 'firebase/app';
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
 import { getDatabase, ref, set, child, get } from "firebase/database";
 import { firebaseConfig } from '../config/firebase';
+import { Alert } from 'react-native';
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth();
@@ -12,14 +13,7 @@ export const LOGIN_USER = "LOGIN_USER"
 
 export const registerUser = (data, password) => {
     return (dispatch) => {
-        dispatch({
-            type: REGISTER_USER,
-            payload: {
-                loading: true,
-                data: false,
-                errorMessage: false,
-            }
-        })
+        dispatchLoading(dispatch, REGISTER_USER)
 
         createUserWithEmailAndPassword(auth, data.email, password)
             .then((userCredential) => {
@@ -28,52 +22,20 @@ export const registerUser = (data, password) => {
                     uid: userCredential.user.uid
                 }
                 const db = getDatabase();
-                console.log('start')
                 set(ref(db, 'users/' + userCredential.user.uid), dataBaru)
-                    .then(() => {
-                        console.log('datasuccess')
-                    })
-                    .catch((error) => {
-                        console.log('failed')
-                    });
-                console.log('finish')
-
-                dispatch({
-                    type: REGISTER_USER,
-                    payload: {
-                        loading: false,
-                        data: dataBaru,
-                        errorMessage: false
-                    }
-                })
-
+                dispatchSuccess(dispatch, REGISTER_USER, dataBaru)
                 storeData('user', dataBaru)
             })
             .catch((error) => {
-                dispatch({
-                    type: REGISTER_USER,
-                    payload: {
-                        loading: false,
-                        data: false,
-                        errorMessage: error.message,
-                    }
-                })
-                alert(error.message)
+                dispatchError(dispatch, REGISTER_USER, error.message)
+                Alert.alert(error.message)
             });
     }
 }
 
 export const loginUser = (email, password) => {
     return (dispatch) => {
-
-        dispatch({
-            type: LOGIN_USER,
-            payload: {
-                loading: true,
-                data: false,
-                errorMessage: false
-            }
-        })
+        dispatchLoading(dispatch, LOGIN_USER)
 
         signInWithEmailAndPassword(auth, email, password)
             .then((userCredential) => {
@@ -82,41 +44,20 @@ export const loginUser = (email, password) => {
                 get(child(dbRef, `users/${userCredential.user.uid}`)).then((snapshot) => {
                     console.log('berhasil get')
                     if (snapshot.exists()) {
-                        dispatch({
-                            type: LOGIN_USER,
-                            payload: {
-                                loading: false,
-                                data: snapshot.val() ? snapshot.val() : [],
-                                errorMessage: false
-                            }
-                        })
+                        dispatchSuccess(dispatch, LOGIN_USER, snapshot.val() ? snapshot.val() : [])
                         storeData('user', snapshot.val())
                     } else {
                         console.log("No data available");
-                        dispatch({
-                            type: LOGIN_USER,
-                            payload: {
-                                loading: false,
-                                data: false,
-                                errorMessage: "Data user tidak ditemukan!",
-                            }
-                        })
-                        alert("Data user tidak ditemukan!")
+                        dispatchError(dispatch, LOGIN_USER, "Data user tidak ditemukan!")
+                        Alert.alert("Data user tidak ditemukan!")
                     }
                 }).catch((error) => {
                     console.error('gagal', error);
                 });
             })
             .catch((error) => {
-                dispatch({
-                    type: LOGIN_USER,
-                    payload: {
-                        loading: false,
-                        data: false,
-                        errorMessage: error.message,
-                    }
-                })
-                alert(error.message)
+                dispatchError(dispatch, LOGIN_USER, error.message)
+                Alert.alert(error.message)
             });
     }
 }

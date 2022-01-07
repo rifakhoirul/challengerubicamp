@@ -1,9 +1,8 @@
 import React from 'react'
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
-import { Jarak } from '..'
+import { Jarak } from '../Jarak'
 import { IconBack, IconKeranjang, IconKeranjangPutih, IconSubmit } from '../../../assets'
 import { colors, fonts } from '../../../utils'
-import TextOnly from './TextOnly'
 
 const TextIcon = ({ icon, padding, onPress, title, fontSize }) => {
     const Icon = () => {

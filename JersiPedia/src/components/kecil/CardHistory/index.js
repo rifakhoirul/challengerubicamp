@@ -1,7 +1,7 @@
 import React from 'react'
 import { Image, StyleSheet, Text, View } from 'react-native'
 import { colors, fonts, numberWithCommas, responsiveHeight, responsiveWidth } from '../../../utils'
-import { Jarak } from '../../kecil'
+import { Jarak } from '../Jarak'
 
 const CardHistory = ({ pesanan }) => {
     return (

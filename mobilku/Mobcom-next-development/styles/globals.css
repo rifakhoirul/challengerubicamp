@@ -1,0 +1,69 @@
+html,
+body {
+  padding: 0;
+  font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
+    Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
+    max-width: 767px;
+    /* height: 100%; */
+    margin: auto;
+}
+html {
+  background-color: #d3d3d3;
+}
+body {
+  background-color: #f0f0f0;
+  /* height: 100%; */
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+button {
+  border: none;
+  color: #fff;
+}
+
+/* Slider */
+.slick-prev:before, .slick-next:before {
+  font-size: 30px !important;
+  opacity: 1.0 !important;
+}
+.slick-prev {
+  left: 10px !important;
+  z-index: 99;
+}
+.slick-next {
+  right: 10px !important;
+  z-index: 99;
+}
+.slick-prev, .slick-next {
+  top: 45% !important;
+  width: 30px !important;
+  height: 30px !important;
+}
+
+.slick-thumb li {
+  width: 25% !important;
+  height: 100% !important;
+}
+.slick-dots {
+  width: 100% !important;
+  position: relative !important;
+  bottom: 0px !important;
+  display: flex !important;
+  margin-bottom: 20px !important;
+  overflow: visible !important;
+  overflow-x: scroll !important;
+}
+.slick-dots li img {
+  max-width: 150px !important;
+}
+.slick-slide img {
+  max-width: -webkit-fill-available !important;
+}

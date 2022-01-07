@@ -4,10 +4,11 @@ import Tombol from '../Tombol'
 import { colors, fonts, responsiveWidth } from '../../../utils'
 
 const CardJersey = ({ jersey, navigation }) => {
+    console.log('jersey',jersey)
     return (
         <View style={styles.container}>
             <TouchableOpacity style={styles.card}>
-                <Image source={jersey.gambar[0]} style={styles.gambar} />
+                <Image source={{uri:jersey.gambar[0]}} style={styles.gambar} />
                 <Text style={styles.text}>{jersey.nama}</Text>
             </TouchableOpacity>
             <Tombol type="text" title="Detail" padding={7} onPress={()=>navigation.navigate('JerseyDetail',{jersey})}/>

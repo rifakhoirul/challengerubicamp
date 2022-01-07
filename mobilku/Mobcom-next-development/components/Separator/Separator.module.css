@@ -1,0 +1,31 @@
+.separator-container {
+  margin-bottom: 15px;
+}
+.second-separator-container {
+  margin-top: 20px;
+  margin-bottom: 15px;
+}
+.separator-container h1 {
+  font-size: 32px;
+  color: #b5b5b5;
+  width: fit-content;
+  margin: 0px;
+}
+.second-separator-container h3 {
+  font-size: 14px;
+  color: #FF671D;
+  width: fit-content;
+  margin: 0px;
+}
+.separator-container h1 span {
+  font-size: 24px;
+  color: #FF671D;
+  width: fit-content;
+  margin-left: 5px;
+}
+.line-separator {
+  height: 1px; 
+  background-color: #324555; 
+  /* margin-top: -10px !important;  */
+  display: block;
+}

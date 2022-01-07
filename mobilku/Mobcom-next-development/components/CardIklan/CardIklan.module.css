@@ -1,0 +1,179 @@
+.card-mobil-dijual{
+  width: calc(50% - 3px) !important;
+  position: relative;
+}
+.card-mobil-dijual:hover > .detail-mobil-dijual-container{
+  color: white; 
+  background-image: linear-gradient(to bottom, #324555 , #131b21);
+}
+.card-mobil-dijual:hover > .detail-mobil-dijual-container p{
+  color: white; 
+}
+.box-mobil-dijual-container{
+  width: calc(50% - 10px); 
+}
+.zoomOut-mobil-dijual{
+  max-width: 100% !important; 
+  height: 180px;
+  overflow: hidden;
+  position: relative;
+}
+.zoomIn-mobil-dijual{
+  width: 100%;
+  background-position: center;
+  background-size: cover;
+  transition: transform ease 0.3s;
+  position: absolute;
+  height: 200px;
+  left: 0px;
+  top: 0px;
+}
+.zoomIn-mobil-dijual:hover {
+  transform: scale(1.2);
+}
+.sign-mobil-dijual-container{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  float: right;
+  padding: 0px;
+  border-radius: 50%;
+  z-index: 99;
+  position: absolute;
+  right: 5px;
+  top: 5px;
+  background-color: rgb(0,0,0,0.8);
+}
+.sign-mobil-dijual-container img{
+  width: 30px;
+}
+.btn-mobil-djiual-container{
+  width: calc(100% - 20px);
+  display: flex;
+  position: absolute;
+  bottom: 10px;
+  left: 10px;
+}
+.btn-mobil-djiual-container span{
+  width: calc(100% - 70%);
+}
+.btn-mobil-djiual-container span img{
+  width: 15px;
+}
+.btn-mobil-djiual-container span div{
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  float: right;
+  padding: 7px;
+  border-radius: 50%;
+  z-index: 999;
+  background-color: rgb(0, 0, 0, 0.8);
+}
+.btn-jual-cepat {
+  width: calc(100% - 0px);
+  padding: 5px;
+  font-size: 10px;
+  border-radius: 5px;
+  margin-top: -0px;
+  text-align: center;
+  background-color: rgb(221, 47, 47, 0.8);
+  text-transform: uppercase;
+}
+.detail-mobil-dijual-container{
+  color: black;
+  opacity: 95%;
+  font-size: 12px;
+  font-weight: 700;
+  padding: 10px;
+  width: 100%;
+  /* margin-top: -20px; */
+  padding-top: 10px !important;
+  background-color: white;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+.title-iklan {
+  font-size: 15px;
+  height: 20px;
+  padding-right: 5px;
+  padding-left: 5px;
+  text-transform: uppercase;
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-weight: 500;
+  margin: 0;
+}
+.price-iklan, .loc-iklan {
+  color: #555;
+  text-align: center;
+  font-size: 15px;
+  font-weight: lighter;
+  margin-top: 10px;
+  margin: 0;
+}
+.grid-spec-mobil-dijual {
+  margin: 10px;
+  display: flex;
+  flex-wrap: wrap;
+}
+.spec-mobil-dijual {
+  display: flex;
+  width: 50%;
+}
+.spec-mobil-dijual img {
+  width: 20px !important;
+}
+.detail-spec-mobil-dijual {
+  font-weight: lighter !important;
+  margin: 4px 0px 0px 5px;
+}
+.profile-seller-container{
+  border-radius: 50px;
+  width: calc(100% - 50px);
+  background-color: rgba(255, 255, 255, 0.70);
+  position: absolute;
+  left: 5px;
+  top: 5px;
+  display: flex;
+}
+.image-profile-container{
+  width: 40px !important;
+  height: 40px !important;
+  background-color: #fff !important;
+  border-radius: 50%;
+  overflow: hidden;
+  object-fit: cover;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.image-profile-container img{
+  width: 100%;
+}
+.name-profile-container{
+  width: calc(100% - 45px);
+  font-size: 12px;
+  padding: 3px 10px;
+  height: fit-content;
+  color: #444;
+}
+.name-profile{
+  height: 15.5px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  margin: 0;
+}
+.city-profile{
+  height: 15.5px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  margin: 0;
+}

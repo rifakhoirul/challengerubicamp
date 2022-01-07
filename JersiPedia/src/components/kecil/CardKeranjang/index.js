@@ -1,6 +1,6 @@
 import React from 'react'
 import { Image, StyleSheet, Text, View } from 'react-native'
-import { Jarak } from '..'
+import { Jarak } from '../Jarak'
 import { IconHapus } from '../../../assets'
 import { fonts, numberWithCommas, responsiveHeight, responsiveWidth,colors } from '../../../utils'
 

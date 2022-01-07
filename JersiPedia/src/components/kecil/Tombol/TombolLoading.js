@@ -1,14 +1,10 @@
 import React from 'react'
 import { ActivityIndicator, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
-import { Jarak } from '..'
-import { IconBack, IconKeranjang, IconKeranjangPutih, IconSubmit } from '../../../assets'
+import { Jarak } from '../Jarak'
 import { colors, fonts } from '../../../utils'
-import TextOnly from './TextOnly'
 
 const TombolLoading = ({ padding, fontSize }) => {
     
-
-
     return (
         <TouchableOpacity style={styles.container(padding)} >
             <ActivityIndicator size='small' color='#FFFFFF'/>

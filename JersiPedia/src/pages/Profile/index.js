@@ -23,6 +23,10 @@ export default class Profile extends Component {
     });
   }
 
+  componentWillUnmount(){
+    this._unsubscribe();
+  }
+
   getUserData = () => {
     getData('user').then(res => {
       if (res) {
