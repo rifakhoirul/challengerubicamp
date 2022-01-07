@@ -1,11 +1,4 @@
-### Built With
-* [Node.js]
-* [Next.js]
-* [Express.js]
-* [MongoDB]
-* [Mongoose]
-
-### Getting Started
+## Getting Started
 
 
 ### Prerequisites
@@ -14,3 +7,13 @@
   ```sh
   npm install npm@latest -g
   ```
+
+
+
+
+### Built With
+* [Node.js]
+* [Next.js]
+* [Express.js]
+* [MongoDB]
+* [Mongoose]
