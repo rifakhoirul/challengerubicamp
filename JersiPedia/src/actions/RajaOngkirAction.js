@@ -21,8 +21,8 @@ export const getProvinsiList = () => {
                 dispatchSuccess(dispatch, GET_PROVINSI, response.data ? response.data.rajaongkir.results : [])
             }
         }).catch(error => {
-            dispatchError(dispatch, GET_PROVINSI, error)
-            Alert.alert(error)
+            dispatchError(dispatch, GET_PROVINSI, error.message)
+            Alert.alert(error.message)
         })
     }
 }
@@ -43,8 +43,8 @@ export const getKotaList = (provinsi_id) => {
                 dispatchSuccess(dispatch, GET_KOTA, response.data ? response.data.rajaongkir.results : [])
             }
         }).catch(error => {
-            dispatchError(dispatch, GET_KOTA, error)
-            Alert.alert(error)
+            dispatchError(dispatch, GET_KOTA, error.message)
+            Alert.alert(error.message)
         })
     }
 }

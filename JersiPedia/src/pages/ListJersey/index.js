@@ -1,31 +1,46 @@
 import React, { Component } from 'react';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
+import { connect } from 'react-redux';
 import { HeaderComponent, Jarak, ListJerseys, ListLiga, Tombol } from '../../components';
 import { dummyJerseys, dummyLigas } from '../../data';
 import { colors, fonts } from '../../utils';
+import { getListLiga } from '../../actions/LigaAction'
+import { getListJersey } from '../../actions/JerseyAction';
 
-export default class ListJersey extends Component {
-  constructor(props) {
-    super(props)
+class ListJersey extends Component {
+  componentDidMount() {
+    this._unsubscribe = this.props.navigation.addListener('focus', () => {
+      const { idLiga } = this.props
+      this.props.dispatch(getListLiga())
+      this.props.dispatch(getListJersey(idLiga))
+    });
+  }
 
-    this.state = {
-      ligas: dummyLigas,
-      jerseys: dummyJerseys
+  componentWillUnmount() {
+    this._unsubscribe();
+  }
+
+  componentDidUpdate(prevProps) {
+    const { idLiga } = this.props
+    if (idLiga && prevProps.idLiga !== idLiga) {
+      this.props.dispatch(getListJersey(idLiga))
     }
   }
+
   render() {
-    const { ligas, jerseys } = this.state
-    const { navigation } = this.props
+    const { navigation, namaLiga } = this.props
     return (
       <View style={styles.page}>
         <HeaderComponent navigation={navigation} />
         <ScrollView showsVerticalScrollIndicator={false} style={styles.container}>
           <View style={styles.pilihLiga}>
-            <ListLiga ligas={ligas} />
+            <ListLiga navigation={navigation} />
           </View>
           <View style={styles.pilihJersey}>
-            <Text style={styles.label}>Pilih <Text style={styles.boldLabel}>Jersey</Text> Yang Anda Inginkan</Text>
-            <ListJerseys jerseys={jerseys} />
+            <Text style={styles.label}>Pilih <Text style={styles.boldLabel}>Jersey </Text>
+              {namaLiga ? namaLiga : " Yang Anda Inginkan"}
+            </Text>
+            <ListJerseys navigation={navigation} />
           </View>
           <Jarak height={100} />
         </ScrollView>
@@ -33,6 +48,13 @@ export default class ListJersey extends Component {
     )
   }
 }
+
+const mapStateToProps = (state) => ({
+  idLiga: state.JerseyReducer.idLiga,
+  namaLiga: state.JerseyReducer.namaLiga,
+})
+
+export default connect(mapStateToProps, null)(ListJersey)
 
 const styles = StyleSheet.create({
   container: {

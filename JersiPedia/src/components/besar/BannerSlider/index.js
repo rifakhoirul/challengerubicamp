@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Text, StyleSheet, View } from 'react-native'
+import { StyleSheet, View } from 'react-native'
 import { Slider1, Slider2 } from '../../../assets'
 import { SliderBox } from "react-native-image-slider-box";
 import { colors, responsiveHeight, responsiveWidth } from '../../../utils';

@@ -4,7 +4,6 @@ import Tombol from '../Tombol'
 import { colors, fonts, responsiveWidth } from '../../../utils'
 
 const CardJersey = ({ jersey, navigation }) => {
-    console.log('jersey',jersey)
     return (
         <View style={styles.container}>
             <TouchableOpacity style={styles.card}>

@@ -2,8 +2,10 @@ import React from 'react'
 import { View, StyleSheet } from 'react-native';
 import TabItem from '../TabItem';
 import { colors } from '../../../utils';
+import { connect } from 'react-redux'
+import { deleteParameterJersey } from '../../../actions/JerseyAction';
 
-const BottomNavigator = ({ state, descriptors, navigation }) => {
+const BottomNavigator = ({ state, descriptors, navigation, dispatch }) => {
   return (
     <View style={styles.container}>
       {state.routes.map((route, index) => {
@@ -28,6 +30,10 @@ const BottomNavigator = ({ state, descriptors, navigation }) => {
             // The `merge: true` option makes sure that the params inside the tab screen are preserved
             navigation.navigate({ name: route.name, merge: true });
           }
+
+          if (route.name !== 'ListJersey') {
+            dispatch(deleteParameterJersey())
+          }
         };
 
         const onLongPress = () => {
@@ -51,14 +57,14 @@ const BottomNavigator = ({ state, descriptors, navigation }) => {
   );
 }
 
-export default BottomNavigator
+export default connect()(BottomNavigator)
 
 const styles = StyleSheet.create({
   container: {
     position: 'absolute',
-    left:0,
-    right:0,
-    bottom:0,
+    left: 0,
+    right: 0,
+    bottom: 0,
     flexDirection: 'row',
     backgroundColor: colors.primary,
     paddingVertical: 8,
@@ -74,7 +80,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
     elevation: 5,
-    justifyContent:'space-between'
+    justifyContent: 'space-between'
   }
 
 })

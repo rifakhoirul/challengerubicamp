@@ -4,12 +4,12 @@ import { CardLiga } from '../../kecil'
 import { connect } from 'react-redux'
 import { colors } from '../../../utils'
 
-const ListLiga = ({ getListLigaLoading,getListLigaResult,getListLigaError }) => {
+const ListLiga = ({ getListLigaLoading,getListLigaResult,getListLigaError,navigation }) => {
     return (
         <View style={styles.container}>
             {getListLigaResult ? Object.keys(getListLigaResult).map((key) => {
                 return (
-                    <CardLiga key={key} liga={getListLigaResult[key]} />
+                    <CardLiga id={key} key={key} liga={getListLigaResult[key]} navigation={navigation} />
                 )
             }) : getListLigaLoading ? (
             <View style={styles.loading}><ActivityIndicator color={colors.primary}/></View>

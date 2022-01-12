@@ -1,16 +1,26 @@
 import React from 'react'
 import { Image, StyleSheet, TouchableOpacity } from 'react-native'
+import { connect } from 'react-redux'
+import { getJerseyByLiga } from '../../../actions/JerseyAction'
 import { colors, responsiveHeight, responsiveWidth } from '../../../utils'
 
-const CardLiga = ({ liga }) => {
+const CardLiga = ({ liga, navigation, id, dispatch }) => {
+    const toJerseyByLiga = (id, namaLiga) => {
+
+        //ke jersey action
+        dispatch(getJerseyByLiga(id, namaLiga))
+
+        //navigate ke listJersey
+        navigation.navigate('ListJersey')
+    }
     return (
-        <TouchableOpacity style={styles.container}>
-            <Image source={{uri: liga.image}} style={styles.logo} />
+        <TouchableOpacity style={styles.container} onPress={() => toJerseyByLiga(id, liga.namaLiga)}>
+            <Image source={{ uri: liga.image }} style={styles.logo} />
         </TouchableOpacity>
     )
 }
 
-export default CardLiga
+export default connect()(CardLiga)
 
 const styles = StyleSheet.create({
     container: {
@@ -22,8 +32,8 @@ const styles = StyleSheet.create({
         },
         shadowOpacity: 0.25,
         shadowRadius: 3.84,
-        padding:10,
-        borderRadius:15,
+        padding: 10,
+        borderRadius: 15,
         elevation: 5,
     },
     logo: {

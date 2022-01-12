@@ -13,13 +13,13 @@ export const getListLiga = () => {
         get(child(dbRef, `ligas`)).then((snapshot) => {
             if (snapshot.exists()) {
                 let data = snapshot.val()
-                dispatchSuccess(dispatch,GET_LIST_LIGA,data)
+                dispatchSuccess(dispatch, GET_LIST_LIGA, data)
             } else {
                 console.log("No data available");
             }
         }).catch((error) => {
-            dispatchError(dispatch,GET_LIST_LIGA,error)
-            Alert.alert(error)
+            dispatchError(dispatch, GET_LIST_LIGA, error.message)
+            Alert.alert(error.message)
         });
     }
 }
