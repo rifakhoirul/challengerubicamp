@@ -8,7 +8,7 @@ const TombolLoading = ({ padding, fontSize }) => {
     return (
         <TouchableOpacity style={styles.container(padding)} >
             <ActivityIndicator size='small' color='#FFFFFF'/>
-            <Jarak width={5} />
+            {/* <Jarak width={5} /> */}
             <Text style={styles.title(fontSize)}>Loading...</Text>
         </TouchableOpacity>
     )

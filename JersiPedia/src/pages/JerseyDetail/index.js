@@ -1,22 +1,59 @@
 import React, { Component } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
-import { colors, fonts, heightMobileUI, numberWithCommas, responsiveHeight, responsiveWidth } from '../../utils'
+import { Alert, StyleSheet, Text, View } from 'react-native';
+import { colors, fonts, getData, heightMobileUI, numberWithCommas, responsiveHeight, responsiveWidth } from '../../utils'
 import { CardLiga, Inputan, JerseySlider, Pilihan, Tombol, Jarak } from '../../components'
 import { RFValue } from 'react-native-responsive-fontsize'
+import { connect } from 'react-redux';
+import { getDetailLiga } from '../../actions/LigaAction';
 
-export default class JerseyDetail extends Component {
+class JerseyDetail extends Component {
     constructor(props) {
         super(props)
 
         this.state = {
             jersey: this.props.route.params.jersey,
-            images: this.props.route.params.jersey.gambar
+            images: this.props.route.params.jersey.gambar,
+            jumlah: "",
+            ukuran: "",
+            keterangan: "",
+            uid: ""
         }
     }
 
+    componentDidMount() {
+        const { jersey } = this.state
+        this.props.dispatch(getDetailLiga(jersey.liga))
+    }
+
+    masukKeranjang = () => {
+        const { jumlah, ukuran, keterangan } = this.state
+
+        getData('user').then((res) => {
+            if (res) {
+                //simpan uid local storage ke state
+                this.setState({
+                    uid: res.uid
+                })
+
+                // validasi form
+                if (jumlah && keterangan && ukuran) {
+                    //hubungkan ke action(KeranjangAction/msasukKeranjang)
+                    //this.props.dispatch(masukKeranjang(this.state))
+
+                } else {
+                    Alert.alert('Error! Ukuran, Jumlah, & Keterangan harus diisi.')
+                }
+            } else {
+                Alert.alert('Error! Silahkan Login Terlebih Dahulu.')
+                this.props.navigation.replace('Login')
+            }
+        })
+
+    }
+
     render() {
-        const { navigation } = this.props
-        const { jersey, images } = this.state
+        const { navigation, getDetailLigaResult } = this.props
+        const { jersey, images, jumlah, ukuran, keterangan } = this.state
         return (
             <View style={styles.page}>
                 <View style={styles.button}>
@@ -25,7 +62,7 @@ export default class JerseyDetail extends Component {
                 <JerseySlider images={images} />
                 <View style={styles.container}>
                     <View style={styles.liga}>
-                        <CardLiga liga={jersey.liga} />
+                        <CardLiga liga={getDetailLigaResult} navigation={navigation} id={jersey.liga} />
                     </View>
                     <View style={styles.desc}>
                         <Text style={styles.nama}>{jersey.nama}</Text>
@@ -36,40 +73,54 @@ export default class JerseyDetail extends Component {
                             <Text style={styles.jenisBerat}>Berat : {jersey.berat}</Text>
                         </View>
                         <View style={styles.wrapperInput}>
-                            <Inputan 
-                            label="Jumlah" 
-                            width={responsiveWidth(166)} 
-                            height={responsiveHeight(43)}
-                            fontSize={13}
+                            <Inputan
+                                label="Jumlah"
+                                width={responsiveWidth(166)}
+                                height={responsiveHeight(43)}
+                                fontSize={13}
+                                value={jumlah}
+                                onChangeText={(jumlah) => this.setState({ jumlah })}
+                                keyboardType="number-pad"
                             />
-                            <Pilihan 
-                            label="Pilih Ukuran"
-                            width={responsiveWidth(166)} 
-                            height={responsiveHeight(43)}
-                            fontSize={13}
-                            datas={jersey.ukuran}
+                            <Pilihan
+                                label="Pilih Ukuran"
+                                width={responsiveWidth(166)}
+                                height={responsiveHeight(43)}
+                                fontSize={13}
+                                datas={jersey.ukuran}
+                                selectedValue={ukuran}
+                                onValueChange={(ukuran) => this.setState({ ukuran })}
                             />
                         </View>
-                            <Inputan 
-                            textarea 
+                        <Inputan
+                            textarea
                             label="Keterangan"
                             fontSize={13}
                             placeholder="Isi jika ingin menambhhkan Name Tag (nama dan nomor punggung)"
-                            />
-                            <Jarak height={15}/>
-                            <Tombol
+                            value={keterangan}
+                            onChangeText={(keterangan) => this.setState({ keterangan })}
+                        />
+                        <Jarak height={15} />
+                        <Tombol
                             title="Masuk Keranjang"
                             type="textIcon"
                             icon="keranjang-putih"
                             padding={responsiveHeight(17)}
                             fontSize={18}
-                            />
+                            onPress={() => this.masukKeranjang()}
+                        />
                     </View>
                 </View>
             </View>
         );
     }
 }
+
+const mapStateToProps = (state) => ({
+    getDetailLigaResult: state.LigaReducer.getDetailLigaResult
+})
+
+export default connect(mapStateToProps, null)(JerseyDetail)
 
 const styles = StyleSheet.create({
     page: {
@@ -114,7 +165,7 @@ const styles = StyleSheet.create({
     },
     wrapperJenisBerat: {
         flexDirection: 'row',
-        marginBottom:5
+        marginBottom: 5
     },
     jenisBerat: {
         fontSize: 13,

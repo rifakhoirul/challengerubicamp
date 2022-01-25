@@ -1,4 +1,9 @@
-import { DELETE_PARAMETER_JERSEY, GET_LIST_JERSEY, GET_LIST_JERSEY_BY_LIGA } from "../../actions/JerseyAction";
+import {
+    DELETE_PARAMETER_JERSEY,
+    GET_LIST_JERSEY,
+    GET_LIST_JERSEY_BY_LIGA,
+    SAVE_KEYWORD_JERSEY
+} from "../../actions/JerseyAction";
 
 const initialState = {
     getListJerseyLoading: false,
@@ -6,7 +11,8 @@ const initialState = {
     getListJerseyError: false,
 
     idLiga: false,
-    namaLiga: false
+    namaLiga: false,
+    keyword: false
 }
 
 export default function (state = initialState, action) {
@@ -28,7 +34,13 @@ export default function (state = initialState, action) {
             return {
                 ...state,
                 idLiga: false,
-                namaLiga: false
+                namaLiga: false,
+                keyword:false
+            }
+        case SAVE_KEYWORD_JERSEY:
+            return {
+                ...state,
+                keyword:action.payload.data
             }
         default:
             return state

@@ -24,7 +24,7 @@ class Home extends Component {
     return (
       <View style={styles.page}>
         <ScrollView showsVerticalScrollIndicator={false}>
-          <HeaderComponent navigation={navigation} />
+          <HeaderComponent page="Home" navigation={navigation} />
           <BannerSlider />
           <View style={styles.pilihLiga}>
             <Text style={styles.label}>Pilih Liga</Text>

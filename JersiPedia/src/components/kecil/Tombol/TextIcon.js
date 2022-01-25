@@ -26,7 +26,7 @@ const TextIcon = ({ icon, padding, onPress, title, fontSize }) => {
     return (
         <TouchableOpacity style={styles.container(padding)} onPress={onPress}>
             <Icon />
-            <Jarak width={5} />
+            {/* <Jarak width={5} /> */}
             <Text style={styles.title(fontSize)}>{title}</Text>
         </TouchableOpacity>
     )

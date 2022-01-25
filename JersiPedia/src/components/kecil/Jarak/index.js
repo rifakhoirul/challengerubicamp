@@ -1,9 +1,9 @@
 import React from 'react'
-import { View, Text } from 'react-native'
+import { View } from 'react-native'
 
-const Jarak = ({height,width}) => {
+const Jarak = ({ height, width }) => {
     return (
-        <View style={{height:height,width:width}}/>
+        <View style={{ height: height, width: width }}></View>
     )
 }
 

@@ -1,9 +1,13 @@
-import { GET_LIST_LIGA } from "../../actions/LigaAction";
+import { GET_LIST_LIGA, GET_DETAIL_LIGA } from "../../actions/LigaAction";
 
 const initialState = {
     getListLigaLoading: false,
     getListLigaResult: false,
     getListLigaError: false,
+
+    getDetailLigaLoading: false,
+    getDetailLigaResult: false,
+    getDetailLigaError: false,
 }
 
 export default function (state = initialState, action) {
@@ -14,6 +18,13 @@ export default function (state = initialState, action) {
                 getListLigaLoading: action.payload.loading,
                 getListLigaResult: action.payload.data,
                 getListLigaError: action.payload.error,
+            }
+            case GET_DETAIL_LIGA:
+            return {
+                ...state,
+                getDetailLigaLoading: action.payload.loading,
+                getDetailLigaResult: action.payload.data,
+                getDetailLigaError: action.payload.error,
             }
         default:
             return state

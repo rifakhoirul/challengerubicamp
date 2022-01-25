@@ -10,9 +10,9 @@ import { getListJersey } from '../../actions/JerseyAction';
 class ListJersey extends Component {
   componentDidMount() {
     this._unsubscribe = this.props.navigation.addListener('focus', () => {
-      const { idLiga } = this.props
+      const { idLiga, keyword } = this.props
       this.props.dispatch(getListLiga())
-      this.props.dispatch(getListJersey(idLiga))
+      this.props.dispatch(getListJersey(idLiga, keyword))
     });
   }
 
@@ -21,25 +21,33 @@ class ListJersey extends Component {
   }
 
   componentDidUpdate(prevProps) {
-    const { idLiga } = this.props
+    const { idLiga, keyword } = this.props
     if (idLiga && prevProps.idLiga !== idLiga) {
-      this.props.dispatch(getListJersey(idLiga))
+      this.props.dispatch(getListJersey(idLiga, keyword))
+    }
+    if (keyword && prevProps.keyword !== keyword) {
+      this.props.dispatch(getListJersey(idLiga, keyword))
     }
   }
 
   render() {
-    const { navigation, namaLiga } = this.props
+    const { navigation, namaLiga, keyword } = this.props
     return (
       <View style={styles.page}>
-        <HeaderComponent navigation={navigation} />
+        <HeaderComponent page="ListJersey" navigation={navigation} />
         <ScrollView showsVerticalScrollIndicator={false} style={styles.container}>
           <View style={styles.pilihLiga}>
             <ListLiga navigation={navigation} />
           </View>
           <View style={styles.pilihJersey}>
-            <Text style={styles.label}>Pilih <Text style={styles.boldLabel}>Jersey </Text>
-              {namaLiga ? namaLiga : " Yang Anda Inginkan"}
-            </Text>
+            {keyword ? (
+              <Text style={styles.label}>Cari: <Text style={styles.boldLabel}>{keyword} </Text>
+              </Text>
+            ) : (
+              <Text style={styles.label}>Pilih <Text style={styles.boldLabel}>Jersey </Text>
+                {namaLiga ? namaLiga : " Yang Anda Inginkan"}
+              </Text>
+            )}
             <ListJerseys navigation={navigation} />
           </View>
           <Jarak height={100} />
@@ -52,6 +60,7 @@ class ListJersey extends Component {
 const mapStateToProps = (state) => ({
   idLiga: state.JerseyReducer.idLiga,
   namaLiga: state.JerseyReducer.namaLiga,
+  keyword: state.JerseyReducer.keyword
 })
 
 export default connect(mapStateToProps, null)(ListJersey)
